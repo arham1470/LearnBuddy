@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Policies\CategoryPolicy;
 use App\Policies\CoursePolicy;
 use App\Policies\UserPolicy;
+use App\Services\Video\VideoProviderInterface;
+use App\Services\Video\VideoService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -19,7 +21,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(VideoService::class, function () {
+            return new VideoService;
+        });
+
+        $this->app->bind(VideoProviderInterface::class, function ($app) {
+            return $app->make(VideoService::class)->getProvider();
+        });
     }
 
     /**

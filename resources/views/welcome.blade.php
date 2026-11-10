@@ -136,7 +136,9 @@
                         <select name="category" class="hidden sm:block text-xs bg-transparent border-l border-neutral-200 pl-3 pr-2 py-1 text-neutral-600 focus:outline-none cursor-pointer">
                             <option value="">All Categories</option>
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                @if (is_object($cat))
+                                    <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                @endif
                             @endforeach
                         </select>
                         <button
@@ -196,16 +198,18 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 @forelse ($categories as $cat)
-                    <a href="{{ route('courses.index', ['category' => $cat->slug]) }}" class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300 group border border-transparent hover:border-orange-200">
-                        <div class="w-12 h-12 rounded-full bg-orange-50 group-hover:bg-lb-orange group-hover:text-white transition text-lb-orange flex items-center justify-center shrink-0 text-xl">
-                            <i class="{{ $cat->icon ?: 'fas fa-graduation-cap' }}"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-base text-neutral-900 group-hover:text-lb-orange transition mb-1">{{ $cat->name }}</h3>
-                            <p class="text-xs text-neutral-500 mb-2 line-clamp-2 leading-relaxed">{{ $cat->description }}</p>
-                            <span class="text-xs font-bold text-lb-orange">+{{ $cat->published_courses_count }} Courses</span>
-                        </div>
-                    </a>
+                    @if (is_object($cat))
+                        <a href="{{ route('courses.index', ['category' => $cat->slug]) }}" class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300 group border border-transparent hover:border-orange-200">
+                            <div class="w-12 h-12 rounded-full bg-orange-50 group-hover:bg-lb-orange group-hover:text-white transition text-lb-orange flex items-center justify-center shrink-0 text-xl">
+                                <i class="{{ $cat->icon ?: 'fas fa-graduation-cap' }}"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-neutral-900 group-hover:text-lb-orange transition mb-1">{{ $cat->name }}</h3>
+                                <p class="text-xs text-neutral-500 mb-2 line-clamp-2 leading-relaxed">{{ $cat->description }}</p>
+                                <span class="text-xs font-bold text-lb-orange">+{{ $cat->published_courses_count ?? 0 }} Courses</span>
+                            </div>
+                        </a>
+                    @endif
                 @empty
                     <div class="col-span-full text-center text-xs text-neutral-400 py-6">
                         No active categories.

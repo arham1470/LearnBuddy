@@ -21,3 +21,6 @@ need to add payment way to checkout
 here need to check scrollbar below the video player
 
 check lesson note writte for that lesson or whole
+
+
+need to check how video upload and work here

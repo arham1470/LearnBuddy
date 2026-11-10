@@ -113,4 +113,16 @@ class CoursePolicy
     {
         return $course->canUserLearn($user);
     }
+
+    /**
+     * Determine whether the user can upload or manage video assets for this course.
+     */
+    public function uploadVideo(User $user, Course $course): bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return $user->isInstructor() && $course->hasInstructor($user) && $course->canInstructorManageContent($user);
+    }
 }

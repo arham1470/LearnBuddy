@@ -7,6 +7,7 @@ use App\Models\Course;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class PublicCourseController extends Controller
 {

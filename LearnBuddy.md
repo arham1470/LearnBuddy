@@ -637,7 +637,7 @@ instructor and administrator.
 
 ------------------------------------------------------------------------
 
-# PROMPT 10 --- VIDEO INTEGRATION
+# PROMPT 10 --- VIDEO INTEGRATION (DONE)
 
 ``` text
 Implement only the recorded-video integration for LearnBuddy.

@@ -38,3 +38,4 @@ class HomeController extends Controller
         return view('welcome', compact('categories', 'featuredCourses', 'totalPublishedCourses'));
     }
 }
+

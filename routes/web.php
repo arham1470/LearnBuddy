@@ -12,9 +12,12 @@ use App\Http\Controllers\LearningController;
 use App\Http\Controllers\Management\CategoryController;
 use App\Http\Controllers\Management\CourseController;
 use App\Http\Controllers\Management\CurriculumController;
+use App\Http\Controllers\Management\LessonVideoUploadController;
 use App\Http\Controllers\PublicCourseController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\VideoPlaybackController;
+use App\Http\Controllers\Webhook\MuxWebhookController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -100,6 +103,7 @@ Route::middleware('auth')->group(function () {
     // Student Learning Interface & Progress Tracking
     Route::get('/learn/courses/{course:slug}', [LearningController::class, 'index'])->name('learning.index');
     Route::get('/learn/courses/{course:slug}/lessons/{lesson:id}', [LearningController::class, 'show'])->name('learning.show');
+    Route::get('/learn/courses/{course:slug}/lessons/{lesson:id}/playback', [VideoPlaybackController::class, 'getPlaybackData'])->name('learning.playback');
     Route::post('/learn/courses/{course:slug}/lessons/{lesson:id}/progress', [LearningController::class, 'updateProgress'])->name('learning.progress');
     Route::get('/learn/courses/{course:slug}/lessons/{lesson:id}/resources/{resource:id}/download', [LearningController::class, 'downloadResource'])->name('learning.resources.download');
 
@@ -118,8 +122,16 @@ Route::middleware('auth')->group(function () {
         Route::delete('sections/{section}', [CurriculumController::class, 'destroySection'])->name('sections.destroy');
         Route::post('sections/{section}/lessons', [CurriculumController::class, 'storeLesson'])->name('sections.lessons.store');
         Route::delete('lessons/{lesson}', [CurriculumController::class, 'destroyLesson'])->name('lessons.destroy');
+        Route::post('courses/{course}/lessons/{lesson}/video-upload', [LessonVideoUploadController::class, 'createUploadSession'])->name('lessons.video-upload');
 
         // Category Management
         Route::resource('categories', CategoryController::class)->except(['show']);
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Provider Webhooks (CSRF exempt)
+|--------------------------------------------------------------------------
+*/
+Route::post('/api/webhooks/video/mux', [MuxWebhookController::class, 'handle'])->name('webhooks.video.mux');
