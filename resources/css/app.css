@@ -1,3 +1,4 @@
+@import '@fortawesome/fontawesome-free/css/all.min.css';
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -5,13 +6,40 @@
 @source '../views/**/*.blade.php';
 @source '../js/**/*.js';
 
+:root {
+    /* LearnBuddy Master Brand Tokens (PROMPT 0 & reference_ui) */
+    --orange: #FF5F00;
+    --orange-light: #FF8A3D;
+    --orange-dark: #D94E00;
+    --orange-hover: #E65500;
+    --white: #FFFFFF;
+    --off-white: #F7F7F5;
+    --peach-bg: #FFF0E6;
+    --gray-light: #E5E5E5;
+    --gray-border: #EAEAEA;
+    --gray-mid: #6B6B6B;
+    --black: #0A0A0A;
+    --near-black: #1A1A1A;
+    --teal-card: #14B8A6;
+
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-full: 999px;
+
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-    /* LearnBuddy Exact Brand Palette */
+    /* Theme color utility bindings */
     --color-lb-orange: #FF5F00;
     --color-lb-orange-light: #FF8A3D;
     --color-lb-orange-dark: #D94E00;
+    --color-lb-orange-hover: #E65500;
     --color-lb-white: #FFFFFF;
     --color-lb-off-white: #F7F7F5;
     --color-lb-peach: #FFF0E6;
@@ -21,4 +49,74 @@
     --color-lb-black: #0A0A0A;
     --color-lb-near-black: #1A1A1A;
     --color-lb-teal: #14B8A6;
+
+    --radius-lb-sm: 8px;
+    --radius-lb-md: 16px;
+    --radius-lb-lg: 24px;
+    --radius-lb-full: 999px;
+
+    --shadow-lb-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+    --shadow-lb-md: 0 10px 30px rgba(0, 0, 0, 0.06);
+    --shadow-lb-lg: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Global Reset & Base Typography */
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background-color: var(--white);
+    color: var(--black);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+/* Accessible focus ring across all interactive elements */
+:focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 2px;
+}
+
+/* Custom Utilities for LearnBuddy Design System */
+.bg-peach {
+    background-color: var(--peach-bg);
+}
+
+.bg-off-white {
+    background-color: var(--off-white);
+}
+
+.text-gray-mid {
+    color: var(--gray-mid);
+}
+
+.border-gray-border {
+    border-color: var(--gray-border);
+}
+
+.shadow-lb-sm {
+    box-shadow: var(--shadow-sm);
+}
+
+.shadow-lb-md {
+    box-shadow: var(--shadow-md);
+}
+
+.card-hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Horizontal overflow prevention guard */
+.no-overflow-x {
+    max-width: 100vw;
+    overflow-x: hidden;
 }
