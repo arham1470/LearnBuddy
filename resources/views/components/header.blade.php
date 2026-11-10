@@ -78,6 +78,16 @@
             <!-- Authentication Actions (Desktop) -->
             @auth
                 <div class="hidden sm:flex items-center gap-3">
+                    @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
+                        <a
+                            href="{{ route('management.courses.index') }}"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition {{ request()->is('management*') ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-800 hover:bg-orange-50 hover:text-lb-orange' }}"
+                        >
+                            <i class="fas fa-layer-group text-xs text-lb-orange" aria-hidden="true"></i>
+                            <span>Course Management</span>
+                        </a>
+                    @endif
+
                     <a
                         href="{{ route('profile.show', auth()->user()) }}"
                         class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-orange-50 text-neutral-800 hover:text-lb-orange text-xs font-semibold transition"
@@ -238,6 +248,22 @@
                         <span>Design System Tokens</span>
                         <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600">Dev</span>
                     </a>
+
+                    @auth
+                        @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
+                            <a
+                                href="{{ route('management.courses.index') }}"
+                                @click="mobileNavOpen = false"
+                                class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-medium transition {{ request()->is('management*') ? 'bg-orange-50 text-lb-orange font-bold' : 'text-neutral-800 hover:bg-neutral-50' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-layer-group text-lb-orange" aria-hidden="true"></i>
+                                    <span>Course Management</span>
+                                </span>
+                                <i class="fas fa-chevron-right text-xs opacity-50" aria-hidden="true"></i>
+                            </a>
+                        @endif
+                    @endauth
                 </nav>
             </div>
 

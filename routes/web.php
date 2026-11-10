@@ -5,6 +5,9 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Management\CategoryController;
+use App\Http\Controllers\Management\CourseController;
+use App\Http\Controllers\Management\CurriculumController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -78,4 +81,24 @@ Route::middleware('auth')->group(function () {
 
     // User Profile Endpoint (protected with IDOR policy checks)
     Route::get('/users/{user}/profile', [UserProfileController::class, 'show'])->name('profile.show');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Course & Category Management Routes (Admin & Instructor only)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:admin,instructor')->prefix('management')->as('management.')->group(function () {
+        // Course Management CRUD & Publication Workflow
+        Route::resource('courses', CourseController::class);
+        Route::post('courses/{course}/status', [CourseController::class, 'transitionStatus'])->name('courses.status');
+
+        // Curriculum Management (Sections & Lessons)
+        Route::post('courses/{course}/sections', [CurriculumController::class, 'storeSection'])->name('courses.sections.store');
+        Route::delete('sections/{section}', [CurriculumController::class, 'destroySection'])->name('sections.destroy');
+        Route::post('sections/{section}/lessons', [CurriculumController::class, 'storeLesson'])->name('sections.lessons.store');
+        Route::delete('lessons/{lesson}', [CurriculumController::class, 'destroyLesson'])->name('lessons.destroy');
+
+        // Category Management
+        Route::resource('categories', CategoryController::class)->except(['show']);
+    });
 });

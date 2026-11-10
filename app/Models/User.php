@@ -6,6 +6,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -76,6 +77,24 @@ class User extends Authenticatable implements MustVerifyEmail
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles')->withTimestamps();
+    }
+
+    /**
+     * Courses created by the user.
+     */
+    public function createdCourses(): HasMany
+    {
+        return $this->hasMany(Course::class, 'created_by_user_id');
+    }
+
+    /**
+     * Courses where the user is an assigned instructor.
+     */
+    public function taughtCourses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'course_instructors')
+            ->withPivot(['is_primary', 'can_manage_content', 'can_grade'])
+            ->withTimestamps();
     }
 
     /**
