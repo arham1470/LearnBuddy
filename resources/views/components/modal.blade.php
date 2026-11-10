@@ -17,10 +17,10 @@ $maxWidthClasses = match ($maxWidth) {
 <div
     x-data="{ show: false }"
     x-show="show"
-    x-on:open-modal.window="$event.detail === '{{ $name }}' ? show = true : null"
-    x-on:close-modal.window="$event.detail === '{{ $name }}' ? show = false : null"
+    x-cloak
+    x-on:open-modal.window="if ($event.detail === '{{ $name }}') show = true"
+    x-on:close-modal.window="if ($event.detail === '{{ $name }}') show = false"
     x-on:keydown.escape.window="show = false"
-    style="display: none;"
     class="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:px-0 flex items-center justify-center"
     role="dialog"
     aria-modal="true"

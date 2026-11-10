@@ -2,3 +2,7 @@ need to check email verification in login authentication | whatsapp otp is also 
 
 need to add design to the unauthorized login page "403 This action is unauthorized"
 
+http://127.0.0.1:8000/management/courses/3 here delete lesson need delete dailog pop up instead of traditional
+
+
+need to do real video upload

@@ -261,7 +261,7 @@
             </div>
 
             <!-- Curriculum Builder (Sections & Lessons) -->
-            <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 sm:p-8 space-y-6">
+            <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 sm:p-8 space-y-6" x-data>
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-100 pb-4">
                     <div>
                         <h2 class="text-base font-bold text-neutral-900 flex items-center gap-2">
@@ -275,6 +275,7 @@
                         <button
                             type="button"
                             @click="$dispatch('open-modal', 'add-section-modal')"
+                            onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'add-section-modal' }))"
                             class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold transition cursor-pointer"
                         >
                             <i class="fas fa-plus text-xs" aria-hidden="true"></i>
@@ -291,6 +292,7 @@
                             <button
                                 type="button"
                                 @click="$dispatch('open-modal', 'add-section-modal')"
+                                onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'add-section-modal' }))"
                                 class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-lb-orange text-white text-xs font-semibold hover:bg-[#E65500] transition cursor-pointer"
                             >
                                 <i class="fas fa-plus text-xs" aria-hidden="true"></i>
@@ -322,6 +324,7 @@
                                             <button
                                                 type="button"
                                                 @click="$dispatch('open-modal', 'add-lesson-modal-{{ $section->id }}')"
+                                                onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'add-lesson-modal-{{ $section->id }}' }))"
                                                 class="px-3 py-1 rounded-full bg-white border border-neutral-200 hover:border-neutral-300 text-xs font-semibold text-neutral-700 transition cursor-pointer"
                                             >
                                                 <i class="fas fa-plus text-[10px] text-lb-orange mr-1"></i> Add Lesson
