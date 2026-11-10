@@ -105,4 +105,12 @@ class CoursePolicy
 
         return $user->isInstructor() && $course->isPrimaryInstructor($user) && $course->isPublished();
     }
+
+    /**
+     * Determine whether the user can access the learning interface for this course.
+     */
+    public function learn(User $user, Course $course): bool
+    {
+        return $course->canUserLearn($user);
+    }
 }

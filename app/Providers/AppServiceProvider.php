@@ -31,8 +31,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Course::class, CoursePolicy::class);
         Gate::policy(Category::class, CategoryPolicy::class);
-        Gate::policy(\App\Models\Course::class, \App\Policies\CoursePolicy::class);
-        Gate::policy(\App\Models\Category::class, \App\Policies\CategoryPolicy::class);
+        Gate::policy(Course::class, CoursePolicy::class);
+        Gate::policy(Category::class, CategoryPolicy::class);
 
         // Define role-based authorization gates
         Gate::define('admin', fn (User $user) => $user->isAdmin());

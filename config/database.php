@@ -71,7 +71,7 @@ return [
                         : null),
                 defined('Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')
                     ? Mysql::ATTR_SSL_VERIFY_SERVER_CERT
-                    : \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => filter_var(env('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT', true), FILTER_VALIDATE_BOOLEAN),
+                    : PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => filter_var(env('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT', true), FILTER_VALIDATE_BOOLEAN),
             ], fn ($value) => ! is_null($value)) : [],
         ],
 

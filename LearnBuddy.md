@@ -611,7 +611,7 @@ enrolment and full-batch rejection.
 
 ------------------------------------------------------------------------
 
-# PROMPT 9 --- LEARNING INTERFACE AND LESSON PROGRESS
+# PROMPT 9 --- LEARNING INTERFACE AND LESSON PROGRESS (DONE)
 
 ``` text
 Implement only the student learning interface and lesson progress.

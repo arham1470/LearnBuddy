@@ -118,6 +118,73 @@ class Course extends Model
         return $this->enrollments()->where('status', Enrollment::STATUS_ACTIVE);
     }
 
+    public function progress(): HasMany
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    public function canUserLearn(User $user): bool
+    {
+        if ($user->isAdmin() || $this->hasInstructor($user)) {
+            return true;
+        }
+
+        return $this->activeEnrollments()->where('user_id', $user->id)->exists();
+    }
+
+    public function calculateProgressPercentageFor(User $user): int
+    {
+        $publishedLessonIds = $this->lessons()
+            ->where('lessons.is_published', true)
+            ->pluck('lessons.id');
+
+        $totalLessons = $publishedLessonIds->count();
+
+        if ($totalLessons === 0) {
+            return 0;
+        }
+
+        $completedCount = $this->progress()
+            ->where('user_id', $user->id)
+            ->where('is_completed', true)
+            ->whereIn('lesson_id', $publishedLessonIds)
+            ->count();
+
+        return (int) round(($completedCount / $totalLessons) * 100);
+    }
+
+    public function firstAccessibleLesson(User $user): ?Lesson
+    {
+        $sectionsQuery = $this->sections()->orderBy('sort_order');
+
+        if (! $user->isAdmin() && ! $this->hasInstructor($user)) {
+            $sectionsQuery->where('is_published', true);
+        }
+
+        $sections = $sectionsQuery->with(['lessons' => function ($query) use ($user) {
+            if (! $user->isAdmin() && ! $this->hasInstructor($user)) {
+                $query->where('is_published', true);
+            }
+            $query->orderBy('sort_order');
+        }])->get();
+
+        $allLessons = $sections->pluck('lessons')->flatten();
+
+        if ($allLessons->isEmpty()) {
+            return null;
+        }
+
+        $completedLessonIds = $this->progress()
+            ->where('user_id', $user->id)
+            ->where('is_completed', true)
+            ->pluck('lesson_id')
+            ->all();
+
+        $nextLesson = $allLessons->first(fn ($lesson) => ! in_array($lesson->id, $completedLessonIds));
+
+        return $nextLesson ?? $allLessons->first();
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PUBLISHED);

@@ -148,9 +148,15 @@
 
                         <div class="space-y-2">
                             @auth
-                                <x-button as="a" href="#delivery-options" variant="primary" class="w-full text-center">
-                                    View Enrollment Options
-                                </x-button>
+                                @if (auth()->user()->isEnrolledIn($course) && auth()->user()->getEnrollmentFor($course)?->status === \App\Models\Enrollment::STATUS_ACTIVE)
+                                    <x-button as="a" href="{{ route('learning.index', $course) }}" variant="primary" class="w-full text-center">
+                                        <i class="fas fa-play text-xs mr-1"></i> Start Learning
+                                    </x-button>
+                                @else
+                                    <x-button as="a" href="#delivery-options" variant="primary" class="w-full text-center">
+                                        View Enrollment Options
+                                    </x-button>
+                                @endif
                             @else
                                 <x-button as="a" href="{{ route('register') }}" variant="primary" class="w-full text-center">
                                     Create Account to Enroll
@@ -571,7 +577,12 @@
                                             Status: <span class="uppercase font-bold tracking-wider">{{ str_replace('_', ' ', $userEnrollment->status) }}</span>
                                         </p>
                                         <div class="pt-1 flex flex-col gap-2">
-                                            <x-button as="a" href="{{ route('student.dashboard') }}" variant="primary" class="w-full text-center">
+                                            @if ($userEnrollment->status === \App\Models\Enrollment::STATUS_ACTIVE)
+                                                <x-button as="a" href="{{ route('learning.index', $course) }}" variant="primary" class="w-full text-center">
+                                                    <i class="fas fa-play text-xs mr-1"></i> Start Learning Now
+                                                </x-button>
+                                            @endif
+                                            <x-button as="a" href="{{ route('student.dashboard') }}" variant="outline" class="w-full text-center text-xs">
                                                 Go to Student Dashboard
                                             </x-button>
                                             <a href="{{ route('enrollments.confirmation', $userEnrollment) }}" class="text-xs text-neutral-600 hover:text-lb-orange underline">

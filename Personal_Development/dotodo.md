@@ -14,3 +14,10 @@ navigation bar fix for all
 when entroll, signup otp, and other notfications check email or whatsapp
 
 here we can select entrolllment type then when go to checkot there also need select, the first one doesn't continue like already selected show selcted here
+
+
+need to add payment way to checkout
+
+here need to check scrollbar below the video player
+
+check lesson note writte for that lesson or whole

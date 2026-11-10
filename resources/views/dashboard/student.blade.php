@@ -117,27 +117,30 @@
                             </p>
 
                             <!-- Progress indicator -->
+                            @php
+                                $continueProgress = $continueLearning->course->calculateProgressPercentageFor(auth()->user());
+                            @endphp
                             <div class="space-y-1.5 max-w-md pt-2">
                                 <div class="flex justify-between text-xs font-semibold text-neutral-600">
                                     <span>Course Progress</span>
-                                    <span class="text-lb-orange font-bold">0% Completed</span>
+                                    <span class="text-lb-orange font-bold">{{ $continueProgress }}% Completed</span>
                                 </div>
                                 <div class="w-full h-2 rounded-full bg-neutral-100 overflow-hidden">
-                                    <div class="h-full bg-lb-orange rounded-full" style="width: 0%;"></div>
+                                    <div class="h-full bg-lb-orange rounded-full transition-all duration-300" style="width: {{ $continueProgress }}%;"></div>
                                 </div>
                                 <p class="text-[10px] text-neutral-400">
-                                    Interactive lesson streaming and video player will be available in Phase 9.
+                                    Interactive lesson streaming, note-taking, and progress tracking.
                                 </p>
                             </div>
                         </div>
 
                         <div class="shrink-0 flex flex-col gap-2">
                             <a
-                                href="{{ route('courses.show', $continueLearning->course) }}"
+                                href="{{ route('learning.index', $continueLearning->course) }}"
                                 class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold transition shadow-sm"
                             >
                                 <i class="fas fa-play text-xs text-lb-orange"></i>
-                                <span>Go to Curriculum</span>
+                                <span>Continue Learning</span>
                             </a>
 
                             <a
@@ -251,10 +254,11 @@
                                 <div class="p-4 pt-2 border-t border-neutral-100 flex items-center justify-between">
                                     <span class="text-[10px] font-mono text-neutral-400">{{ $enr->enrollment_code }}</span>
                                     <a
-                                        href="{{ route('courses.show', $enr->course) }}"
-                                        class="text-xs font-bold text-lb-orange hover:underline"
+                                        href="{{ route('learning.index', $enr->course) }}"
+                                        class="text-xs font-bold text-lb-orange hover:underline flex items-center gap-1"
                                     >
-                                        Curriculum &rarr;
+                                        <span>Start Learning</span>
+                                        <i class="fas fa-play text-[10px]"></i>
                                     </a>
                                 </div>
                             </div>

@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Lesson extends Model
@@ -48,5 +50,35 @@ class Lesson extends Model
     public function section(): BelongsTo
     {
         return $this->belongsTo(CourseSection::class, 'section_id');
+    }
+
+    public function resources(): HasMany
+    {
+        return $this->hasMany(LessonResource::class);
+    }
+
+    public function progress(): HasMany
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('is_published', true);
+    }
+
+    public function isCompletedByUser(User $user): bool
+    {
+        return $this->progress()
+            ->where('user_id', $user->id)
+            ->where('is_completed', true)
+            ->exists();
+    }
+
+    public function getUserProgress(User $user): ?LessonProgress
+    {
+        return $this->progress()
+            ->where('user_id', $user->id)
+            ->first();
     }
 }
