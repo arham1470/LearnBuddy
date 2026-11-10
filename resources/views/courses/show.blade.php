@@ -262,9 +262,18 @@
                                         </ul>
                                     </div>
 
-                                    <div class="pt-3 border-t border-neutral-200/60 flex items-center justify-between">
-                                        <span class="text-xs text-neutral-500">Tuition Fee:</span>
-                                        <span class="text-base font-extrabold text-neutral-900">{{ $opt->formattedPrice() }}</span>
+                                    <div class="pt-3 border-t border-neutral-200/60 flex items-center justify-between gap-2">
+                                        <div>
+                                            <span class="text-xs text-neutral-500 block">Tuition Fee:</span>
+                                            <span class="text-base font-extrabold text-neutral-900">{{ $opt->formattedPrice() }}</span>
+                                        </div>
+
+                                        <a
+                                            href="{{ route('enrollments.create', ['course' => $course, 'option_id' => $opt->id]) }}"
+                                            class="px-4 py-2 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs font-bold transition shadow-sm"
+                                        >
+                                            Select &bull; {{ $opt->formattedPrice() }}
+                                        </a>
                                     </div>
                                 </div>
                             @endforeach
@@ -551,21 +560,41 @@
                         <!-- Enrollment Actions -->
                         <div class="space-y-3">
                             @auth
-                                <div class="p-3 bg-orange-50/70 rounded-2xl border border-orange-100 text-center space-y-2">
-                                    <p class="text-xs font-bold text-neutral-800">You are signed in as {{ auth()->user()->name }}</p>
-                                    <x-button
-                                        as="a"
-                                        href="#delivery-options"
-                                        variant="primary"
-                                        size="lg"
-                                        class="w-full text-center"
-                                    >
-                                        Select Delivery Mode
-                                    </x-button>
-                                    <p class="text-[10px] text-neutral-500">
-                                        Enrolment processing will activate in Phase 8.
-                                    </p>
-                                </div>
+                                @if (auth()->user()->isEnrolledIn($course))
+                                    @php $userEnrollment = auth()->user()->getEnrollmentFor($course); @endphp
+                                    <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-center space-y-2.5">
+                                        <div class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800">
+                                            <i class="fas fa-check-circle text-emerald-600 text-sm"></i>
+                                            <span>You are enrolled in this course</span>
+                                        </div>
+                                        <p class="text-[11px] text-emerald-700">
+                                            Status: <span class="uppercase font-bold tracking-wider">{{ str_replace('_', ' ', $userEnrollment->status) }}</span>
+                                        </p>
+                                        <div class="pt-1 flex flex-col gap-2">
+                                            <x-button as="a" href="{{ route('student.dashboard') }}" variant="primary" class="w-full text-center">
+                                                Go to Student Dashboard
+                                            </x-button>
+                                            <a href="{{ route('enrollments.confirmation', $userEnrollment) }}" class="text-xs text-neutral-600 hover:text-lb-orange underline">
+                                                View Enrollment Receipt
+                                            </a>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="space-y-2">
+                                        <x-button
+                                            as="a"
+                                            href="{{ route('enrollments.create', $course) }}"
+                                            variant="primary"
+                                            size="lg"
+                                            class="w-full text-center font-bold"
+                                        >
+                                            Enroll Now &bull; {{ $course->formattedPriceRange() }}
+                                        </x-button>
+                                        <p class="text-[11px] text-neutral-500 text-center">
+                                            Select your delivery mode &amp; intake batch.
+                                        </p>
+                                    </div>
+                                @endif
                             @else
                                 <div class="space-y-2">
                                     <x-button

@@ -579,7 +579,7 @@ mobile navigation.
 
 ------------------------------------------------------------------------
 
-# PROMPT 8 --- ENROLMENT AND STUDENT DASHBOARD
+# PROMPT 8 --- ENROLMENT AND STUDENT DASHBOARD (DONE)
 
 ``` text
 Implement only course enrolment and the initial student dashboard.

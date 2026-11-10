@@ -106,6 +106,54 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * All student enrollments for this user.
+     */
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    /**
+     * Active enrollments for this user.
+     */
+    public function activeEnrollments(): HasMany
+    {
+        return $this->enrollments()->where('status', Enrollment::STATUS_ACTIVE);
+    }
+
+    /**
+     * Courses the user is enrolled in.
+     */
+    public function enrolledCourses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'enrollments')
+            ->withPivot(['id', 'course_delivery_option_id', 'course_batch_id', 'enrollment_code', 'delivery_mode', 'status', 'price_paid', 'is_free', 'enrolled_at', 'expires_at'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Check if user is actively or pending enrolled in a course.
+     */
+    public function isEnrolledIn(Course $course): bool
+    {
+        return $this->enrollments()
+            ->where('course_id', $course->id)
+            ->whereIn('status', [Enrollment::STATUS_ACTIVE, Enrollment::STATUS_PENDING_PAYMENT])
+            ->exists();
+    }
+
+    /**
+     * Get user's enrollment for a specific course.
+     */
+    public function getEnrollmentFor(Course $course): ?Enrollment
+    {
+        return $this->enrollments()
+            ->where('course_id', $course->id)
+            ->latest()
+            ->first();
+    }
+
+    /**
      * Check if user has a specific role or any of the given roles.
      *
      * @param  string|array<int, string>  $role

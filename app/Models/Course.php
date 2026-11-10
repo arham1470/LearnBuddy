@@ -108,6 +108,16 @@ class Course extends Model
         return $this->hasMany(Review::class)->where('is_published', true)->latest();
     }
 
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function activeEnrollments(): HasMany
+    {
+        return $this->enrollments()->where('status', Enrollment::STATUS_ACTIVE);
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PUBLISHED);
@@ -276,5 +286,21 @@ class Course extends Model
     public function reviewsCount(): int
     {
         return $this->publishedReviews->count();
+    }
+
+    public function isUserEnrolled(User $user): bool
+    {
+        return $this->enrollments()
+            ->where('user_id', $user->id)
+            ->whereIn('status', [Enrollment::STATUS_ACTIVE, Enrollment::STATUS_PENDING_PAYMENT])
+            ->exists();
+    }
+
+    public function getUserEnrollment(User $user): ?Enrollment
+    {
+        return $this->enrollments()
+            ->where('user_id', $user->id)
+            ->latest()
+            ->first();
     }
 }

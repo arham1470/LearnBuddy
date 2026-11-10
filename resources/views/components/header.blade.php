@@ -77,7 +77,15 @@
 
             <!-- Authentication Actions (Desktop) -->
             @auth
-                <div class="hidden sm:flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2.5">
+                    <a
+                        href="{{ route('student.dashboard') }}"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition {{ request()->routeIs('student.dashboard') ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-800 hover:bg-orange-50 hover:text-lb-orange' }}"
+                    >
+                        <i class="fas fa-graduation-cap text-xs text-lb-orange" aria-hidden="true"></i>
+                        <span>My Learning</span>
+                    </a>
+
                     @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
                         <a
                             href="{{ route('management.courses.index') }}"
@@ -279,6 +287,16 @@
                             </div>
                         </div>
                     </div>
+
+                    <x-button
+                        as="a"
+                        href="{{ route('student.dashboard') }}"
+                        variant="primary"
+                        class="w-full text-center"
+                        @click="mobileNavOpen = false"
+                    >
+                        My Learning Dashboard
+                    </x-button>
 
                     <x-button
                         as="a"

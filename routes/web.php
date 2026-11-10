@@ -5,12 +5,14 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorProfileController;
 use App\Http\Controllers\Management\CategoryController;
 use App\Http\Controllers\Management\CourseController;
 use App\Http\Controllers\Management\CurriculumController;
 use App\Http\Controllers\PublicCourseController;
+use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -85,6 +87,14 @@ Route::middleware('auth')->group(function () {
 
     // User Profile Endpoint (protected with IDOR policy checks)
     Route::get('/users/{user}/profile', [UserProfileController::class, 'show'])->name('profile.show');
+
+    // Student Dashboard
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
+
+    // Course Enrollment Flow
+    Route::get('/courses/{course:slug}/enroll', [EnrollmentController::class, 'create'])->name('enrollments.create');
+    Route::post('/courses/{course:slug}/enroll', [EnrollmentController::class, 'store'])->name('enrollments.store');
+    Route::get('/enrollments/{enrollment:enrollment_code}', [EnrollmentController::class, 'confirmation'])->name('enrollments.confirmation');
 
     /*
     |--------------------------------------------------------------------------
