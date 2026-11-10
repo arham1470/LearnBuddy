@@ -75,16 +75,50 @@
                 <i class="fas fa-search text-sm" aria-hidden="true"></i>
             </button>
 
-            <!-- Login / Auth Placeholder -->
-            <x-button
-                as="a"
-                href="{{ url('/login') }}"
-                variant="dark"
-                size="sm"
-                class="hidden sm:inline-flex"
-            >
-                Log in
-            </x-button>
+            <!-- Authentication Actions (Desktop) -->
+            @auth
+                <div class="hidden sm:flex items-center gap-3">
+                    <a
+                        href="{{ route('profile.show', auth()->user()) }}"
+                        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-orange-50 text-neutral-800 hover:text-lb-orange text-xs font-semibold transition"
+                    >
+                        <i class="fas fa-user-circle text-sm text-lb-orange" aria-hidden="true"></i>
+                        <span>{{ auth()->user()->name }}</span>
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="inline-flex items-center justify-center p-2 rounded-full text-neutral-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer text-xs"
+                            title="Sign out"
+                            aria-label="Sign out"
+                        >
+                            <i class="fas fa-sign-out-alt text-sm" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div class="hidden sm:flex items-center gap-2">
+                    <x-button
+                        as="a"
+                        href="{{ route('login') }}"
+                        variant="dark"
+                        size="sm"
+                    >
+                        Log in
+                    </x-button>
+
+                    <x-button
+                        as="a"
+                        href="{{ route('register') }}"
+                        variant="primary"
+                        size="sm"
+                    >
+                        Register
+                    </x-button>
+                </div>
+            @endauth
 
             <!-- Mobile Hamburger Toggle Button -->
             <button
@@ -209,19 +243,63 @@
 
             <!-- Drawer Bottom Actions -->
             <div class="pt-6 border-t border-neutral-100 space-y-3">
-                <x-button
-                    as="a"
-                    href="{{ url('/login') }}"
-                    variant="dark"
-                    class="w-full text-center"
-                >
-                    Log in
-                </x-button>
+                @auth
+                    <div class="p-3 rounded-2xl bg-orange-50/60 border border-orange-100 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fas fa-user-circle text-xl text-lb-orange" aria-hidden="true"></i>
+                            <div>
+                                <p class="text-xs font-bold text-neutral-900">{{ auth()->user()->name }}</p>
+                                <p class="text-[10px] text-neutral-500">{{ auth()->user()->email }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <x-button
+                        as="a"
+                        href="{{ route('profile.show', auth()->user()) }}"
+                        variant="dark"
+                        class="w-full text-center"
+                        @click="mobileNavOpen = false"
+                    >
+                        My Profile
+                    </x-button>
+
+                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="w-full py-2.5 px-4 rounded-full border border-neutral-200 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                            <i class="fas fa-sign-out-alt text-xs" aria-hidden="true"></i>
+                            <span>Sign out</span>
+                        </button>
+                    </form>
+                @else
+                    <x-button
+                        as="a"
+                        href="{{ route('login') }}"
+                        variant="dark"
+                        class="w-full text-center"
+                        @click="mobileNavOpen = false"
+                    >
+                        Log in
+                    </x-button>
+
+                    <x-button
+                        as="a"
+                        href="{{ route('register') }}"
+                        variant="primary"
+                        class="w-full text-center"
+                        @click="mobileNavOpen = false"
+                    >
+                        Register
+                    </x-button>
+                @endauth
 
                 <x-button
                     as="a"
                     href="{{ url('/#courses') }}"
-                    variant="primary"
+                    variant="outline"
                     class="w-full text-center"
                     @click="mobileNavOpen = false"
                 >

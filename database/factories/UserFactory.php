@@ -28,8 +28,12 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            'phone' => '+9477'.fake()->numerify('#######'),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'locale' => 'en',
+            'timezone' => 'Asia/Colombo',
+            'is_active' => true,
         ];
     }
 
@@ -41,5 +45,45 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Indicate that the user account is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => false,
+        ]);
+    }
+
+    /**
+     * Assign administrator role to the user after creation.
+     */
+    public function admin(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('admin');
+        });
+    }
+
+    /**
+     * Assign instructor role to the user after creation.
+     */
+    public function instructor(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('instructor');
+        });
+    }
+
+    /**
+     * Assign student role to the user after creation.
+     */
+    public function student(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('student');
+        });
     }
 }
