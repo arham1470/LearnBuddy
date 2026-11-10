@@ -5,9 +5,12 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstructorProfileController;
 use App\Http\Controllers\Management\CategoryController;
 use App\Http\Controllers\Management\CourseController;
 use App\Http\Controllers\Management\CurriculumController;
+use App\Http\Controllers\PublicCourseController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -17,9 +20,10 @@ use Illuminate\Support\Facades\Route;
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/courses', [PublicCourseController::class, 'index'])->name('courses.index');
+Route::get('/courses/{course:slug}', [PublicCourseController::class, 'show'])->name('courses.show');
+Route::get('/instructors/{instructor}', [InstructorProfileController::class, 'show'])->name('instructors.show');
 
 Route::view('/design-system', 'design-system')->name('design-system');
 

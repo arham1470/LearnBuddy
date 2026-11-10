@@ -22,7 +22,7 @@
                     <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4">
                         <x-button
                             as="a"
-                            href="#courses"
+                            href="{{ route('courses.index') }}"
                             variant="primary"
                             size="lg"
                             icon="fas fa-arrow-right"
@@ -125,132 +125,58 @@
                 </div>
 
                 <!-- Fast Filter Input -->
-                <div class="w-full md:w-auto">
+                <form action="{{ route('courses.index') }}" method="GET" class="w-full md:w-auto">
                     <div class="flex items-center bg-white p-1.5 rounded-full shadow-lb-sm border border-neutral-200/80 max-w-md">
                         <input
                             type="text"
+                            name="q"
                             placeholder="Search Courses..."
                             class="w-full sm:w-56 px-4 py-1.5 text-xs sm:text-sm bg-transparent border-0 focus:outline-none placeholder-neutral-400"
-                            @click="$dispatch('open-modal', 'search-modal')"
-                            readonly
                         >
-                        <select class="hidden sm:block text-xs bg-transparent border-l border-neutral-200 pl-3 pr-2 py-1 text-neutral-600 focus:outline-none cursor-pointer">
-                            <option>All Categories</option>
-                            <option>Development</option>
-                            <option>Design</option>
+                        <select name="category" class="hidden sm:block text-xs bg-transparent border-l border-neutral-200 pl-3 pr-2 py-1 text-neutral-600 focus:outline-none cursor-pointer">
+                            <option value="">All Categories</option>
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                            @endforeach
                         </select>
                         <button
-                            type="button"
-                            @click="$dispatch('open-modal', 'search-modal')"
-                            class="w-9 h-9 rounded-full bg-lb-orange text-white flex items-center justify-center shrink-0 hover:bg-lb-orange-hover transition"
+                            type="submit"
+                            class="w-9 h-9 rounded-full bg-lb-orange text-white flex items-center justify-center shrink-0 hover:bg-lb-orange-hover transition cursor-pointer"
                             aria-label="Submit search"
                         >
                             <i class="fas fa-search text-xs" aria-hidden="true"></i>
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
 
             <!-- Course Cards Grid (Responsive: 1 col on mobile, 2 col on tablet, 3 col on desktop) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Course 1 -->
-                <x-card variant="white" padding="sm" class="flex flex-col justify-between">
-                    <div>
-                        <div class="h-44 rounded-xl bg-gradient-to-tr from-neutral-200 to-neutral-100 flex items-center justify-center mb-4 relative overflow-hidden">
-                            <i class="fab fa-figma text-4xl text-neutral-400" aria-hidden="true"></i>
-                            <span class="absolute top-3 left-3">
-                                <x-badge variant="orange" class="text-[10px]">Online + Batch</x-badge>
-                            </span>
+                @forelse ($featuredCourses as $course)
+                    <x-course-card :course="$course" />
+                @empty
+                    <div class="col-span-full py-12 text-center bg-white rounded-3xl border border-neutral-200/80 p-8">
+                        <div class="w-12 h-12 rounded-full bg-orange-50 text-lb-orange flex items-center justify-center mx-auto mb-3 text-xl">
+                            <i class="fas fa-book-open"></i>
                         </div>
-                        <div class="flex items-center justify-between text-xs text-neutral-500 mb-2">
-                            <span><i class="fas fa-star text-lb-orange" aria-hidden="true"></i> 4.9 (310 reviews)</span>
-                            <span><i class="fas fa-clock text-lb-orange" aria-hidden="true"></i> 12h 30m</span>
-                        </div>
-                        <h3 class="font-bold text-base text-lb-black line-clamp-2 mb-4 leading-snug">
-                            Learn Figma to LearnBuddy Core Beginner to Advanced
-                        </h3>
+                        <h3 class="text-base font-bold text-neutral-900 mb-1">No Published Courses Yet</h3>
+                        <p class="text-xs text-neutral-500 max-w-sm mx-auto">
+                            Check back soon as our verified instructors are currently preparing upcoming curriculums.
+                        </p>
                     </div>
-
-                    <div class="pt-3 border-t border-neutral-100 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-600">
-                                ST
-                            </div>
-                            <span class="text-xs font-semibold text-neutral-800">Sakif Tahmid</span>
-                        </div>
-                        <span class="text-sm font-extrabold text-lb-orange">LKR 14,900</span>
-                    </div>
-                </x-card>
-
-                <!-- Course 2 -->
-                <x-card variant="white" padding="sm" class="flex flex-col justify-between">
-                    <div>
-                        <div class="h-44 rounded-xl bg-gradient-to-tr from-emerald-100 to-teal-100 flex items-center justify-center mb-4 relative overflow-hidden">
-                            <i class="fas fa-paint-brush text-4xl text-teal-400" aria-hidden="true"></i>
-                            <span class="absolute top-3 left-3">
-                                <x-badge variant="teal" class="text-[10px]">Physical Colombo</x-badge>
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs text-neutral-500 mb-2">
-                            <span><i class="fas fa-star text-lb-orange" aria-hidden="true"></i> 4.8 (240 reviews)</span>
-                            <span><i class="fas fa-clock text-lb-orange" aria-hidden="true"></i> 16h 00m</span>
-                        </div>
-                        <h3 class="font-bold text-base text-lb-black line-clamp-2 mb-4 leading-snug">
-                            Create a Digital Illustration With Procreate &amp; UI Assets
-                        </h3>
-                    </div>
-
-                    <div class="pt-3 border-t border-neutral-100 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-600">
-                                KP
-                            </div>
-                            <span class="text-xs font-semibold text-neutral-800">Kavindu Perera</span>
-                        </div>
-                        <span class="text-sm font-extrabold text-lb-orange">LKR 18,500</span>
-                    </div>
-                </x-card>
-
-                <!-- Course 3 -->
-                <x-card variant="white" padding="sm" class="flex flex-col justify-between">
-                    <div>
-                        <div class="h-44 rounded-xl bg-gradient-to-tr from-blue-100 to-sky-100 flex items-center justify-center mb-4 relative overflow-hidden">
-                            <i class="fas fa-laptop-code text-4xl text-sky-400" aria-hidden="true"></i>
-                            <span class="absolute top-3 left-3">
-                                <x-badge variant="dark" class="text-[10px]">Online Self-Paced</x-badge>
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs text-neutral-500 mb-2">
-                            <span><i class="fas fa-star text-lb-orange" aria-hidden="true"></i> 4.9 (450 reviews)</span>
-                            <span><i class="fas fa-clock text-lb-orange" aria-hidden="true"></i> 24h 15m</span>
-                        </div>
-                        <h3 class="font-bold text-base text-lb-black line-clamp-2 mb-4 leading-snug">
-                            Create a Perfect Career with Modern Full-Stack Development
-                        </h3>
-                    </div>
-
-                    <div class="pt-3 border-t border-neutral-100 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-600">
-                                NL
-                            </div>
-                            <span class="text-xs font-semibold text-neutral-800">Nuwan Lokuge</span>
-                        </div>
-                        <span class="text-sm font-extrabold text-lb-orange">LKR 22,000</span>
-                    </div>
-                </x-card>
+                @endforelse
             </div>
 
             <!-- See All Action -->
             <div class="mt-12 text-center">
                 <x-button
                     as="a"
-                    href="{{ url('/design-system') }}"
+                    href="{{ route('courses.index') }}"
                     variant="teal"
                     size="md"
                     icon="fas fa-arrow-right"
                 >
-                    View All Design System Assets
+                    Explore All Published Courses
                 </x-button>
             </div>
         </div>
@@ -269,77 +195,22 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                <!-- Cat 1 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300">
-                    <div class="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-lb-black shrink-0 text-xl">
-                        <i class="fab fa-wordpress-simple"></i>
+                @forelse ($categories as $cat)
+                    <a href="{{ route('courses.index', ['category' => $cat->slug]) }}" class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300 group border border-transparent hover:border-orange-200">
+                        <div class="w-12 h-12 rounded-full bg-orange-50 group-hover:bg-lb-orange group-hover:text-white transition text-lb-orange flex items-center justify-center shrink-0 text-xl">
+                            <i class="{{ $cat->icon ?: 'fas fa-graduation-cap' }}"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base text-neutral-900 group-hover:text-lb-orange transition mb-1">{{ $cat->name }}</h3>
+                            <p class="text-xs text-neutral-500 mb-2 line-clamp-2 leading-relaxed">{{ $cat->description }}</p>
+                            <span class="text-xs font-bold text-lb-orange">+{{ $cat->published_courses_count }} Courses</span>
+                        </div>
+                    </a>
+                @empty
+                    <div class="col-span-full text-center text-xs text-neutral-400 py-6">
+                        No active categories.
                     </div>
-                    <div>
-                        <h3 class="font-bold text-base text-neutral-900 mb-1">WordPress Development</h3>
-                        <p class="text-xs text-neutral-500 mb-2">Build dynamic websites and custom client themes.</p>
-                        <span class="text-xs font-bold text-lb-orange">+12 Courses</span>
-                    </div>
-                </div>
-
-                <!-- Cat 2 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300">
-                    <div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-lb-orange shrink-0 text-xl">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-neutral-900 mb-1">Web Development</h3>
-                        <p class="text-xs text-neutral-500 mb-2">Laravel, PHP, Tailwind CSS &amp; Modern APIs.</p>
-                        <span class="text-xs font-bold text-lb-orange">+24 Courses</span>
-                    </div>
-                </div>
-
-                <!-- Cat 3 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300">
-                    <div class="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-lb-black shrink-0 text-xl">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-neutral-900 mb-1">Mobile Development</h3>
-                        <p class="text-xs text-neutral-500 mb-2">Cross-platform iOS and Android applications.</p>
-                        <span class="text-xs font-bold text-lb-orange">+8 Courses</span>
-                    </div>
-                </div>
-
-                <!-- Cat 4 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300">
-                    <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0 text-xl">
-                        <i class="fab fa-js"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-neutral-900 mb-1">JavaScript &amp; Alpine.js</h3>
-                        <p class="text-xs text-neutral-500 mb-2">Interactive frontend engineering without bloated frameworks.</p>
-                        <span class="text-xs font-bold text-lb-orange">+15 Courses</span>
-                    </div>
-                </div>
-
-                <!-- Cat 5 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300">
-                    <div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-lb-orange shrink-0 text-xl">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-neutral-900 mb-1">Cloud &amp; DevOps</h3>
-                        <p class="text-xs text-neutral-500 mb-2">Aiven MySQL, Linux, Git, and automated deployments.</p>
-                        <span class="text-xs font-bold text-lb-orange">+9 Courses</span>
-                    </div>
-                </div>
-
-                <!-- Cat 6 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lb-sm flex items-start gap-4 hover:-translate-y-1 transition duration-300">
-                    <div class="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-lb-black shrink-0 text-xl">
-                        <i class="fas fa-paint-brush"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base text-neutral-900 mb-1">UI/UX Design</h3>
-                        <p class="text-xs text-neutral-500 mb-2">Figma prototyping, accessible design systems.</p>
-                        <span class="text-xs font-bold text-lb-orange">+18 Courses</span>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -468,7 +339,7 @@
                         </p>
                     </div>
                     <div>
-                        <x-button as="a" href="#courses" variant="dark">
+                        <x-button as="a" href="{{ route('courses.index') }}" variant="dark">
                             Join Now
                         </x-button>
                     </div>

@@ -544,7 +544,7 @@ including direct URL access.
 
 ------------------------------------------------------------------------
 
-# PROMPT 7 --- PUBLIC HOMEPAGE, CATALOGUE AND COURSE DETAILS
+# PROMPT 7 --- PUBLIC HOMEPAGE, CATALOGUE AND COURSE DETAILS (DONE)
 
 ``` text
 Implement only the public LearnBuddy discovery experience.

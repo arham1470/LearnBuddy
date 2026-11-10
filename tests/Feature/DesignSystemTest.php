@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class DesignSystemTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_homepage_shell_renders_successfully(): void
     {
         $response = $this->get('/');

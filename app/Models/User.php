@@ -98,6 +98,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Only published courses taught by the user.
+     */
+    public function publishedTaughtCourses(): BelongsToMany
+    {
+        return $this->taughtCourses()->where('status', Course::STATUS_PUBLISHED);
+    }
+
+    /**
      * Check if user has a specific role or any of the given roles.
      *
      * @param  string|array<int, string>  $role

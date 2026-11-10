@@ -98,6 +98,16 @@ class Course extends Model
         return $this->hasManyThrough(Lesson::class, CourseSection::class, 'course_id', 'section_id');
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function publishedReviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->where('is_published', true)->latest();
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PUBLISHED);
@@ -202,5 +212,69 @@ class Course extends Model
         }
 
         return (float) $activeOptions->min('price');
+    }
+
+    public function primaryInstructor(): ?User
+    {
+        return $this->instructors->firstWhere('pivot.is_primary', true)
+            ?? $this->instructors->first()
+            ?? $this->creator;
+    }
+
+    public function formattedPriceRange(): string
+    {
+        $activeOptions = $this->deliveryOptions->where('is_active', true);
+
+        if ($activeOptions->isEmpty()) {
+            return 'Price on inquiry';
+        }
+
+        $allFree = $activeOptions->every(fn ($opt) => $opt->is_free || (float) $opt->price === 0.0);
+        if ($allFree) {
+            return 'Free';
+        }
+
+        $min = (float) $activeOptions->min('price');
+        $max = (float) $activeOptions->max('price');
+        $currency = $activeOptions->first()->currency ?? 'LKR';
+
+        if ($min === $max) {
+            return $currency.' '.number_format($min, 2);
+        }
+
+        if ($min === 0.0) {
+            return 'Free / Up to '.$currency.' '.number_format($max, 2);
+        }
+
+        return 'From '.$currency.' '.number_format($min, 2);
+    }
+
+    public function formattedDuration(): ?string
+    {
+        if (empty($this->duration_hours) || (float) $this->duration_hours <= 0) {
+            return null;
+        }
+
+        $hours = (float) $this->duration_hours;
+        if (floor($hours) == $hours) {
+            return ((int) $hours).'h';
+        }
+
+        $wholeHours = floor($hours);
+        $minutes = round(($hours - $wholeHours) * 60);
+
+        return $wholeHours > 0 ? "{$wholeHours}h {$minutes}m" : "{$minutes}m";
+    }
+
+    public function averageRating(): ?float
+    {
+        $avg = $this->publishedReviews->avg('rating');
+
+        return $avg ? round((float) $avg, 1) : null;
+    }
+
+    public function reviewsCount(): int
+    {
+        return $this->publishedReviews->count();
     }
 }

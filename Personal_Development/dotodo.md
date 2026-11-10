@@ -6,3 +6,5 @@ http://127.0.0.1:8000/management/courses/3 here delete lesson need delete dailog
 
 
 need to do real video upload
+
+http://127.0.0.1:8000/courses here need check serach bar and course card and automatic serach when type

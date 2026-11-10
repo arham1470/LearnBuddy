@@ -32,8 +32,8 @@
                 Home
             </a>
             <a
-                href="{{ url('/#courses') }}"
-                class="transition-colors hover:text-lb-orange text-neutral-700"
+                href="{{ route('courses.index') }}"
+                class="transition-colors hover:text-lb-orange {{ request()->routeIs('courses.*') ? 'text-lb-orange font-semibold' : 'text-neutral-700' }}"
             >
                 Our Courses
             </a>
@@ -209,9 +209,9 @@
                         <i class="fas fa-chevron-right text-xs opacity-50" aria-hidden="true"></i>
                     </a>
                     <a
-                        href="{{ url('/#courses') }}"
+                        href="{{ route('courses.index') }}"
                         @click="mobileNavOpen = false"
-                        class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-medium text-neutral-800 hover:bg-neutral-50 transition"
+                        class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-medium transition {{ request()->routeIs('courses.*') ? 'bg-orange-50 text-lb-orange font-semibold' : 'text-neutral-800 hover:bg-neutral-50' }}"
                     >
                         <span>Our Courses</span>
                         <i class="fas fa-chevron-right text-xs opacity-50" aria-hidden="true"></i>
