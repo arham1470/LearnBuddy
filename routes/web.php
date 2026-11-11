@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CourseAnnouncementController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorProfileController;
@@ -21,6 +22,8 @@ use App\Http\Controllers\Management\LessonVideoUploadController;
 use App\Http\Controllers\Management\LiveClassManagementController;
 use App\Http\Controllers\Management\PhysicalLocationController;
 use App\Http\Controllers\Management\QuizManagementController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\PublicCourseController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\ReceiptController;
@@ -122,6 +125,21 @@ Route::middleware('auth')->group(function () {
     // Payment History & Receipts
     Route::get('/my-receipts', [ReceiptController::class, 'index'])->name('receipts.index');
     Route::get('/orders/{order:order_number}/receipt', [ReceiptController::class, 'show'])->name('receipts.show');
+
+    // In-App Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
+    Route::get('/api/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+
+    // Notification Preferences
+    Route::get('/settings/notifications', [NotificationPreferenceController::class, 'edit'])->name('settings.notifications.edit');
+    Route::put('/settings/notifications', [NotificationPreferenceController::class, 'update'])->name('settings.notifications.update');
+
+    // Course Announcements
+    Route::get('/courses/{course:slug}/announcements', [CourseAnnouncementController::class, 'index'])->name('courses.announcements.index');
+    Route::post('/courses/{course:slug}/announcements', [CourseAnnouncementController::class, 'store'])->name('courses.announcements.store');
+    Route::delete('/courses/{course:slug}/announcements/{announcement}', [CourseAnnouncementController::class, 'destroy'])->name('courses.announcements.destroy');
 
     // Student Learning Interface & Progress Tracking
     Route::get('/learn/courses/{course:slug}', [LearningController::class, 'index'])->name('learning.index');

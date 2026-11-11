@@ -808,7 +808,7 @@ approval.
 
 ------------------------------------------------------------------------
 
-# PROMPT 15 --- NOTIFICATIONS AND ANNOUNCEMENTS
+# PROMPT 15 --- NOTIFICATIONS AND ANNOUNCEMENTS (DONE)
 
 ``` text
 Implement only notifications and course announcements.

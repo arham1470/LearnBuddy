@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Notifications\PasswordResetNotification;
+use App\Notifications\RegistrationVerificationNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -269,5 +272,31 @@ class User extends Authenticatable implements MustVerifyEmail
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function notificationPreferences(): HasOne
+    {
+        return $this->hasOne(UserNotificationPreference::class);
+    }
+
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(CourseAnnouncement::class);
+    }
+
+    /**
+     * Send queued custom branded email verification notification.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new RegistrationVerificationNotification);
+    }
+
+    /**
+     * Send queued custom branded password reset notification.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new PasswordResetNotification($token));
     }
 }

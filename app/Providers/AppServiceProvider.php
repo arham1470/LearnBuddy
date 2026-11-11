@@ -6,6 +6,7 @@ use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseAnnouncement;
 use App\Models\CourseBatch;
 use App\Models\LiveClass;
 use App\Models\Order;
@@ -16,6 +17,7 @@ use App\Models\QuizAttempt;
 use App\Models\User;
 use App\Policies\AssignmentPolicy;
 use App\Policies\CategoryPolicy;
+use App\Policies\CourseAnnouncementPolicy;
 use App\Policies\CourseBatchPolicy;
 use App\Policies\CoursePolicy;
 use App\Policies\LiveClassPolicy;
@@ -26,6 +28,8 @@ use App\Policies\QuizPolicy;
 use App\Policies\UserPolicy;
 use App\Services\LiveClass\Contracts\LiveClassProviderInterface;
 use App\Services\LiveClass\Providers\JitsiLiveClassProvider;
+use App\Services\Notifications\Push\FirebasePushNotificationProvider;
+use App\Services\Notifications\Push\PushNotificationProviderInterface;
 use App\Services\Payments\Contracts\PaymentGatewayInterface;
 use App\Services\Payments\PaymentManager;
 use App\Services\Video\VideoProviderInterface;
@@ -60,6 +64,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PaymentGatewayInterface::class, function ($app) {
             return $app->make(PaymentManager::class)->gateway();
         });
+
+        $this->app->singleton(PushNotificationProviderInterface::class, function () {
+            return new FirebasePushNotificationProvider;
+        });
     }
 
     /**
@@ -80,6 +88,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(LiveClass::class, LiveClassPolicy::class);
         Gate::policy(Order::class, OrderPolicy::class);
         Gate::policy(Payment::class, PaymentPolicy::class);
+        Gate::policy(CourseAnnouncement::class, CourseAnnouncementPolicy::class);
 
         // Define role-based authorization gates
         Gate::define('admin', fn (User $user) => $user->isAdmin());

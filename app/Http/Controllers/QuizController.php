@@ -6,6 +6,8 @@ use App\Models\Course;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\QuizAttemptAnswer;
+use App\Notifications\QuizResultNotification;
+use App\Services\Notifications\NotificationDispatcherService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -166,6 +168,14 @@ class QuizController extends Controller
                 'completed_at' => now(),
             ]);
         });
+
+        $attempt->refresh();
+        app(NotificationDispatcherService::class)->send(
+            user: auth()->user(),
+            notification: new QuizResultNotification($quiz, $attempt),
+            deduplicationKey: "quiz_result_{$attempt->id}_{$attempt->score}",
+            eventType: 'quiz_result'
+        );
 
         return redirect()->route('courses.quizzes.result', [$course, $quiz, $attempt])
             ->with('status', 'Quiz completed successfully!');

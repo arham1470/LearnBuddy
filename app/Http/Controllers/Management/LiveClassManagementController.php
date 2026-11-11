@@ -6,8 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLiveClassRequest;
 use App\Http\Requests\UpdateLiveClassRequest;
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\LiveClass;
+use App\Models\User;
+use App\Notifications\LiveClassReminderNotification;
+use App\Notifications\LiveClassStatusNotification;
 use App\Services\LiveClass\Contracts\LiveClassProviderInterface;
+use App\Services\Notifications\NotificationDispatcherService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -133,6 +138,21 @@ class LiveClassManagementController extends Controller
         $reason = $request->input('cancellation_reason', 'Live class cancelled by instructor.');
         $liveClass->cancel($reason);
 
+        // Notify enrolled students
+        $dispatcher = app(NotificationDispatcherService::class);
+        $students = User::whereHas('enrollments', function ($q) use ($course) {
+            $q->where('course_id', $course->id)->where('status', Enrollment::STATUS_ACTIVE);
+        })->get();
+
+        foreach ($students as $student) {
+            $dispatcher->send(
+                user: $student,
+                notification: new LiveClassStatusNotification($liveClass, 'cancelled', $reason),
+                deduplicationKey: "live_class_cancelled_{$liveClass->id}_{$student->id}",
+                eventType: 'live_class_status'
+            );
+        }
+
         return redirect()->route('management.courses.live-classes.show', [$course, $liveClass])
             ->with('status', 'Live class session cancelled.');
     }
@@ -158,6 +178,21 @@ class LiveClassManagementController extends Controller
         Gate::authorize('update', $liveClass);
 
         $liveClass->update(['reminder_sent_at' => now()]);
+
+        // Dispatch reminders to active students
+        $dispatcher = app(NotificationDispatcherService::class);
+        $students = User::whereHas('enrollments', function ($q) use ($course) {
+            $q->where('course_id', $course->id)->where('status', Enrollment::STATUS_ACTIVE);
+        })->get();
+
+        foreach ($students as $student) {
+            $dispatcher->send(
+                user: $student,
+                notification: new LiveClassReminderNotification($liveClass, 30),
+                deduplicationKey: "live_class_reminder_{$liveClass->id}_{$student->id}_manual",
+                eventType: 'live_class_reminder'
+            );
+        }
 
         return back()->with('status', 'Class session reminders dispatched to enrolled students.');
     }

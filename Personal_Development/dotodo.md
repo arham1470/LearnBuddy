@@ -43,3 +43,5 @@ allow batch craeate wwhich course have physical
 need Live Meeting Provider Not Configured
 
 and check dailog box whole app
+
+NEED TO CHECK AND SETUP PAYHERE IN APPLICATION

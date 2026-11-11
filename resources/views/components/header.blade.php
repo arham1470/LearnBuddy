@@ -96,6 +96,22 @@
                         </a>
                     @endif
 
+                    <!-- In-App Notification Bell -->
+                    <a
+                        href="{{ route('notifications.index') }}"
+                        class="relative inline-flex items-center justify-center w-8 h-8 rounded-full bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange transition"
+                        title="Notifications"
+                        aria-label="Notifications"
+                    >
+                        <i class="fas fa-bell text-xs" aria-hidden="true"></i>
+                        @php $unreadHeaderCount = auth()->user()->unreadNotifications()->count(); @endphp
+                        @if ($unreadHeaderCount > 0)
+                            <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-lb-orange text-[9px] font-black text-white">
+                                {{ $unreadHeaderCount > 9 ? '9+' : $unreadHeaderCount }}
+                            </span>
+                        @endif
+                    </a>
+
                     <a
                         href="{{ route('profile.show', auth()->user()) }}"
                         class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-orange-50 text-neutral-800 hover:text-lb-orange text-xs font-semibold transition"

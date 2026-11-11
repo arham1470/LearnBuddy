@@ -138,6 +138,11 @@ class Course extends Model
         return $this->enrollments()->where('status', Enrollment::STATUS_ACTIVE);
     }
 
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(CourseAnnouncement::class);
+    }
+
     public function batches(): HasManyThrough
     {
         return $this->hasManyThrough(CourseBatch::class, CourseDeliveryOption::class, 'course_id', 'course_delivery_option_id');

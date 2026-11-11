@@ -14,6 +14,8 @@ use App\Models\BatchSession;
 use App\Models\Course;
 use App\Models\CourseBatch;
 use App\Models\PhysicalLocation;
+use App\Notifications\BatchScheduleChangeNotification;
+use App\Services\Notifications\NotificationDispatcherService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -154,6 +156,18 @@ class CourseBatchManagementController extends Controller
 
         $reason = $request->input('reason', 'Batch cancelled by instructor/administrator.');
         $batch->cancel(auth()->user(), $reason);
+
+        // Notify enrolled students in this physical batch
+        $dispatcher = app(NotificationDispatcherService::class);
+        $enrolledStudents = $batch->enrollments()->with('user')->get()->pluck('user')->filter();
+        foreach ($enrolledStudents as $student) {
+            $dispatcher->send(
+                user: $student,
+                notification: new BatchScheduleChangeNotification($batch, 'cancelled', $reason),
+                deduplicationKey: "batch_cancelled_{$batch->id}_{$student->id}",
+                eventType: 'batch_cancelled'
+            );
+        }
 
         return redirect()->route('management.courses.batches.show', [$course, $batch])
             ->with('status', "Batch '{$batch->batch_code}' cancelled.");

@@ -10,6 +10,9 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PaymentAuditLog;
 use App\Models\User;
+use App\Notifications\EnrollmentConfirmationNotification;
+use App\Notifications\PaymentConfirmationNotification;
+use App\Services\Notifications\NotificationDispatcherService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -374,6 +377,27 @@ class PaymentService
                     ipAddress: $ipAddress,
                     userAgent: $userAgent
                 );
+
+                // Dispatch payment confirmation and enrollment confirmation notifications
+                $dispatcher = app(NotificationDispatcherService::class);
+                $user = $order->user;
+                if ($user) {
+                    $dispatcher->send(
+                        user: $user,
+                        notification: new PaymentConfirmationNotification($order, $payment),
+                        deduplicationKey: "payment_confirmed_{$payment->id}_{$user->id}",
+                        eventType: 'payment_confirmation'
+                    );
+
+                    if ($enrollment) {
+                        $dispatcher->send(
+                            user: $user,
+                            notification: new EnrollmentConfirmationNotification($enrollment),
+                            deduplicationKey: "enrollment_confirmed_{$enrollment->id}_{$user->id}",
+                            eventType: 'enrollment_confirmation'
+                        );
+                    }
+                }
 
                 return [
                     'status' => 'success',

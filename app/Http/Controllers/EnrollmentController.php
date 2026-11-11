@@ -7,6 +7,8 @@ use App\Models\Course;
 use App\Models\CourseBatch;
 use App\Models\CourseDeliveryOption;
 use App\Models\Enrollment;
+use App\Notifications\EnrollmentConfirmationNotification;
+use App\Services\Notifications\NotificationDispatcherService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -164,6 +166,15 @@ class EnrollmentController extends Controller
                 'expires_at' => $expiresAt,
             ]);
         });
+
+        if ($enrollment->isActive()) {
+            app(NotificationDispatcherService::class)->send(
+                user: $user,
+                notification: new EnrollmentConfirmationNotification($enrollment),
+                deduplicationKey: "enrollment_confirmed_{$enrollment->id}_{$user->id}",
+                eventType: 'enrollment_confirmation'
+            );
+        }
 
         $message = $enrollment->isActive()
             ? 'Congratulations! Your enrollment is confirmed and your learning access is now active.'

@@ -470,6 +470,19 @@
                         </span>
                     </button>
 
+                    <a
+                        href="{{ route('courses.announcements.index', $course) }}"
+                        class="pb-3 px-3 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 font-medium text-sm flex items-center gap-2 whitespace-nowrap transition"
+                    >
+                        <i class="fa-solid fa-bullhorn text-xs"></i>
+                        <span>Announcements</span>
+                        @if ($course->announcements()->count() > 0)
+                            <span class="px-1.5 py-0.5 rounded text-[10px] bg-orange-500/20 text-lb-orange font-bold">
+                                {{ $course->announcements()->count() }}
+                            </span>
+                        @endif
+                    </a>
+
                     <button
                         @click="activeTab = 'discussions'"
                         :class="activeTab === 'discussions' ? 'border-lb-orange text-lb-orange font-bold' : 'border-transparent text-neutral-400 hover:text-neutral-200 font-medium'"

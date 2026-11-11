@@ -9,6 +9,8 @@ use App\Http\Requests\UpdateAssignmentRequest;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Course;
+use App\Notifications\AssignmentNotification;
+use App\Services\Notifications\NotificationDispatcherService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -153,6 +155,16 @@ class AssignmentManagementController extends Controller
             'graded_at' => now(),
             'status' => AssignmentSubmission::STATUS_GRADED,
         ]);
+
+        $student = $submission->student;
+        if ($student) {
+            app(NotificationDispatcherService::class)->send(
+                user: $student,
+                notification: new AssignmentNotification($assignment, 'graded', $submission),
+                deduplicationKey: "assignment_graded_{$submission->id}_{$submission->points_awarded}",
+                eventType: 'assignment_graded'
+            );
+        }
 
         return back()->with('status', 'Submission graded successfully.');
     }
