@@ -594,15 +594,15 @@
                                     <div class="space-y-2">
                                         <x-button
                                             as="a"
-                                            href="{{ route('enrollments.create', $course) }}"
+                                            href="{{ route('checkout.show', $course) }}"
                                             variant="primary"
                                             size="lg"
                                             class="w-full text-center font-bold"
                                         >
-                                            Enroll Now &bull; {{ $course->formattedPriceRange() }}
+                                            Enroll / Checkout &bull; {{ $course->formattedPriceRange() }}
                                         </x-button>
                                         <p class="text-[11px] text-neutral-500 text-center">
-                                            Select your delivery mode &amp; intake batch.
+                                            Select your delivery mode, campus batch &amp; pay securely via PayHere.
                                         </p>
                                     </div>
                                 @endif

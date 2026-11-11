@@ -761,7 +761,7 @@ non-enrolled student.
 
 ------------------------------------------------------------------------
 
-# PROMPT 14 --- PAYMENTS (SRI LANKA-FIRST)
+# PROMPT 14 --- PAYMENTS (SRI LANKA-FIRST) (DONE)
 
 ``` text
 Implement only the payment architecture and approved payment provider integration.

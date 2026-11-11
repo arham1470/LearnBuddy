@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorProfileController;
@@ -22,11 +23,13 @@ use App\Http\Controllers\Management\PhysicalLocationController;
 use App\Http\Controllers\Management\QuizManagementController;
 use App\Http\Controllers\PublicCourseController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\StudentBatchController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\VideoPlaybackController;
 use App\Http\Controllers\Webhook\MuxWebhookController;
+use App\Http\Controllers\Webhook\PaymentWebhookController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -108,6 +111,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/courses/{course:slug}/enroll', [EnrollmentController::class, 'create'])->name('enrollments.create');
     Route::post('/courses/{course:slug}/enroll', [EnrollmentController::class, 'store'])->name('enrollments.store');
     Route::get('/enrollments/{enrollment:enrollment_code}', [EnrollmentController::class, 'confirmation'])->name('enrollments.confirmation');
+
+    // Secure Checkout & Payments
+    Route::get('/courses/{course:slug}/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/courses/{course:slug}/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/orders/{order:order_number}/pay', [CheckoutController::class, 'payOrder'])->name('orders.pay');
+    Route::get('/orders/{order:order_number}/success', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/orders/{order:order_number}/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+
+    // Payment History & Receipts
+    Route::get('/my-receipts', [ReceiptController::class, 'index'])->name('receipts.index');
+    Route::get('/orders/{order:order_number}/receipt', [ReceiptController::class, 'show'])->name('receipts.show');
 
     // Student Learning Interface & Progress Tracking
     Route::get('/learn/courses/{course:slug}', [LearningController::class, 'index'])->name('learning.index');
@@ -215,3 +229,5 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::post('/api/webhooks/video/mux', [MuxWebhookController::class, 'handle'])->name('webhooks.video.mux');
+Route::post('/api/webhooks/payments/payhere', [PaymentWebhookController::class, 'handlePayHere'])->name('webhooks.payhere');
+Route::post('/api/webhooks/payments/mock', [PaymentWebhookController::class, 'handleMock'])->name('webhooks.mock');

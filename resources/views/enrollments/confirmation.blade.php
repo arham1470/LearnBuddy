@@ -144,13 +144,23 @@
 
                 <!-- Receipt Actions -->
                 <div class="p-6 bg-neutral-50 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <a
-                        href="{{ route('student.dashboard') }}"
-                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs font-bold transition shadow-sm"
-                    >
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>Go to My Student Dashboard</span>
-                    </a>
+                    @if ($enrollment->status === \App\Models\Enrollment::STATUS_PENDING_PAYMENT)
+                        <a
+                            href="{{ route('checkout.show', ['course' => $enrollment->course->slug, 'option_id' => $enrollment->course_delivery_option_id]) }}"
+                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs font-bold transition shadow-sm"
+                        >
+                            <i class="fas fa-credit-card"></i>
+                            <span>Complete Payment via PayHere</span>
+                        </a>
+                    @else
+                        <a
+                            href="{{ route('student.dashboard') }}"
+                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs font-bold transition shadow-sm"
+                        >
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Go to My Student Dashboard</span>
+                        </a>
+                    @endif
 
                     <div class="flex items-center gap-3 w-full sm:w-auto">
                         <a

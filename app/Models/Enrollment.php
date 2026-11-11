@@ -76,6 +76,11 @@ class Enrollment extends Model
         return $this->hasMany(Attendance::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public function attendanceRate(): float
     {
         if (! $this->batch) {

@@ -8,6 +8,8 @@ use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseBatch;
 use App\Models\LiveClass;
+use App\Models\Order;
+use App\Models\Payment;
 use App\Models\PhysicalLocation;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
@@ -17,11 +19,15 @@ use App\Policies\CategoryPolicy;
 use App\Policies\CourseBatchPolicy;
 use App\Policies\CoursePolicy;
 use App\Policies\LiveClassPolicy;
+use App\Policies\OrderPolicy;
+use App\Policies\PaymentPolicy;
 use App\Policies\PhysicalLocationPolicy;
 use App\Policies\QuizPolicy;
 use App\Policies\UserPolicy;
 use App\Services\LiveClass\Contracts\LiveClassProviderInterface;
 use App\Services\LiveClass\Providers\JitsiLiveClassProvider;
+use App\Services\Payments\Contracts\PaymentGatewayInterface;
+use App\Services\Payments\PaymentManager;
 use App\Services\Video\VideoProviderInterface;
 use App\Services\Video\VideoService;
 use Illuminate\Support\Facades\Gate;
@@ -46,6 +52,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(LiveClassProviderInterface::class, function () {
             return new JitsiLiveClassProvider;
         });
+
+        $this->app->singleton(PaymentManager::class, function () {
+            return new PaymentManager;
+        });
+
+        $this->app->bind(PaymentGatewayInterface::class, function ($app) {
+            return $app->make(PaymentManager::class)->gateway();
+        });
     }
 
     /**
@@ -64,6 +78,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(PhysicalLocation::class, PhysicalLocationPolicy::class);
         Gate::policy(CourseBatch::class, CourseBatchPolicy::class);
         Gate::policy(LiveClass::class, LiveClassPolicy::class);
+        Gate::policy(Order::class, OrderPolicy::class);
+        Gate::policy(Payment::class, PaymentPolicy::class);
 
         // Define role-based authorization gates
         Gate::define('admin', fn (User $user) => $user->isAdmin());

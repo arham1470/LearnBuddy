@@ -38,6 +38,14 @@
                     </a>
 
                     <a
+                        href="{{ route('receipts.index') }}"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition"
+                    >
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Receipts</span>
+                    </a>
+
+                    <a
                         href="{{ route('profile.show', $user) }}"
                         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition"
                     >
