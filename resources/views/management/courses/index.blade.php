@@ -246,11 +246,30 @@
                                         <td class="py-4 px-4 text-right pr-6 whitespace-nowrap">
                                             <div class="inline-flex items-center gap-2">
                                                 <a
+                                                    href="{{ route('management.courses.assignments.index', $course) }}"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-lb-orange font-bold text-xs transition border border-orange-200/60"
+                                                    title="Manage Assignments & Submissions"
+                                                >
+                                                    <i class="fas fa-file-alt text-xs" aria-hidden="true"></i>
+                                                    <span>Assignments ({{ $course->assignments()->count() }})</span>
+                                                </a>
+
+                                                <a
+                                                    href="{{ route('management.courses.quizzes.index', $course) }}"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs transition border border-purple-200/60"
+                                                    title="Manage Quizzes & Question Banks"
+                                                >
+                                                    <i class="fas fa-question-circle text-xs" aria-hidden="true"></i>
+                                                    <span>Quizzes ({{ $course->quizzes()->count() }})</span>
+                                                </a>
+
+                                                <a
                                                     href="{{ route('management.courses.show', $course) }}"
-                                                    class="p-2 rounded-lg text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold text-xs transition"
                                                     title="View & Manage Curriculum"
                                                 >
-                                                    <i class="fas fa-eye text-sm" aria-hidden="true"></i>
+                                                    <i class="fas fa-layer-group text-xs" aria-hidden="true"></i>
+                                                    <span>Curriculum</span>
                                                 </a>
 
                                                 @can('update', $course)

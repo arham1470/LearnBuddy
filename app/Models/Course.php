@@ -113,6 +113,26 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class);
+    }
+
+    public function publishedAssignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class)->where('is_published', true);
+    }
+
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class);
+    }
+
+    public function publishedQuizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class)->where('is_published', true);
+    }
+
     public function activeEnrollments(): HasMany
     {
         return $this->enrollments()->where('status', Enrollment::STATUS_ACTIVE);
@@ -253,6 +273,17 @@ class Course extends Model
         $instructor = $this->courseInstructors->firstWhere('user_id', $user->id);
 
         return $instructor ? (bool) $instructor->can_manage_content : false;
+    }
+
+    public function canInstructorGrade(User $user): bool
+    {
+        if ($user->isAdmin() || $this->created_by_user_id === $user->id) {
+            return true;
+        }
+
+        $instructor = $this->courseInstructors->firstWhere('user_id', $user->id);
+
+        return $instructor ? (bool) $instructor->can_grade : false;
     }
 
     public function deliveryModes(): array

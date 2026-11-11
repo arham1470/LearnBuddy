@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
@@ -9,11 +10,14 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorProfileController;
 use App\Http\Controllers\LearningController;
+use App\Http\Controllers\Management\AssignmentManagementController;
 use App\Http\Controllers\Management\CategoryController;
 use App\Http\Controllers\Management\CourseController;
 use App\Http\Controllers\Management\CurriculumController;
 use App\Http\Controllers\Management\LessonVideoUploadController;
+use App\Http\Controllers\Management\QuizManagementController;
 use App\Http\Controllers\PublicCourseController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\VideoPlaybackController;
@@ -107,6 +111,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/learn/courses/{course:slug}/lessons/{lesson:id}/progress', [LearningController::class, 'updateProgress'])->name('learning.progress');
     Route::get('/learn/courses/{course:slug}/lessons/{lesson:id}/resources/{resource:id}/download', [LearningController::class, 'downloadResource'])->name('learning.resources.download');
 
+    // Student Assignments & Submissions
+    Route::get('/courses/{course:slug}/assignments/{assignment:slug}', [AssignmentController::class, 'show'])->name('courses.assignments.show');
+    Route::post('/courses/{course:slug}/assignments/{assignment:slug}/submit', [AssignmentController::class, 'submit'])->name('courses.assignments.submit');
+    Route::get('/assignments/submissions/{submission}/download', [AssignmentController::class, 'downloadSubmission'])->name('assignments.submissions.download');
+
+    // Student Quizzes & Attempts
+    Route::get('/courses/{course:slug}/quizzes/{quiz:slug}', [QuizController::class, 'show'])->name('courses.quizzes.show');
+    Route::post('/courses/{course:slug}/quizzes/{quiz:slug}/start', [QuizController::class, 'start'])->name('courses.quizzes.start');
+    Route::get('/courses/{course:slug}/quizzes/{quiz:slug}/attempts/{attempt}', [QuizController::class, 'take'])->name('courses.quizzes.take');
+    Route::post('/courses/{course:slug}/quizzes/{quiz:slug}/attempts/{attempt}/submit', [QuizController::class, 'submit'])->name('courses.quizzes.submit');
+    Route::get('/courses/{course:slug}/quizzes/{quiz:slug}/attempts/{attempt}/result', [QuizController::class, 'result'])->name('courses.quizzes.result');
+
     /*
     |--------------------------------------------------------------------------
     | Course & Category Management Routes (Admin & Instructor only)
@@ -123,6 +139,28 @@ Route::middleware('auth')->group(function () {
         Route::post('sections/{section}/lessons', [CurriculumController::class, 'storeLesson'])->name('sections.lessons.store');
         Route::delete('lessons/{lesson}', [CurriculumController::class, 'destroyLesson'])->name('lessons.destroy');
         Route::post('courses/{course}/lessons/{lesson}/video-upload', [LessonVideoUploadController::class, 'createUploadSession'])->name('lessons.video-upload');
+
+        // Assignment Management
+        Route::get('courses/{course}/assignments', [AssignmentManagementController::class, 'index'])->name('courses.assignments.index');
+        Route::get('courses/{course}/assignments/create', [AssignmentManagementController::class, 'create'])->name('courses.assignments.create');
+        Route::post('courses/{course}/assignments', [AssignmentManagementController::class, 'store'])->name('courses.assignments.store');
+        Route::get('courses/{course}/assignments/{assignment}/edit', [AssignmentManagementController::class, 'edit'])->name('courses.assignments.edit');
+        Route::put('courses/{course}/assignments/{assignment}', [AssignmentManagementController::class, 'update'])->name('courses.assignments.update');
+        Route::delete('courses/{course}/assignments/{assignment}', [AssignmentManagementController::class, 'destroy'])->name('courses.assignments.destroy');
+        Route::get('courses/{course}/assignments/{assignment}/submissions', [AssignmentManagementController::class, 'submissions'])->name('courses.assignments.submissions');
+        Route::post('courses/{course}/assignments/{assignment}/submissions/{submission}/grade', [AssignmentManagementController::class, 'grade'])->name('courses.assignments.grade');
+
+        // Quiz Management
+        Route::get('courses/{course}/quizzes', [QuizManagementController::class, 'index'])->name('courses.quizzes.index');
+        Route::get('courses/{course}/quizzes/create', [QuizManagementController::class, 'create'])->name('courses.quizzes.create');
+        Route::post('courses/{course}/quizzes', [QuizManagementController::class, 'store'])->name('courses.quizzes.store');
+        Route::get('courses/{course}/quizzes/{quiz}/edit', [QuizManagementController::class, 'edit'])->name('courses.quizzes.edit');
+        Route::put('courses/{course}/quizzes/{quiz}', [QuizManagementController::class, 'update'])->name('courses.quizzes.update');
+        Route::delete('courses/{course}/quizzes/{quiz}', [QuizManagementController::class, 'destroy'])->name('courses.quizzes.destroy');
+        Route::get('courses/{course}/quizzes/{quiz}/questions', [QuizManagementController::class, 'questions'])->name('courses.quizzes.questions');
+        Route::post('courses/{course}/quizzes/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('courses.quizzes.questions.store');
+        Route::delete('courses/{course}/quizzes/{quiz}/questions/{question}', [QuizManagementController::class, 'destroyQuestion'])->name('courses.quizzes.questions.destroy');
+        Route::get('courses/{course}/quizzes/{quiz}/attempts', [QuizManagementController::class, 'attempts'])->name('courses.quizzes.attempts');
 
         // Category Management
         Route::resource('categories', CategoryController::class)->except(['show']);

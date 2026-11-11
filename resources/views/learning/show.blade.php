@@ -483,21 +483,25 @@
                     <button
                         @click="activeTab = 'assignments'"
                         :class="activeTab === 'assignments' ? 'border-lb-orange text-lb-orange font-bold' : 'border-transparent text-neutral-400 hover:text-neutral-200 font-medium'"
-                        class="pb-3 px-3 border-b-2 text-sm flex items-center gap-2 whitespace-nowrap transition opacity-75"
+                        class="pb-3 px-3 border-b-2 text-sm flex items-center gap-2 whitespace-nowrap transition"
                     >
                         <i class="fa-solid fa-file-lines text-xs"></i>
                         <span>Assignments</span>
-                        <span class="px-1.5 py-0.5 rounded text-[9px] bg-neutral-800 text-neutral-400 uppercase font-mono">Phase 14</span>
+                        @if ($course->publishedAssignments->count() > 0)
+                            <span class="px-1.5 py-0.5 rounded text-[9px] bg-orange-500/20 text-lb-orange font-mono font-bold">{{ $course->publishedAssignments->count() }}</span>
+                        @endif
                     </button>
 
                     <button
                         @click="activeTab = 'quizzes'"
                         :class="activeTab === 'quizzes' ? 'border-lb-orange text-lb-orange font-bold' : 'border-transparent text-neutral-400 hover:text-neutral-200 font-medium'"
-                        class="pb-3 px-3 border-b-2 text-sm flex items-center gap-2 whitespace-nowrap transition opacity-75"
+                        class="pb-3 px-3 border-b-2 text-sm flex items-center gap-2 whitespace-nowrap transition"
                     >
                         <i class="fa-solid fa-circle-question text-xs"></i>
                         <span>Quizzes</span>
-                        <span class="px-1.5 py-0.5 rounded text-[9px] bg-neutral-800 text-neutral-400 uppercase font-mono">Phase 15</span>
+                        @if ($course->publishedQuizzes->count() > 0)
+                            <span class="px-1.5 py-0.5 rounded text-[9px] bg-purple-500/20 text-purple-400 font-mono font-bold">{{ $course->publishedQuizzes->count() }}</span>
+                        @endif
                     </button>
                 </div>
 
@@ -643,32 +647,116 @@
                     </p>
                 </div>
 
-                <!-- Tab 5: Assignments (Phase 14 Placeholder) -->
-                <div x-show="activeTab === 'assignments'" x-cloak class="p-8 bg-neutral-950 rounded-2xl border border-neutral-800 text-center">
-                    <div class="w-12 h-12 rounded-2xl bg-orange-500/10 text-lb-orange flex items-center justify-center mx-auto mb-3 text-xl">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </div>
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-neutral-800 text-neutral-300 uppercase tracking-wider mb-2 inline-block">
-                        Phase 14 Milestone
-                    </span>
-                    <h4 class="text-base font-bold text-white mb-2">Hands-on Assignments</h4>
-                    <p class="text-xs text-neutral-400 max-w-md mx-auto leading-relaxed">
-                        Course projects, assignment submission portals, and instructor grading rubrics will be activated in Phase 14.
-                    </p>
+                <!-- Tab 5: Assignments -->
+                <div x-show="activeTab === 'assignments'" x-cloak class="space-y-4">
+                    @if ($course->publishedAssignments->isNotEmpty())
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach ($course->publishedAssignments as $assign)
+                                @php
+                                    $userSub = $assign->getUserSubmission(auth()->user());
+                                @endphp
+                                <div class="p-5 bg-neutral-900/90 rounded-2xl border border-neutral-800 space-y-3">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <h4 class="text-sm font-bold text-white">{{ $assign->title }}</h4>
+                                            <p class="text-xs text-neutral-400 mt-0.5 line-clamp-2">{{ $assign->description }}</p>
+                                        </div>
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-neutral-800 text-neutral-300 shrink-0">
+                                            {{ $assign->max_points }} pts
+                                        </span>
+                                    </div>
+
+                                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-neutral-800 text-xs">
+                                        <span class="text-neutral-400">
+                                            @if ($assign->due_date)
+                                                Due {{ $assign->due_date->timezone('Asia/Colombo')->format('M d, Y') }}
+                                            @else
+                                                No deadline
+                                            @endif
+                                        </span>
+
+                                        <div class="flex items-center gap-2">
+                                            @if ($userSub)
+                                                @if ($userSub->isGraded())
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">
+                                                        Graded: {{ $userSub->points_awarded }}/{{ $assign->max_points }}
+                                                    </span>
+                                                @else
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400">Submitted</span>
+                                                @endif
+                                            @else
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-neutral-800 text-neutral-400">Pending</span>
+                                            @endif
+
+                                            <a
+                                                href="{{ route('courses.assignments.show', [$course, $assign]) }}"
+                                                class="px-3 py-1.5 rounded-xl bg-lb-orange text-white hover:bg-orange-600 font-bold text-xs transition"
+                                            >
+                                                {{ $userSub ? 'View' : 'Submit' }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="p-8 bg-neutral-950 rounded-2xl border border-neutral-800 text-center">
+                            <i class="fa-solid fa-file-lines text-2xl text-neutral-600 mb-2 block"></i>
+                            <h4 class="text-sm font-bold text-white mb-1">No Assignments Yet</h4>
+                            <p class="text-xs text-neutral-400">No coursework has been posted for this course yet.</p>
+                        </div>
+                    @endif
                 </div>
 
-                <!-- Tab 6: Quizzes (Phase 15 Placeholder) -->
-                <div x-show="activeTab === 'quizzes'" x-cloak class="p-8 bg-neutral-950 rounded-2xl border border-neutral-800 text-center">
-                    <div class="w-12 h-12 rounded-2xl bg-orange-500/10 text-lb-orange flex items-center justify-center mx-auto mb-3 text-xl">
-                        <i class="fa-solid fa-circle-question"></i>
-                    </div>
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-neutral-800 text-neutral-300 uppercase tracking-wider mb-2 inline-block">
-                        Phase 15 Milestone
-                    </span>
-                    <h4 class="text-base font-bold text-white mb-2">Knowledge Check Quizzes</h4>
-                    <p class="text-xs text-neutral-400 max-w-md mx-auto leading-relaxed">
-                        Timed quizzes, multiple choice knowledge checks, and instant scoring will launch in Phase 15.
-                    </p>
+                <!-- Tab 6: Quizzes -->
+                <div x-show="activeTab === 'quizzes'" x-cloak class="space-y-4">
+                    @if ($course->publishedQuizzes->isNotEmpty())
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach ($course->publishedQuizzes as $q)
+                                @php
+                                    $best = $q->getUserBestAttempt(auth()->user());
+                                @endphp
+                                <div class="p-5 bg-neutral-900/90 rounded-2xl border border-neutral-800 space-y-3">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <h4 class="text-sm font-bold text-white">{{ $q->title }}</h4>
+                                            <p class="text-xs text-neutral-400 mt-0.5 line-clamp-2">{{ $q->description }}</p>
+                                        </div>
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-purple-500/20 text-purple-400 shrink-0">
+                                            {{ $q->questions->count() }} Qs · {{ $q->totalMarks() }} pts
+                                        </span>
+                                    </div>
+
+                                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-neutral-800 text-xs">
+                                        <span class="text-neutral-400">
+                                            {{ $q->time_limit_minutes ? $q->time_limit_minutes . 'm limit' : 'Untimed' }} · Pass: {{ $q->passing_percentage }}%
+                                        </span>
+
+                                        <div class="flex items-center gap-2">
+                                            @if ($best)
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $best->is_passed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400' }}">
+                                                    Best: {{ $best->percentage }}%
+                                                </span>
+                                            @endif
+
+                                            <a
+                                                href="{{ route('courses.quizzes.show', [$course, $q]) }}"
+                                                class="px-3 py-1.5 rounded-xl bg-purple-600 text-white hover:bg-purple-700 font-bold text-xs transition"
+                                            >
+                                                {{ $best ? 'Details' : 'Take Quiz' }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="p-8 bg-neutral-950 rounded-2xl border border-neutral-800 text-center">
+                            <i class="fa-solid fa-circle-question text-2xl text-neutral-600 mb-2 block"></i>
+                            <h4 class="text-sm font-bold text-white mb-1">No Quizzes Yet</h4>
+                            <p class="text-xs text-neutral-400">No knowledge check quizzes have been created for this course yet.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

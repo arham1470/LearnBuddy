@@ -346,15 +346,54 @@
                             <i class="fas fa-tasks text-purple-500"></i>
                             <span>Assignments &amp; Quizzes</span>
                         </h3>
-                        <span class="text-[10px] font-bold text-neutral-400 uppercase">Phases 14-15</span>
+                        @if ($pendingAssignments->isNotEmpty())
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-lb-orange">
+                                {{ $pendingAssignments->count() }} Due
+                            </span>
+                        @endif
                     </div>
-                    <div class="py-6 text-center text-xs text-neutral-400 space-y-2">
-                        <i class="fas fa-clipboard-check text-2xl text-neutral-300"></i>
-                        <p class="text-neutral-600 font-medium">No pending submissions.</p>
-                        <p class="text-[11px] leading-relaxed">
-                            Graded assignments and quiz attempts will be managed in upcoming assessment phases.
-                        </p>
-                    </div>
+
+                    @if ($pendingAssignments->isNotEmpty() || $recentQuizAttempts->isNotEmpty())
+                        <div class="space-y-2.5">
+                            @foreach ($pendingAssignments as $pAssign)
+                                <div class="p-3 rounded-2xl bg-neutral-50 border border-neutral-100 flex items-center justify-between gap-2 text-xs">
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-neutral-800 truncate">{{ $pAssign->title }}</p>
+                                        <p class="text-[10px] text-neutral-400 truncate">{{ $pAssign->course->title }} · {{ $pAssign->due_date ? 'Due ' . $pAssign->due_date->timezone('Asia/Colombo')->format('M d') : 'No deadline' }}</p>
+                                    </div>
+                                    <a
+                                        href="{{ route('courses.assignments.show', [$pAssign->course, $pAssign]) }}"
+                                        class="px-2.5 py-1 rounded-lg bg-lb-orange text-white text-[11px] font-bold hover:bg-orange-600 shrink-0"
+                                    >
+                                        Submit
+                                    </a>
+                                </div>
+                            @endforeach
+
+                            @foreach ($recentQuizAttempts as $rAttempt)
+                                <div class="p-3 rounded-2xl bg-purple-50/50 border border-purple-100 flex items-center justify-between gap-2 text-xs">
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-purple-900 truncate">{{ $rAttempt->quiz->title }}</p>
+                                        <p class="text-[10px] text-purple-600 truncate">Score: {{ $rAttempt->percentage }}% · {{ $rAttempt->is_passed ? 'Passed' : 'Failed' }}</p>
+                                    </div>
+                                    <a
+                                        href="{{ route('courses.quizzes.result', [$rAttempt->quiz->course, $rAttempt->quiz, $rAttempt]) }}"
+                                        class="px-2.5 py-1 rounded-lg bg-purple-600 text-white text-[11px] font-bold hover:bg-purple-700 shrink-0"
+                                    >
+                                        Result
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="py-6 text-center text-xs text-neutral-400 space-y-2">
+                            <i class="fas fa-clipboard-check text-2xl text-neutral-300"></i>
+                            <p class="text-neutral-600 font-medium">No pending submissions.</p>
+                            <p class="text-[11px] leading-relaxed">
+                                You are all caught up on assignments and quizzes across your enrolled courses!
+                            </p>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Verifiable Certificates -->

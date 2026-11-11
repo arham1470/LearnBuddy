@@ -2,11 +2,17 @@
 
 namespace App\Providers;
 
+use App\Models\Assignment;
+use App\Models\AssignmentSubmission;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use App\Models\User;
+use App\Policies\AssignmentPolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\CoursePolicy;
+use App\Policies\QuizPolicy;
 use App\Policies\UserPolicy;
 use App\Services\Video\VideoProviderInterface;
 use App\Services\Video\VideoService;
@@ -39,8 +45,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Course::class, CoursePolicy::class);
         Gate::policy(Category::class, CategoryPolicy::class);
-        Gate::policy(Course::class, CoursePolicy::class);
-        Gate::policy(Category::class, CategoryPolicy::class);
+        Gate::policy(Assignment::class, AssignmentPolicy::class);
+        Gate::policy(AssignmentSubmission::class, AssignmentPolicy::class);
+        Gate::policy(Quiz::class, QuizPolicy::class);
+        Gate::policy(QuizAttempt::class, QuizPolicy::class);
 
         // Define role-based authorization gates
         Gate::define('admin', fn (User $user) => $user->isAdmin());

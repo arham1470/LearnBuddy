@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Assignment;
 use App\Models\Enrollment;
+use App\Models\QuizAttempt;
 use Illuminate\Contracts\View\View;
 
 class StudentDashboardController extends Controller
@@ -54,13 +56,34 @@ class StudentDashboardController extends Controller
             ->take(5)
             ->get();
 
+        // 6. Pending assignments and quiz activity for enrolled courses
+        $enrolledCourseIds = $activeEnrollments->pluck('course_id');
+
+        $pendingAssignments = Assignment::whereIn('course_id', $enrolledCourseIds)
+            ->where('is_published', true)
+            ->whereDoesntHave('submissions', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
+            ->with('course')
+            ->orderBy('due_date')
+            ->take(5)
+            ->get();
+
+        $recentQuizAttempts = QuizAttempt::where('user_id', $user->id)
+            ->with(['quiz.course'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('dashboard.student', compact(
             'user',
             'activeEnrollments',
             'pendingEnrollments',
             'physicalEnrollments',
             'continueLearning',
-            'recentActivities'
+            'recentActivities',
+            'pendingAssignments',
+            'recentQuizAttempts'
         ));
     }
 }

@@ -24,3 +24,14 @@ check lesson note writte for that lesson or whole
 
 
 need to check how video upload and work here
+
+
+check asssignment upload work pdf or any file formet then how it come to instrcuter
+
+check assignment after sumbited
+
+need to add notifcation after get assignment and quiz marks from lecture
+
+need to edit Ayubowan in student dashbaord
+
+need to check sumbit quix dailog box for confirmation, check can go to other tab in quiz? and donwload option of their result

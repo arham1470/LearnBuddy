@@ -669,7 +669,7 @@ and mobile playback.
 
 ------------------------------------------------------------------------
 
-# PROMPT 11 --- ASSIGNMENTS AND QUIZZES
+# PROMPT 11 --- ASSIGNMENTS AND QUIZZES (DONE)
 
 ``` text
 Implement only assignments, submissions, quizzes and quiz attempts.
@@ -699,7 +699,7 @@ student and instructor accounts.
 
 ------------------------------------------------------------------------
 
-# PROMPT 12 --- PHYSICAL BATCHES, LOCATIONS AND ATTENDANCE
+# PROMPT 12 --- PHYSICAL BATCHES, LOCATIONS AND ATTENDANCE (DONE)
 
 ``` text
 Implement only physical learning operations.
