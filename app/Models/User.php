@@ -121,6 +121,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->enrollments()->where('status', Enrollment::STATUS_ACTIVE);
     }
 
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
     /**
      * Courses the user is enrolled in.
      */

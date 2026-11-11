@@ -6,12 +6,16 @@ use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseBatch;
+use App\Models\PhysicalLocation;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\User;
 use App\Policies\AssignmentPolicy;
 use App\Policies\CategoryPolicy;
+use App\Policies\CourseBatchPolicy;
 use App\Policies\CoursePolicy;
+use App\Policies\PhysicalLocationPolicy;
 use App\Policies\QuizPolicy;
 use App\Policies\UserPolicy;
 use App\Services\Video\VideoProviderInterface;
@@ -49,6 +53,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(AssignmentSubmission::class, AssignmentPolicy::class);
         Gate::policy(Quiz::class, QuizPolicy::class);
         Gate::policy(QuizAttempt::class, QuizPolicy::class);
+        Gate::policy(PhysicalLocation::class, PhysicalLocationPolicy::class);
+        Gate::policy(CourseBatch::class, CourseBatchPolicy::class);
 
         // Define role-based authorization gates
         Gate::define('admin', fn (User $user) => $user->isAdmin());

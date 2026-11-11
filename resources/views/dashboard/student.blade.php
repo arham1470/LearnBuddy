@@ -304,14 +304,21 @@
                                     </div>
                                 @endif
 
-                                <div class="pt-2 flex flex-wrap items-center gap-4 text-[11px] text-neutral-500 border-t border-neutral-100">
-                                    @if ($b->start_date)
-                                        <span>Starts: <strong>{{ $b->start_date->format('d M Y') }}</strong></span>
-                                    @endif
-                                    @if ($b->end_date)
-                                        <span>Ends: <strong>{{ $b->end_date->format('d M Y') }}</strong></span>
-                                    @endif
-                                    <span>Timezone: <strong>Asia/Colombo</strong></span>
+                                <div class="pt-2.5 flex flex-wrap items-center justify-between gap-3 text-[11px] text-neutral-500 border-t border-neutral-100">
+                                    <div class="flex items-center gap-3">
+                                        @if ($b->start_date)
+                                            <span>Starts: <strong>{{ $b->start_date->format('d M Y') }}</strong></span>
+                                        @endif
+                                        <span>Attendance: <strong class="text-neutral-800">{{ number_format($pEnr->attendanceRate(), 1) }}%</strong></span>
+                                    </div>
+
+                                    <a
+                                        href="{{ route('student.batches.show', $b) }}"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-lb-orange text-white text-xs font-bold transition shadow-sm"
+                                    >
+                                        <span>Schedule &amp; Attendance</span>
+                                        <i class="fas fa-chevron-right text-[10px]"></i>
+                                    </a>
                                 </div>
                             </div>
                         @endforeach

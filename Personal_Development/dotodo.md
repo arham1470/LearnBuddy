@@ -35,3 +35,8 @@ need to add notifcation after get assignment and quiz marks from lecture
 need to edit Ayubowan in student dashbaord
 
 need to check sumbit quix dailog box for confirmation, check can go to other tab in quiz? and donwload option of their result
+
+course image not shown probelm check
+
+allow batch craeate wwhich course have physical
+

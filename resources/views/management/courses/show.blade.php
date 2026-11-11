@@ -111,6 +111,13 @@
                                 <i class="fas fa-question-circle text-xs text-purple-600" aria-hidden="true"></i>
                                 <span>Quizzes ({{ $course->quizzes()->count() }})</span>
                             </a>
+                            <a
+                                href="{{ route('management.courses.batches.index', $course) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition"
+                            >
+                                <i class="fas fa-calendar-alt text-xs text-amber-600" aria-hidden="true"></i>
+                                <span>Batches ({{ $course->batches()->count() }})</span>
+                            </a>
                         @endcan
                     </div>
                 </div>
@@ -221,47 +228,47 @@
                 </div>
             </div>
 
-            <!-- Course Assessments & Evaluation Console -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Course Assessments & Campus Operations Console -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Assignments Console Card -->
-                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 sm:p-7 flex flex-col justify-between space-y-5">
-                    <div class="space-y-3">
+                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2.5">
                         <div class="flex items-center justify-between">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-lb-orange">
-                                <i class="fas fa-file-alt text-xs" aria-hidden="true"></i> Coursework & Projects
+                                <i class="fas fa-file-alt text-xs" aria-hidden="true"></i> Coursework
                             </span>
                             <span class="text-xs font-extrabold text-neutral-800">
                                 {{ $course->assignments()->count() }} {{ Str::plural('Assignment', $course->assignments()->count()) }}
                             </span>
                         </div>
-                        <h3 class="text-xl font-extrabold text-lb-black">Assignments & Submissions</h3>
+                        <h3 class="text-lg font-extrabold text-lb-black">Assignments &amp; Submissions</h3>
                         <p class="text-xs text-neutral-500 leading-relaxed">
-                            Create project briefs, set submission deadlines, specify permitted file extensions, and review/grade submitted coursework.
+                            Create project briefs, set deadlines, and review/grade submitted student files.
                         </p>
                     </div>
 
-                    <div class="pt-4 border-t border-neutral-100 flex items-center justify-between gap-3">
+                    <div class="pt-4 border-t border-neutral-100 flex items-center justify-between gap-2">
                         <a
                             href="{{ route('management.courses.assignments.create', $course) }}"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-50 text-xs font-semibold transition"
+                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-50 text-xs font-semibold transition"
                         >
                             <i class="fas fa-plus text-xs text-lb-orange" aria-hidden="true"></i>
-                            <span>Create Assignment</span>
+                            <span>Create</span>
                         </a>
 
                         <a
                             href="{{ route('management.courses.assignments.index', $course) }}"
-                            class="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-lb-orange text-white hover:bg-orange-600 text-xs font-bold transition shadow-sm"
+                            class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-lb-orange text-white hover:bg-orange-600 text-xs font-bold transition shadow-sm"
                         >
-                            <span>Manage Assignments</span>
+                            <span>Manage</span>
                             <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Quizzes Console Card -->
-                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 sm:p-7 flex flex-col justify-between space-y-5">
-                    <div class="space-y-3">
+                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2.5">
                         <div class="flex items-center justify-between">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700">
                                 <i class="fas fa-question-circle text-xs" aria-hidden="true"></i> Knowledge Checks
@@ -270,26 +277,62 @@
                                 {{ $course->quizzes()->count() }} {{ Str::plural('Quiz', $course->quizzes()->count()) }}
                             </span>
                         </div>
-                        <h3 class="text-xl font-extrabold text-lb-black">Quizzes & Question Banks</h3>
+                        <h3 class="text-lg font-extrabold text-lb-black">Quizzes &amp; Questions</h3>
                         <p class="text-xs text-neutral-500 leading-relaxed">
-                            Build single-choice and true/false quizzes with time limits, passing scores, automated server-side grading, and attempt tracking.
+                            Single-choice and true/false tests with automatic scoring and attempt limits.
                         </p>
                     </div>
 
-                    <div class="pt-4 border-t border-neutral-100 flex items-center justify-between gap-3">
+                    <div class="pt-4 border-t border-neutral-100 flex items-center justify-between gap-2">
                         <a
                             href="{{ route('management.courses.quizzes.create', $course) }}"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-50 text-xs font-semibold transition"
+                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-50 text-xs font-semibold transition"
                         >
                             <i class="fas fa-plus text-xs text-purple-600" aria-hidden="true"></i>
-                            <span>Create Quiz</span>
+                            <span>Create</span>
                         </a>
 
                         <a
                             href="{{ route('management.courses.quizzes.index', $course) }}"
-                            class="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700 text-xs font-bold transition shadow-sm"
+                            class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-purple-600 text-white hover:bg-purple-700 text-xs font-bold transition shadow-sm"
                         >
-                            <span>Manage Quizzes</span>
+                            <span>Manage</span>
+                            <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Physical Batches & Attendance Card -->
+                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+                                <i class="fas fa-building text-xs" aria-hidden="true"></i> Campus Batches
+                            </span>
+                            <span class="text-xs font-extrabold text-neutral-800">
+                                {{ $course->batches()->count() }} {{ Str::plural('Batch', $course->batches()->count()) }}
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-lb-black">Batches &amp; Attendance</h3>
+                        <p class="text-xs text-neutral-500 leading-relaxed">
+                            Manage classroom intakes, weekly timetables, session rosters, and student attendance.
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-neutral-100 flex items-center justify-between gap-2">
+                        <a
+                            href="{{ route('management.courses.batches.create', $course) }}"
+                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-50 text-xs font-semibold transition"
+                        >
+                            <i class="fas fa-plus text-xs text-amber-600" aria-hidden="true"></i>
+                            <span>Create</span>
+                        </a>
+
+                        <a
+                            href="{{ route('management.courses.batches.index', $course) }}"
+                            class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-amber-600 text-white hover:bg-amber-700 text-xs font-bold transition shadow-sm"
+                        >
+                            <span>Manage</span>
                             <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
                         </a>
                     </div>

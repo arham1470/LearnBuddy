@@ -12,12 +12,15 @@ use App\Http\Controllers\InstructorProfileController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\Management\AssignmentManagementController;
 use App\Http\Controllers\Management\CategoryController;
+use App\Http\Controllers\Management\CourseBatchManagementController;
 use App\Http\Controllers\Management\CourseController;
 use App\Http\Controllers\Management\CurriculumController;
 use App\Http\Controllers\Management\LessonVideoUploadController;
+use App\Http\Controllers\Management\PhysicalLocationController;
 use App\Http\Controllers\Management\QuizManagementController;
 use App\Http\Controllers\PublicCourseController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\StudentBatchController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\VideoPlaybackController;
@@ -123,12 +126,33 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses/{course:slug}/quizzes/{quiz:slug}/attempts/{attempt}/submit', [QuizController::class, 'submit'])->name('courses.quizzes.submit');
     Route::get('/courses/{course:slug}/quizzes/{quiz:slug}/attempts/{attempt}/result', [QuizController::class, 'result'])->name('courses.quizzes.result');
 
+    // Student Physical Batch Schedule & Attendance
+    Route::get('/batches/{batch}', [StudentBatchController::class, 'show'])->name('student.batches.show');
+
     /*
     |--------------------------------------------------------------------------
     | Course & Category Management Routes (Admin & Instructor only)
     |--------------------------------------------------------------------------
     */
     Route::middleware('role:admin,instructor')->prefix('management')->as('management.')->group(function () {
+        // Physical Campus Locations (Admin only management)
+        Route::resource('locations', PhysicalLocationController::class)->except(['show']);
+
+        // Course Batches, Schedules, and Attendance Management
+        Route::get('courses/{course}/batches', [CourseBatchManagementController::class, 'index'])->name('courses.batches.index');
+        Route::get('courses/{course}/batches/create', [CourseBatchManagementController::class, 'create'])->name('courses.batches.create');
+        Route::post('courses/{course}/batches', [CourseBatchManagementController::class, 'store'])->name('courses.batches.store');
+        Route::get('courses/{course}/batches/{batch}', [CourseBatchManagementController::class, 'show'])->name('courses.batches.show');
+        Route::get('courses/{course}/batches/{batch}/edit', [CourseBatchManagementController::class, 'edit'])->name('courses.batches.edit');
+        Route::put('courses/{course}/batches/{batch}', [CourseBatchManagementController::class, 'update'])->name('courses.batches.update');
+        Route::delete('courses/{course}/batches/{batch}', [CourseBatchManagementController::class, 'destroy'])->name('courses.batches.destroy');
+        Route::post('courses/{course}/batches/{batch}/cancel', [CourseBatchManagementController::class, 'cancel'])->name('courses.batches.cancel');
+        Route::post('courses/{course}/batches/{batch}/schedules', [CourseBatchManagementController::class, 'storeSchedule'])->name('courses.batches.schedules.store');
+        Route::delete('courses/{course}/batches/{batch}/schedules/{schedule}', [CourseBatchManagementController::class, 'destroySchedule'])->name('courses.batches.schedules.destroy');
+        Route::post('courses/{course}/batches/{batch}/sessions', [CourseBatchManagementController::class, 'storeSession'])->name('courses.batches.sessions.store');
+        Route::get('courses/{course}/batches/{batch}/sessions/{session}/attendance', [CourseBatchManagementController::class, 'attendanceSheet'])->name('courses.batches.sessions.attendance');
+        Route::post('courses/{course}/batches/{batch}/sessions/{session}/attendance', [CourseBatchManagementController::class, 'recordAttendance'])->name('courses.batches.sessions.attendance.store');
+
         // Course Management CRUD & Publication Workflow
         Route::resource('courses', CourseController::class);
         Route::post('courses/{course}/status', [CourseController::class, 'transitionStatus'])->name('courses.status');

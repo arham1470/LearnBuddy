@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Enrollment extends Model
@@ -68,6 +69,29 @@ class Enrollment extends Model
     public function batch(): BelongsTo
     {
         return $this->belongsTo(CourseBatch::class, 'course_batch_id');
+    }
+
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function attendanceRate(): float
+    {
+        if (! $this->batch) {
+            return 0.0;
+        }
+
+        $totalSessions = $this->batch->sessions()->where('status', BatchSession::STATUS_COMPLETED)->count();
+        if ($totalSessions === 0) {
+            return 0.0;
+        }
+
+        $presentCount = $this->attendances()
+            ->whereIn('status', [Attendance::STATUS_PRESENT, Attendance::STATUS_LATE])
+            ->count();
+
+        return round(($presentCount / $totalSessions) * 100, 1);
     }
 
     public function scopeActive(Builder $query): Builder
