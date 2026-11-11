@@ -40,3 +40,6 @@ course image not shown probelm check
 
 allow batch craeate wwhich course have physical
 
+need Live Meeting Provider Not Configured
+
+and check dailog box whole app

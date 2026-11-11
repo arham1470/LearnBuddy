@@ -143,6 +143,19 @@ class Course extends Model
         return $this->hasManyThrough(CourseBatch::class, CourseDeliveryOption::class, 'course_id', 'course_delivery_option_id');
     }
 
+    public function liveClasses(): HasMany
+    {
+        return $this->hasMany(LiveClass::class)->orderBy('scheduled_start_time');
+    }
+
+    public function upcomingLiveClasses(): HasMany
+    {
+        return $this->hasMany(LiveClass::class)
+            ->whereIn('status', [LiveClass::STATUS_SCHEDULED, LiveClass::STATUS_LIVE])
+            ->where('scheduled_end_time', '>=', now()->subMinutes(30))
+            ->orderBy('scheduled_start_time');
+    }
+
     public function progress(): HasMany
     {
         return $this->hasMany(LessonProgress::class);

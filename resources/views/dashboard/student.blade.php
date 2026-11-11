@@ -335,15 +335,45 @@
                             <i class="fas fa-video text-blue-500"></i>
                             <span>Upcoming Live Classes</span>
                         </h3>
-                        <span class="text-[10px] font-bold text-neutral-400 uppercase">Phase 11</span>
+                        @if ($upcomingLiveClasses->isNotEmpty())
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                                {{ $upcomingLiveClasses->count() }} Live
+                            </span>
+                        @endif
                     </div>
-                    <div class="py-6 text-center text-xs text-neutral-400 space-y-2">
-                        <i class="fas fa-calendar-times text-2xl text-neutral-300"></i>
-                        <p class="text-neutral-600 font-medium">No live interactive classes scheduled.</p>
-                        <p class="text-[11px] leading-relaxed">
-                            Live video workshops scheduled by your instructors will appear here with calendar links in Phase 11.
-                        </p>
-                    </div>
+
+                    @if ($upcomingLiveClasses->isNotEmpty())
+                        <div class="space-y-2.5">
+                            @foreach ($upcomingLiveClasses as $live)
+                                <div class="p-3 rounded-2xl bg-neutral-50 border border-neutral-100 space-y-1.5 text-xs">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-neutral-900 line-clamp-1">{{ $live->title }}</span>
+                                        @if ($live->isLive())
+                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 animate-pulse">LIVE</span>
+                                        @else
+                                            <span class="text-[10px] text-neutral-400">{{ $live->scheduled_start_time->timezone('Asia/Colombo')->format('M d') }}</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-[11px] text-neutral-500 truncate">{{ $live->course->title }} &bull; {{ $live->instructor->name }}</p>
+                                    <div class="pt-1 flex items-center justify-between">
+                                        <span class="text-[10px] text-neutral-400">{{ $live->formattedTiming() }}</span>
+                                        <a href="{{ route('courses.live-classes.show', [$live->course->slug, $live]) }}" class="inline-flex items-center gap-1 text-[11px] font-bold text-lb-orange hover:underline">
+                                            <span>Enter</span>
+                                            <i class="fas fa-chevron-right text-[9px]"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="py-6 text-center text-xs text-neutral-400 space-y-2">
+                            <i class="fas fa-calendar-times text-2xl text-neutral-300"></i>
+                            <p class="text-neutral-600 font-medium">No live interactive classes scheduled.</p>
+                            <p class="text-[11px] leading-relaxed">
+                                Live video workshops scheduled by your instructors will appear here with calendar countdowns and meeting links.
+                            </p>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Pending Assignments & Quizzes -->

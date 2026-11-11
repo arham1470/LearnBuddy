@@ -118,6 +118,13 @@
                                 <i class="fas fa-calendar-alt text-xs text-amber-600" aria-hidden="true"></i>
                                 <span>Batches ({{ $course->batches()->count() }})</span>
                             </a>
+                            <a
+                                href="{{ route('management.courses.live-classes.index', $course) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition"
+                            >
+                                <i class="fas fa-video text-xs text-blue-600" aria-hidden="true"></i>
+                                <span>Live Classes ({{ $course->liveClasses()->count() }})</span>
+                            </a>
                         @endcan
                     </div>
                 </div>
@@ -229,7 +236,7 @@
             </div>
 
             <!-- Course Assessments & Campus Operations Console -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Assignments Console Card -->
                 <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 flex flex-col justify-between space-y-4">
                     <div class="space-y-2.5">
@@ -331,6 +338,42 @@
                         <a
                             href="{{ route('management.courses.batches.index', $course) }}"
                             class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-amber-600 text-white hover:bg-amber-700 text-xs font-bold transition shadow-sm"
+                        >
+                            <span>Manage</span>
+                            <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Interactive Live Classes Card -->
+                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+                                <i class="fas fa-video text-xs" aria-hidden="true"></i> Virtual Classes
+                            </span>
+                            <span class="text-xs font-extrabold text-neutral-800">
+                                {{ $course->liveClasses()->count() }} {{ Str::plural('Session', $course->liveClasses()->count()) }}
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-lb-black">Live Video Classes</h3>
+                        <p class="text-xs text-neutral-500 leading-relaxed">
+                            Schedule real-time workshops, review code live, and conduct interactive Q&amp;A sessions.
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-neutral-100 flex items-center justify-between gap-2">
+                        <a
+                            href="{{ route('management.courses.live-classes.create', $course) }}"
+                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-50 text-xs font-semibold transition"
+                        >
+                            <i class="fas fa-plus text-xs text-blue-600" aria-hidden="true"></i>
+                            <span>Schedule</span>
+                        </a>
+
+                        <a
+                            href="{{ route('management.courses.live-classes.index', $course) }}"
+                            class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 text-xs font-bold transition shadow-sm"
                         >
                             <span>Manage</span>
                             <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>

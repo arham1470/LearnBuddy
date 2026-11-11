@@ -284,6 +284,15 @@
                                                 </a>
 
                                                 <a
+                                                    href="{{ route('management.courses.live-classes.index', $course) }}"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold text-xs transition border border-blue-200/60"
+                                                    title="Manage Interactive Live Classes"
+                                                >
+                                                    <i class="fas fa-video text-xs" aria-hidden="true"></i>
+                                                    <span>Live ({{ $course->liveClasses()->count() }})</span>
+                                                </a>
+
+                                                <a
                                                     href="{{ route('management.courses.show', $course) }}"
                                                     class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold text-xs transition"
                                                     title="View & Manage Curriculum"

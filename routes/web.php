@@ -10,12 +10,14 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorProfileController;
 use App\Http\Controllers\LearningController;
+use App\Http\Controllers\LiveClassController;
 use App\Http\Controllers\Management\AssignmentManagementController;
 use App\Http\Controllers\Management\CategoryController;
 use App\Http\Controllers\Management\CourseBatchManagementController;
 use App\Http\Controllers\Management\CourseController;
 use App\Http\Controllers\Management\CurriculumController;
 use App\Http\Controllers\Management\LessonVideoUploadController;
+use App\Http\Controllers\Management\LiveClassManagementController;
 use App\Http\Controllers\Management\PhysicalLocationController;
 use App\Http\Controllers\Management\QuizManagementController;
 use App\Http\Controllers\PublicCourseController;
@@ -129,6 +131,11 @@ Route::middleware('auth')->group(function () {
     // Student Physical Batch Schedule & Attendance
     Route::get('/batches/{batch}', [StudentBatchController::class, 'show'])->name('student.batches.show');
 
+    // Student Live Classes & Interactive Sessions
+    Route::get('/courses/{course:slug}/live-classes', [LiveClassController::class, 'index'])->name('courses.live-classes.index');
+    Route::get('/courses/{course:slug}/live-classes/{live_class}', [LiveClassController::class, 'show'])->name('courses.live-classes.show');
+    Route::get('/courses/{course:slug}/live-classes/{live_class}/join', [LiveClassController::class, 'join'])->name('courses.live-classes.join');
+
     /*
     |--------------------------------------------------------------------------
     | Course & Category Management Routes (Admin & Instructor only)
@@ -185,6 +192,17 @@ Route::middleware('auth')->group(function () {
         Route::post('courses/{course}/quizzes/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('courses.quizzes.questions.store');
         Route::delete('courses/{course}/quizzes/{quiz}/questions/{question}', [QuizManagementController::class, 'destroyQuestion'])->name('courses.quizzes.questions.destroy');
         Route::get('courses/{course}/quizzes/{quiz}/attempts', [QuizManagementController::class, 'attempts'])->name('courses.quizzes.attempts');
+
+        // Live Class Management
+        Route::get('courses/{course}/live-classes', [LiveClassManagementController::class, 'index'])->name('courses.live-classes.index');
+        Route::get('courses/{course}/live-classes/create', [LiveClassManagementController::class, 'create'])->name('courses.live-classes.create');
+        Route::post('courses/{course}/live-classes', [LiveClassManagementController::class, 'store'])->name('courses.live-classes.store');
+        Route::get('courses/{course}/live-classes/{live_class}', [LiveClassManagementController::class, 'show'])->name('courses.live-classes.show');
+        Route::get('courses/{course}/live-classes/{live_class}/edit', [LiveClassManagementController::class, 'edit'])->name('courses.live-classes.edit');
+        Route::put('courses/{course}/live-classes/{live_class}', [LiveClassManagementController::class, 'update'])->name('courses.live-classes.update');
+        Route::post('courses/{course}/live-classes/{live_class}/cancel', [LiveClassManagementController::class, 'cancel'])->name('courses.live-classes.cancel');
+        Route::post('courses/{course}/live-classes/{live_class}/reminder', [LiveClassManagementController::class, 'triggerReminder'])->name('courses.live-classes.reminder');
+        Route::delete('courses/{course}/live-classes/{live_class}', [LiveClassManagementController::class, 'destroy'])->name('courses.live-classes.destroy');
 
         // Category Management
         Route::resource('categories', CategoryController::class)->except(['show']);

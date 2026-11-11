@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Assignment;
 use App\Models\Enrollment;
+use App\Models\LiveClass;
 use App\Models\QuizAttempt;
 use Illuminate\Contracts\View\View;
 
@@ -75,6 +76,15 @@ class StudentDashboardController extends Controller
             ->take(5)
             ->get();
 
+        // 7. Upcoming live classes for enrolled courses
+        $upcomingLiveClasses = LiveClass::whereIn('course_id', $enrolledCourseIds)
+            ->whereIn('status', [LiveClass::STATUS_SCHEDULED, LiveClass::STATUS_LIVE])
+            ->where('scheduled_end_time', '>=', now()->subMinutes(30))
+            ->with(['course', 'instructor'])
+            ->orderBy('scheduled_start_time')
+            ->take(5)
+            ->get();
+
         return view('dashboard.student', compact(
             'user',
             'activeEnrollments',
@@ -83,7 +93,8 @@ class StudentDashboardController extends Controller
             'continueLearning',
             'recentActivities',
             'pendingAssignments',
-            'recentQuizAttempts'
+            'recentQuizAttempts',
+            'upcomingLiveClasses'
         ));
     }
 }

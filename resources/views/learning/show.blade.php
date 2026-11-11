@@ -503,6 +503,18 @@
                             <span class="px-1.5 py-0.5 rounded text-[9px] bg-purple-500/20 text-purple-400 font-mono font-bold">{{ $course->publishedQuizzes->count() }}</span>
                         @endif
                     </button>
+
+                    <a
+                        href="{{ route('courses.live-classes.index', $course->slug) }}"
+                        class="pb-3 px-3 border-b-2 border-transparent text-neutral-400 hover:text-blue-400 font-medium text-sm flex items-center gap-2 whitespace-nowrap transition"
+                        title="View Live Interactive Classes"
+                    >
+                        <i class="fa-solid fa-video text-xs text-blue-500"></i>
+                        <span>Live Classes</span>
+                        @if ($course->upcomingLiveClasses->count() > 0)
+                            <span class="px-1.5 py-0.5 rounded text-[9px] bg-blue-500/20 text-blue-400 font-mono font-bold">{{ $course->upcomingLiveClasses->count() }}</span>
+                        @endif
+                    </a>
                 </div>
 
                 <!-- Tab 1: Overview & Reading Content -->

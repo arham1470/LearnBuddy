@@ -725,7 +725,7 @@ and attendance privacy.
 
 ------------------------------------------------------------------------
 
-# PROMPT 13 --- LIVE CLASSES
+# PROMPT 13 --- LIVE CLASSES (DONE)
 
 ``` text
 Implement only live-class scheduling and joining.

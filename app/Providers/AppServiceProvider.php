@@ -7,6 +7,7 @@ use App\Models\AssignmentSubmission;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseBatch;
+use App\Models\LiveClass;
 use App\Models\PhysicalLocation;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
@@ -15,9 +16,12 @@ use App\Policies\AssignmentPolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\CourseBatchPolicy;
 use App\Policies\CoursePolicy;
+use App\Policies\LiveClassPolicy;
 use App\Policies\PhysicalLocationPolicy;
 use App\Policies\QuizPolicy;
 use App\Policies\UserPolicy;
+use App\Services\LiveClass\Contracts\LiveClassProviderInterface;
+use App\Services\LiveClass\Providers\JitsiLiveClassProvider;
 use App\Services\Video\VideoProviderInterface;
 use App\Services\Video\VideoService;
 use Illuminate\Support\Facades\Gate;
@@ -38,6 +42,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(VideoProviderInterface::class, function ($app) {
             return $app->make(VideoService::class)->getProvider();
         });
+
+        $this->app->singleton(LiveClassProviderInterface::class, function () {
+            return new JitsiLiveClassProvider;
+        });
     }
 
     /**
@@ -55,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(QuizAttempt::class, QuizPolicy::class);
         Gate::policy(PhysicalLocation::class, PhysicalLocationPolicy::class);
         Gate::policy(CourseBatch::class, CourseBatchPolicy::class);
+        Gate::policy(LiveClass::class, LiveClassPolicy::class);
 
         // Define role-based authorization gates
         Gate::define('admin', fn (User $user) => $user->isAdmin());
