@@ -45,3 +45,11 @@ need Live Meeting Provider Not Configured
 and check dailog box whole app
 
 NEED TO CHECK AND SETUP PAYHERE IN APPLICATION
+
+need to setup notification and test that comepletly
+
+show button for certificate get if eligible in the frontend without complicated
+
+need to customize the certificate pdf
+
+need to design the certificate ui verfication

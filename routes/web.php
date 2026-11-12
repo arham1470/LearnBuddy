@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CourseAnnouncementController;
 use App\Http\Controllers\EnrollmentController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\PublicCourseController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StudentBatchController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\UserProfileController;
@@ -45,6 +47,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [PublicCourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course:slug}', [PublicCourseController::class, 'show'])->name('courses.show');
 Route::get('/instructors/{instructor}', [InstructorProfileController::class, 'show'])->name('instructors.show');
+
+// Public Certificate Verification
+Route::get('/certificates/verify/{hash}', [CertificateController::class, 'verify'])->name('certificates.verify');
+Route::get('/certificates/verify', [CertificateController::class, 'search'])->name('certificates.search');
 
 Route::view('/design-system', 'design-system')->name('design-system');
 
@@ -167,6 +173,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/courses/{course:slug}/live-classes', [LiveClassController::class, 'index'])->name('courses.live-classes.index');
     Route::get('/courses/{course:slug}/live-classes/{live_class}', [LiveClassController::class, 'show'])->name('courses.live-classes.show');
     Route::get('/courses/{course:slug}/live-classes/{live_class}/join', [LiveClassController::class, 'join'])->name('courses.live-classes.join');
+
+    // Course Certificates
+    Route::get('/courses/{course:slug}/certificate/eligibility', [CertificateController::class, 'eligibility'])->name('certificates.eligibility');
+    Route::post('/courses/{course:slug}/certificate/claim', [CertificateController::class, 'claim'])->name('certificates.claim');
+    Route::get('/certificates/{certificate:certificate_code}', [CertificateController::class, 'show'])->name('certificates.show');
+
+    // Course Reviews & Ratings
+    Route::post('/courses/{course:slug}/reviews', [ReviewController::class, 'store'])->name('courses.reviews.store');
+    Route::put('/courses/{course:slug}/reviews/{review}', [ReviewController::class, 'update'])->name('courses.reviews.update');
+    Route::delete('/courses/{course:slug}/reviews/{review}', [ReviewController::class, 'destroy'])->name('courses.reviews.destroy');
+    Route::patch('/courses/{course:slug}/reviews/{review}/moderate', [ReviewController::class, 'moderate'])->name('courses.reviews.moderate');
 
     /*
     |--------------------------------------------------------------------------

@@ -467,45 +467,335 @@
 
                     <!-- Reviews & Student Feedback Section (Real data only, no invented ratings) -->
                     <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-lb-sm p-6 sm:p-8 space-y-6">
-                        <div class="flex items-center justify-between border-b border-neutral-100 pb-4">
+                        @php
+                            $pubReviews = $course->publishedReviews;
+                            $totalPubCount = $pubReviews->count();
+                            $realAvg = $totalPubCount > 0 ? round($pubReviews->avg('rating'), 1) : 0;
+                            $starBreakdown = [
+                                5 => $pubReviews->where('rating', 5)->count(),
+                                4 => $pubReviews->where('rating', 4)->count(),
+                                3 => $pubReviews->where('rating', 3)->count(),
+                                2 => $pubReviews->where('rating', 2)->count(),
+                                1 => $pubReviews->where('rating', 1)->count(),
+                            ];
+
+                            $currentUser = auth()->user();
+                            $isEnrolled = $currentUser ? \App\Models\Enrollment::where('user_id', $currentUser->id)
+                                ->where('course_id', $course->id)
+                                ->whereIn('status', [\App\Models\Enrollment::STATUS_ACTIVE, \App\Models\Enrollment::STATUS_COMPLETED])
+                                ->exists() : false;
+                            $existingReview = $currentUser ? $course->reviews()->where('user_id', $currentUser->id)->first() : null;
+
+                            $reviewsToDisplay = ($currentUser && $currentUser->isAdmin())
+                                ? $course->reviews()->with('user')->latest()->get()
+                                : $pubReviews;
+                        @endphp
+
+                        <!-- Header & Summary Stats -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-100 pb-5">
                             <div>
                                 <h2 class="text-base sm:text-lg font-bold text-neutral-900 flex items-center gap-2">
                                     <i class="fas fa-star text-amber-500" aria-hidden="true"></i>
-                                    <span>Verified Student Feedback</span>
+                                    <span>Verified Student Feedback &amp; Ratings</span>
                                 </h2>
-                                <p class="text-xs text-neutral-500 mt-0.5">Reviews submitted by enrolled Sri Lankan students.</p>
+                                <p class="text-xs text-neutral-500 mt-0.5">Authentic course ratings submitted by verified enrolled Sri Lankan students.</p>
                             </div>
 
-                            @if ($rating && $reviewsCount > 0)
-                                <div class="text-right">
-                                    <div class="text-2xl font-extrabold text-neutral-900">{{ number_format($rating, 1) }}<span class="text-xs font-normal text-neutral-400">/5</span></div>
-                                    <p class="text-[10px] text-neutral-400">{{ $reviewsCount }} verified ratings</p>
+                            @if ($totalPubCount > 0)
+                                <div class="flex items-center gap-3">
+                                    <div class="text-right">
+                                        <div class="text-2xl font-extrabold text-neutral-900 leading-tight">
+                                            {{ number_format($realAvg, 1) }}<span class="text-xs font-normal text-neutral-400">/5</span>
+                                        </div>
+                                        <div class="flex text-amber-400 text-xs mt-0.5">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="fas fa-star {{ $i <= round($realAvg) ? 'text-amber-400' : 'text-neutral-200' }}"></i>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                    <span class="text-[11px] text-neutral-400 font-medium">({{ $totalPubCount }} {{ Str::plural('rating', $totalPubCount) }})</span>
                                 </div>
                             @endif
                         </div>
 
-                        @if ($course->publishedReviews->isEmpty())
+                        <!-- Rating Breakdown Bars (If reviews exist) -->
+                        @if ($totalPubCount > 0)
+                            <div class="p-4 rounded-2xl bg-neutral-50 border border-neutral-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="space-y-1.5 justify-center flex flex-col">
+                                    @for ($s = 5; $s >= 1; $s--)
+                                        @php
+                                            $count = $starBreakdown[$s];
+                                            $pct = $totalPubCount > 0 ? round(($count / $totalPubCount) * 100) : 0;
+                                        @endphp
+                                        <div class="flex items-center gap-2 text-xs">
+                                            <span class="w-12 text-neutral-500 text-[11px] font-medium shrink-0">{{ $s }} stars</span>
+                                            <div class="flex-1 bg-neutral-200 rounded-full h-2 overflow-hidden">
+                                                <div class="bg-amber-400 h-2 rounded-full transition-all duration-300" style="width: {{ $pct }}%"></div>
+                                            </div>
+                                            <span class="w-8 text-neutral-400 text-[10px] text-right shrink-0">{{ $count }}</span>
+                                        </div>
+                                    @endfor
+                                </div>
+                                <div class="flex flex-col justify-center items-center sm:border-l sm:border-neutral-200 text-center px-4">
+                                    <div class="text-3xl font-extrabold text-neutral-900">{{ number_format($realAvg, 1) }}</div>
+                                    <div class="flex text-amber-400 text-sm my-1">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="fas fa-star {{ $i <= round($realAvg) ? 'text-amber-400' : 'text-neutral-200' }}"></i>
+                                        @endfor
+                                    </div>
+                                    <p class="text-[11px] text-neutral-500">100% Verified Enrolled Learners</p>
+                                    <p class="text-[10px] text-neutral-400">Strictly authentic. Zero fabricated ratings.</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Student Review Form / User Review Management -->
+                        @auth
+                            @if ($existingReview)
+                                <!-- User Already Left a Review: Display with Edit/Delete Controls -->
+                                <div x-data="{ editing: false }" class="p-5 rounded-2xl border-2 border-orange-200 bg-orange-50/30 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-lb-orange uppercase tracking-wider flex items-center gap-1.5">
+                                            <i class="fas fa-user-check"></i>
+                                            <span>Your Course Review</span>
+                                        </span>
+                                        <div class="flex items-center gap-2" x-show="!editing">
+                                            <button
+                                                type="button"
+                                                @click="editing = true"
+                                                class="px-2.5 py-1 text-xs font-semibold text-neutral-700 hover:text-lb-orange bg-white border border-neutral-200 rounded-lg transition"
+                                            >
+                                                <i class="fas fa-edit mr-1"></i> Edit
+                                            </button>
+                                            <form action="{{ route('courses.reviews.destroy', [$course, $existingReview]) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove your review?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button
+                                                    type="submit"
+                                                    class="px-2.5 py-1 text-xs font-semibold text-red-600 hover:text-red-700 bg-white border border-neutral-200 rounded-lg transition"
+                                                >
+                                                    <i class="fas fa-trash-alt mr-1"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Read-only view -->
+                                    <div x-show="!editing" class="space-y-2">
+                                        <div class="flex items-center gap-2">
+                                            <div class="flex text-amber-400 text-xs">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <i class="fas fa-star {{ $i <= $existingReview->rating ? 'text-amber-400' : 'text-neutral-300' }}"></i>
+                                                @endfor
+                                            </div>
+                                            <span class="text-xs font-bold text-neutral-800">{{ $existingReview->rating }} / 5</span>
+                                            <span class="text-[10px] text-neutral-400">&bull; {{ $existingReview->created_at->diffForHumans() }}</span>
+                                        </div>
+                                        @if ($existingReview->title)
+                                            <h4 class="text-xs font-bold text-neutral-900">{{ $existingReview->title }}</h4>
+                                        @endif
+                                        <p class="text-xs text-neutral-700 leading-relaxed">{{ $existingReview->comment }}</p>
+                                    </div>
+
+                                    <!-- Edit Form -->
+                                    <form
+                                        x-show="editing"
+                                        x-cloak
+                                        action="{{ route('courses.reviews.update', [$course, $existingReview]) }}"
+                                        method="POST"
+                                        class="space-y-3 pt-2"
+                                    >
+                                        @csrf
+                                        @method('PUT')
+
+                                        <div class="space-y-1">
+                                            <label class="text-xs font-bold text-neutral-700 block">Rating</label>
+                                            <select name="rating" required class="w-full sm:w-48 text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200">
+                                                @for ($r = 5; $r >= 1; $r--)
+                                                    <option value="{{ $r }}" {{ $existingReview->rating === $r ? 'selected' : '' }}>
+                                                        {{ $r }} {{ Str::plural('Star', $r) }}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                        </div>
+
+                                        <div class="space-y-1">
+                                            <label class="text-xs font-bold text-neutral-700 block">Title (Optional)</label>
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                value="{{ old('title', $existingReview->title) }}"
+                                                maxlength="100"
+                                                class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200"
+                                            >
+                                        </div>
+
+                                        <div class="space-y-1">
+                                            <label class="text-xs font-bold text-neutral-700 block">Review Feedback</label>
+                                            <textarea
+                                                name="comment"
+                                                rows="3"
+                                                required
+                                                minlength="10"
+                                                maxlength="2000"
+                                                class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200"
+                                            >{{ old('comment', $existingReview->comment) }}</textarea>
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            <button
+                                                type="submit"
+                                                class="px-4 py-2 bg-lb-orange hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+                                            >
+                                                Update Review
+                                            </button>
+                                            <button
+                                                type="button"
+                                                @click="editing = false"
+                                                class="px-3 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold transition"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            @elseif ($isEnrolled)
+                                <!-- Enrolled Student Without Existing Review: Submission Form -->
+                                <div x-data="{ rating: 5 }" class="p-5 sm:p-6 rounded-2xl border border-neutral-200 bg-neutral-50/70 space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="space-y-0.5">
+                                            <h3 class="text-sm font-bold text-neutral-900 flex items-center gap-2">
+                                                <i class="fas fa-pen text-lb-orange"></i>
+                                                <span>Write a Verified Course Review</span>
+                                            </h3>
+                                            <p class="text-xs text-neutral-500">As an enrolled student, your authentic feedback helps other Sri Lankan learners.</p>
+                                        </div>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                            Enrolled Student
+                                        </span>
+                                    </div>
+
+                                    <form action="{{ route('courses.reviews.store', $course) }}" method="POST" class="space-y-4">
+                                        @csrf
+
+                                        <!-- Interactive Star Rating -->
+                                        <div class="space-y-1">
+                                            <label class="text-xs font-bold text-neutral-700 block">Your Rating <span class="text-red-500">*</span></label>
+                                            <div class="flex items-center gap-2">
+                                                <input type="hidden" name="rating" :value="rating">
+                                                <div class="flex items-center gap-1 text-xl cursor-pointer">
+                                                    <template x-for="star in 5" :key="star">
+                                                        <button
+                                                            type="button"
+                                                            @click="rating = star"
+                                                            class="text-neutral-300 hover:text-amber-400 focus:outline-none transition-colors"
+                                                            :class="{ 'text-amber-400': star <= rating, 'text-neutral-300': star > rating }"
+                                                        >
+                                                            <i class="fas fa-star"></i>
+                                                        </button>
+                                                    </template>
+                                                </div>
+                                                <span class="text-xs font-bold text-neutral-600 ml-2" x-text="rating + ' / 5 Stars'"></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Review Title -->
+                                        <div class="space-y-1">
+                                            <label for="review_title" class="text-xs font-bold text-neutral-700 block">Headline / Summary (Optional)</label>
+                                            <input
+                                                type="text"
+                                                id="review_title"
+                                                name="title"
+                                                value="{{ old('title') }}"
+                                                placeholder="e.g. Excellent practical insights and clear explanations"
+                                                maxlength="100"
+                                                class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200"
+                                            >
+                                        </div>
+
+                                        <!-- Review Comment -->
+                                        <div class="space-y-1">
+                                            <label for="review_comment" class="text-xs font-bold text-neutral-700 block">Detailed Review <span class="text-red-500">*</span></label>
+                                            <textarea
+                                                id="review_comment"
+                                                name="comment"
+                                                rows="3"
+                                                required
+                                                minlength="10"
+                                                maxlength="2000"
+                                                placeholder="Share what you liked, how the lectures and exercises helped your career or learning, and any tips for future students..."
+                                                class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200"
+                                            >{{ old('comment') }}</textarea>
+                                            <p class="text-[10px] text-neutral-400">Minimum 10 characters. Safe and respectful reviews only.</p>
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            class="px-5 py-2.5 bg-lb-orange hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm inline-flex items-center gap-2"
+                                        >
+                                            <i class="fas fa-paper-plane text-[10px]"></i>
+                                            <span>Post Verified Review</span>
+                                        </button>
+                                    </form>
+                                </div>
+
+                            @else
+                                <!-- Logged in, but not enrolled -->
+                                <div class="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-500 flex items-center justify-between gap-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-neutral-200 text-neutral-600 flex items-center justify-center shrink-0">
+                                            <i class="fas fa-lock"></i>
+                                        </div>
+                                        <p>Enrolled students can leave verified reviews for this course. Enroll today to participate and share feedback.</p>
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            <!-- Guest User -->
+                            <div class="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-600 flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-neutral-200 text-neutral-600 flex items-center justify-center shrink-0">
+                                        <i class="fas fa-user-lock"></i>
+                                    </div>
+                                    <p>Are you enrolled in this course? <a href="{{ route('login') }}" class="font-bold text-lb-orange hover:underline">Log in</a> to submit your authentic verified feedback.</p>
+                                </div>
+                            </div>
+                        @endauth
+
+                        <!-- Reviews List -->
+                        @if ($reviewsToDisplay->isEmpty())
                             <div class="p-8 text-center bg-neutral-50 rounded-2xl border border-neutral-100 text-xs text-neutral-500 space-y-2">
                                 <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center mx-auto text-neutral-400">
                                     <i class="far fa-comment-dots text-base"></i>
                                 </div>
-                                <p class="font-medium text-neutral-800">No reviews yet for this newly published course.</p>
+                                <p class="font-medium text-neutral-800">No reviews yet for this course.</p>
                                 <p class="text-neutral-400 max-w-sm mx-auto">
-                                    Student reviews and transparent ratings appear here once enrolled students complete coursework in Phase 8.
+                                    Enrolled students will submit authentic reviews as they progress through coursework.
                                 </p>
                             </div>
                         @else
                             <div class="space-y-4">
-                                @foreach ($course->publishedReviews as $rev)
-                                    <div class="p-4 rounded-2xl border border-neutral-100 bg-neutral-50/50 space-y-2">
-                                        <div class="flex items-center justify-between">
+                                @foreach ($reviewsToDisplay as $rev)
+                                    <div class="p-4 rounded-2xl border border-neutral-100 bg-neutral-50/50 space-y-3 {{ ! $rev->is_published ? 'border-amber-300 bg-amber-50/40' : '' }}">
+                                        <div class="flex items-start justify-between gap-2">
                                             <div class="flex items-center gap-2.5">
-                                                <div class="w-7 h-7 rounded-full bg-neutral-200 text-neutral-700 flex items-center justify-center text-xs font-bold shrink-0">
+                                                <div class="w-8 h-8 rounded-full bg-orange-100 text-lb-orange flex items-center justify-center text-xs font-bold shrink-0">
                                                     {{ strtoupper(substr($rev->user?->name ?? 'Student', 0, 2)) }}
                                                 </div>
                                                 <div>
-                                                    <span class="text-xs font-bold text-neutral-900">{{ $rev->user?->name ?? 'Verified Student' }}</span>
-                                                    <span class="text-[10px] text-neutral-400 ml-2">{{ $rev->created_at->diffForHumans() }}</span>
+                                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                                        <span class="text-xs font-bold text-neutral-900">{{ $rev->user?->name ?? 'Verified Student' }}</span>
+                                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded-full">
+                                                            <i class="fas fa-check-circle text-[9px]"></i> Verified Learner
+                                                        </span>
+                                                        @if (! $rev->is_published)
+                                                            <span class="text-[10px] font-bold text-amber-800 bg-amber-200 px-1.5 py-0.2 rounded-full">
+                                                                [Hidden from Public]
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <span class="text-[10px] text-neutral-400 block">{{ $rev->created_at->diffForHumans() }}</span>
                                                 </div>
                                             </div>
 
@@ -517,10 +807,41 @@
                                         </div>
 
                                         @if ($rev->title)
-                                            <h4 class="text-xs font-bold text-neutral-800">{{ $rev->title }}</h4>
+                                            <h4 class="text-xs font-bold text-neutral-900">{{ $rev->title }}</h4>
                                         @endif
 
                                         <p class="text-xs text-neutral-600 leading-relaxed">{{ $rev->comment }}</p>
+
+                                        <!-- Administrator Moderation Controls -->
+                                        @if (auth()->check() && auth()->user()->isAdmin())
+                                            <div class="pt-2 border-t border-neutral-200/60 flex items-center justify-between text-xs">
+                                                <span class="text-[10px] font-mono text-neutral-400">Admin Moderation</span>
+                                                <div class="flex items-center gap-2">
+                                                    <form action="{{ route('courses.reviews.moderate', [$course, $rev]) }}" method="POST">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="hidden" name="is_published" value="{{ $rev->is_published ? '0' : '1' }}">
+                                                        <button
+                                                            type="submit"
+                                                            class="px-2.5 py-1 rounded text-[11px] font-semibold transition {{ $rev->is_published ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' }}"
+                                                        >
+                                                            {{ $rev->is_published ? 'Hide Review' : 'Publish Review' }}
+                                                        </button>
+                                                    </form>
+
+                                                    <form action="{{ route('courses.reviews.destroy', [$course, $rev]) }}" method="POST" onsubmit="return confirm('Permanently delete this inappropriate review?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button
+                                                            type="submit"
+                                                            class="px-2.5 py-1 rounded text-[11px] font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

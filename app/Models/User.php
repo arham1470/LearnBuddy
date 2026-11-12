@@ -284,6 +284,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(CourseAnnouncement::class);
     }
 
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     /**
      * Send queued custom branded email verification notification.
      */

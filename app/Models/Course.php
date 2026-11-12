@@ -143,6 +143,11 @@ class Course extends Model
         return $this->hasMany(CourseAnnouncement::class);
     }
 
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
     public function batches(): HasManyThrough
     {
         return $this->hasManyThrough(CourseBatch::class, CourseDeliveryOption::class, 'course_id', 'course_delivery_option_id');

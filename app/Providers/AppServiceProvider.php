@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Category;
+use App\Models\Certificate;
 use App\Models\Course;
 use App\Models\CourseAnnouncement;
 use App\Models\CourseBatch;
@@ -14,9 +15,11 @@ use App\Models\Payment;
 use App\Models\PhysicalLocation;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
+use App\Models\Review;
 use App\Models\User;
 use App\Policies\AssignmentPolicy;
 use App\Policies\CategoryPolicy;
+use App\Policies\CertificatePolicy;
 use App\Policies\CourseAnnouncementPolicy;
 use App\Policies\CourseBatchPolicy;
 use App\Policies\CoursePolicy;
@@ -25,6 +28,7 @@ use App\Policies\OrderPolicy;
 use App\Policies\PaymentPolicy;
 use App\Policies\PhysicalLocationPolicy;
 use App\Policies\QuizPolicy;
+use App\Policies\ReviewPolicy;
 use App\Policies\UserPolicy;
 use App\Services\LiveClass\Contracts\LiveClassProviderInterface;
 use App\Services\LiveClass\Providers\JitsiLiveClassProvider;
@@ -89,6 +93,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Order::class, OrderPolicy::class);
         Gate::policy(Payment::class, PaymentPolicy::class);
         Gate::policy(CourseAnnouncement::class, CourseAnnouncementPolicy::class);
+        Gate::policy(Certificate::class, CertificatePolicy::class);
+        Gate::policy(Review::class, ReviewPolicy::class);
 
         // Define role-based authorization gates
         Gate::define('admin', fn (User $user) => $user->isAdmin());

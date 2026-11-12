@@ -528,6 +528,15 @@
                             <span class="px-1.5 py-0.5 rounded text-[9px] bg-blue-500/20 text-blue-400 font-mono font-bold">{{ $course->upcomingLiveClasses->count() }}</span>
                         @endif
                     </a>
+
+                    <a
+                        href="{{ route('certificates.eligibility', $course) }}"
+                        class="pb-3 px-3 border-b-2 border-transparent text-neutral-400 hover:text-amber-400 font-medium text-sm flex items-center gap-2 whitespace-nowrap transition"
+                        title="Check completion criteria and claim certificate"
+                    >
+                        <i class="fa-solid fa-award text-xs text-amber-500"></i>
+                        <span>Certificate</span>
+                    </a>
                 </div>
 
                 <!-- Tab 1: Overview & Reading Content -->

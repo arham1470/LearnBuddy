@@ -81,8 +81,8 @@
                 <!-- Stat 4 -->
                 <div class="p-4 rounded-2xl bg-neutral-800/80 border border-neutral-700/80">
                     <span class="text-[11px] font-semibold text-neutral-400 block uppercase tracking-wider">Certificates</span>
-                    <div class="text-2xl sm:text-3xl font-extrabold text-white mt-1">0</div>
-                    <span class="text-[10px] text-neutral-400">Available upon completion</span>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white mt-1">{{ isset($certificates) ? $certificates->count() : 0 }}</div>
+                    <span class="text-[10px] text-emerald-400 font-medium">{{ isset($certificates) && $certificates->count() > 0 ? 'Verified credentials' : 'Available on completion' }}</span>
                 </div>
             </div>
         </div>
@@ -448,15 +448,55 @@
                             <i class="fas fa-certificate text-emerald-500"></i>
                             <span>Earned Certificates</span>
                         </h3>
-                        <span class="text-[10px] font-bold text-neutral-400 uppercase">Phase 16</span>
+                        <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full uppercase">
+                            Verified Credentials
+                        </span>
                     </div>
-                    <div class="py-6 text-center text-xs text-neutral-400 space-y-2">
-                        <i class="fas fa-award text-2xl text-neutral-300"></i>
-                        <p class="text-neutral-600 font-medium">0 Certificates earned.</p>
-                        <p class="text-[11px] leading-relaxed">
-                            Certificates with public verification hashes will be issued once course lessons and assessments are completed in Phase 16.
-                        </p>
-                    </div>
+
+                    @if (isset($certificates) && $certificates->isNotEmpty())
+                        <div class="space-y-3">
+                            @foreach ($certificates as $cert)
+                                <div class="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-100 flex items-center justify-between gap-3 text-xs">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm font-bold shrink-0">
+                                            <i class="fas fa-award"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-neutral-900 line-clamp-1">{{ $cert->course->title }}</h4>
+                                            <div class="text-[10px] text-neutral-400 font-mono">
+                                                ID: {{ $cert->certificate_code }} &bull; Issued: {{ $cert->issue_date->format('d M Y') }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <a
+                                            href="{{ route('certificates.show', $cert) }}"
+                                            class="px-2.5 py-1 rounded-lg bg-lb-orange hover:bg-orange-600 text-white font-bold text-[11px] transition shadow-sm"
+                                        >
+                                            View
+                                        </a>
+                                        <a
+                                            href="{{ $cert->verificationUrl() }}"
+                                            target="_blank"
+                                            class="px-2 py-1 rounded-lg bg-neutral-200 hover:bg-neutral-300 text-neutral-700 text-[11px] transition"
+                                            title="Verify Credential"
+                                        >
+                                            <i class="fas fa-external-link-alt text-[10px]"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="py-6 text-center text-xs text-neutral-400 space-y-2">
+                            <i class="fas fa-award text-2xl text-neutral-300"></i>
+                            <p class="text-neutral-600 font-medium">0 Certificates earned so far.</p>
+                            <p class="text-[11px] leading-relaxed">
+                                Complete all course lessons, assignments, and quizzes to earn and claim verifiable academic credentials.
+                            </p>
+                        </div>
+                    @endif
                 </div>
             </div>
 

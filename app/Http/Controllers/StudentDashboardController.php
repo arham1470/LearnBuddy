@@ -85,6 +85,12 @@ class StudentDashboardController extends Controller
             ->take(5)
             ->get();
 
+        // 8. Earned academic certificates
+        $certificates = $user->certificates()
+            ->with(['course.category'])
+            ->latest('issue_date')
+            ->get();
+
         return view('dashboard.student', compact(
             'user',
             'activeEnrollments',
@@ -94,7 +100,8 @@ class StudentDashboardController extends Controller
             'recentActivities',
             'pendingAssignments',
             'recentQuizAttempts',
-            'upcomingLiveClasses'
+            'upcomingLiveClasses',
+            'certificates'
         ));
     }
 }
