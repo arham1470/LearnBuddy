@@ -4,9 +4,9 @@
     :class="{ 'bg-white/90 backdrop-blur-md shadow-lb-sm': scrolled, 'bg-transparent': !scrolled }"
     class="sticky top-0 z-40 w-full transition-all duration-300 py-3 sm:py-4"
 >
-    <div class="max-w-[1140px] mx-auto px-4 sm:px-6 flex items-center justify-between">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
         <!-- Brand Logo -->
-        <a href="{{ url('/') }}" class="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange rounded-lg">
+        <a href="{{ url('/') }}" class="flex items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange rounded-lg shrink-0">
             @if (file_exists(public_path('images/logo.png')))
                 <img
                     src="{{ asset('images/logo.png') }}"
@@ -14,7 +14,7 @@
                     class="h-8 sm:h-9 w-auto object-contain"
                 >
             @else
-                <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-lb-black">
+                <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-lb-black whitespace-nowrap">
                     Learn<span class="text-lb-orange">Buddy</span>.
                 </span>
             @endif
@@ -22,123 +22,270 @@
 
         <!-- Desktop Navigation Pill (Reference UI Style) -->
         <nav
-            class="hidden lg:flex items-center gap-8 bg-white px-8 py-2.5 rounded-full shadow-lb-sm border border-neutral-100/80 text-sm font-medium"
+            class="hidden lg:flex items-center gap-4 xl:gap-7 bg-white px-5 xl:px-7 py-2.5 rounded-full shadow-lb-sm border border-neutral-100/80 text-xs xl:text-sm font-medium whitespace-nowrap shrink-0"
             aria-label="Main Navigation"
         >
             <a
                 href="{{ url('/') }}"
-                class="transition-colors hover:text-lb-orange {{ request()->is('/') ? 'text-lb-orange font-semibold' : 'text-neutral-700' }}"
+                class="transition-colors hover:text-lb-orange whitespace-nowrap {{ request()->is('/') ? 'text-lb-orange font-semibold' : 'text-neutral-700' }}"
             >
                 Home
             </a>
             <a
                 href="{{ route('courses.index') }}"
-                class="transition-colors hover:text-lb-orange {{ request()->routeIs('courses.*') ? 'text-lb-orange font-semibold' : 'text-neutral-700' }}"
+                class="transition-colors hover:text-lb-orange whitespace-nowrap {{ request()->routeIs('courses.*') ? 'text-lb-orange font-semibold' : 'text-neutral-700' }}"
             >
                 Our Courses
             </a>
             <a
                 href="{{ url('/#categories') }}"
-                class="transition-colors hover:text-lb-orange text-neutral-700"
+                class="transition-colors hover:text-lb-orange whitespace-nowrap text-neutral-700"
             >
                 Categories
             </a>
             <a
                 href="{{ url('/#about') }}"
-                class="transition-colors hover:text-lb-orange text-neutral-700"
+                class="transition-colors hover:text-lb-orange whitespace-nowrap text-neutral-700"
             >
                 Who We Are
             </a>
             <a
                 href="{{ url('/#faq') }}"
-                class="transition-colors hover:text-lb-orange text-neutral-700"
+                class="transition-colors hover:text-lb-orange whitespace-nowrap text-neutral-700"
             >
                 FAQ
             </a>
             <a
                 href="{{ url('/design-system') }}"
-                class="transition-colors hover:text-lb-orange {{ request()->is('design-system') ? 'text-lb-orange font-semibold' : 'text-neutral-500 text-xs uppercase tracking-wider' }}"
+                class="transition-colors hover:text-lb-orange whitespace-nowrap {{ request()->is('design-system') ? 'text-lb-orange font-semibold' : 'hidden xl:inline-block text-neutral-400 hover:text-neutral-600 text-xs uppercase tracking-wider' }}"
             >
                 Design System
             </a>
         </nav>
 
         <!-- Right Action Controls -->
-        <div class="flex items-center gap-3 sm:gap-4">
+        <div class="flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0">
             <!-- Search Trigger -->
-            <button
-                type="button"
-                @click="$dispatch('open-modal', 'search-modal')"
-                class="w-10 h-10 rounded-full flex items-center justify-center text-neutral-600 hover:text-lb-orange hover:bg-orange-50/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange cursor-pointer"
-                aria-label="Open search"
-            >
-                <i class="fas fa-search text-sm" aria-hidden="true"></i>
-            </button>
+            <div class="relative group shrink-0">
+                <button
+                    type="button"
+                    @click="$dispatch('open-modal', 'search-modal')"
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-neutral-600 hover:text-lb-orange bg-neutral-100 hover:bg-orange-50/80 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange cursor-pointer shrink-0"
+                    aria-label="Open search"
+                >
+                    <i class="fas fa-search text-sm" aria-hidden="true"></i>
+                </button>
+                <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                    Search courses
+                    <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                </div>
+            </div>
 
             <!-- Authentication Actions (Desktop) -->
             @auth
-                <div class="hidden sm:flex items-center gap-2.5">
-                    <a
-                        href="{{ route('student.dashboard') }}"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition {{ request()->routeIs('student.dashboard') ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-800 hover:bg-orange-50 hover:text-lb-orange' }}"
-                    >
-                        <i class="fas fa-graduation-cap text-xs text-lb-orange" aria-hidden="true"></i>
-                        <span>My Learning</span>
-                    </a>
+                <div class="hidden sm:flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0">
+                    <!-- My Learning Icon -->
+                    <div class="relative group shrink-0">
+                        <a
+                            href="{{ route('student.dashboard') }}"
+                            class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 {{ request()->routeIs('student.dashboard') ? 'bg-orange-100 text-lb-orange ring-2 ring-lb-orange/30' : 'bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange' }}"
+                            aria-label="My Learning"
+                        >
+                            <i class="fas fa-graduation-cap text-sm text-lb-orange" aria-hidden="true"></i>
+                        </a>
+                        <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                            My Learning
+                            <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                        </div>
+                    </div>
 
                     @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
-                        <a
-                            href="{{ route('management.courses.index') }}"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition {{ request()->is('management*') ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-800 hover:bg-orange-50 hover:text-lb-orange' }}"
-                        >
-                            <i class="fas fa-layer-group text-xs text-lb-orange" aria-hidden="true"></i>
-                            <span>Course Management</span>
-                        </a>
+                        <!-- Course Management Icon -->
+                        <div class="relative group shrink-0">
+                            <a
+                                href="{{ route('management.courses.index') }}"
+                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 {{ request()->is('management*') ? 'bg-orange-100 text-lb-orange ring-2 ring-lb-orange/30' : 'bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange' }}"
+                                aria-label="Course Management"
+                            >
+                                <i class="fas fa-layer-group text-sm text-lb-orange" aria-hidden="true"></i>
+                            </a>
+                            <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                                Course Management
+                                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                            </div>
+                        </div>
                     @endif
 
-                    <!-- In-App Notification Bell -->
-                    <a
-                        href="{{ route('notifications.index') }}"
-                        class="relative inline-flex items-center justify-center w-8 h-8 rounded-full bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange transition"
-                        title="Notifications"
-                        aria-label="Notifications"
-                    >
-                        <i class="fas fa-bell text-xs" aria-hidden="true"></i>
-                        @php $unreadHeaderCount = auth()->user()->unreadNotifications()->count(); @endphp
-                        @if ($unreadHeaderCount > 0)
-                            <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-lb-orange text-[9px] font-black text-white">
-                                {{ $unreadHeaderCount > 9 ? '9+' : $unreadHeaderCount }}
-                            </span>
-                        @endif
-                    </a>
-
-                    <a
-                        href="{{ route('profile.show', auth()->user()) }}"
-                        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-orange-50 text-neutral-800 hover:text-lb-orange text-xs font-semibold transition"
-                    >
-                        <i class="fas fa-user-circle text-sm text-lb-orange" aria-hidden="true"></i>
-                        <span>{{ auth()->user()->name }}</span>
-                    </a>
-
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button
-                            type="submit"
-                            class="inline-flex items-center justify-center p-2 rounded-full text-neutral-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer text-xs"
-                            title="Sign out"
-                            aria-label="Sign out"
+                    <!-- In-App Notification Bell Icon -->
+                    <div class="relative group shrink-0">
+                        <a
+                            href="{{ route('notifications.index') }}"
+                            class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange transition shrink-0"
+                            aria-label="Notifications"
                         >
-                            <i class="fas fa-sign-out-alt text-sm" aria-hidden="true"></i>
+                            <i class="fas fa-bell text-sm" aria-hidden="true"></i>
+                            @php $unreadHeaderCount = auth()->user()->unreadNotifications()->count(); @endphp
+                            @if ($unreadHeaderCount > 0)
+                                <span class="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-lb-orange text-[9px] font-black text-white shadow-xs">
+                                    {{ $unreadHeaderCount > 9 ? '9+' : $unreadHeaderCount }}
+                                </span>
+                            @endif
+                        </a>
+                        <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                            Notifications @if ($unreadHeaderCount > 0) ({{ $unreadHeaderCount }}) @endif
+                            <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                        </div>
+                    </div>
+
+                    <!-- User Profile Icon & Dropdown Menu -->
+                    <div
+                        x-data="{ userMenuOpen: false }"
+                        @click.outside="userMenuOpen = false"
+                        @keydown.escape.window="userMenuOpen = false"
+                        class="relative group shrink-0"
+                    >
+                        <button
+                            type="button"
+                            @click="userMenuOpen = !userMenuOpen"
+                            :aria-expanded="userMenuOpen.toString()"
+                            class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-neutral-100 hover:bg-orange-50 text-neutral-800 hover:text-lb-orange transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange cursor-pointer border border-transparent hover:border-orange-200 shrink-0"
+                            aria-label="User account menu"
+                        >
+                            @if (auth()->user()->avatar_url)
+                                <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full rounded-full object-cover">
+                            @else
+                                <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-lb-orange text-white flex items-center justify-center font-bold text-xs uppercase shadow-xs">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                </span>
+                            @endif
                         </button>
-                    </form>
+
+                        <!-- Tooltip on hover (hidden when menu open) -->
+                        <div
+                            x-show="!userMenuOpen"
+                            class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50"
+                        >
+                            {{ auth()->user()->name }}
+                            <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                        </div>
+
+                        <!-- Dropdown Menu Card -->
+                        <div
+                            x-show="userMenuOpen"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                            class="absolute right-0 mt-2 w-64 rounded-2xl bg-white shadow-xl border border-neutral-100 p-2 z-50 text-sm"
+                            role="menu"
+                        >
+                            <!-- User Card Header -->
+                            <div class="px-3 py-2.5 bg-neutral-50 rounded-xl mb-1 border border-neutral-100">
+                                <p class="font-bold text-neutral-900 text-xs truncate" title="{{ auth()->user()->name }}">{{ auth()->user()->name }}</p>
+                                <p class="text-[11px] text-neutral-500 truncate" title="{{ auth()->user()->email }}">{{ auth()->user()->email }}</p>
+                                <div class="mt-1.5 flex items-center gap-1.5">
+                                    @if (auth()->user()->isAdmin())
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700">Administrator</span>
+                                    @elseif (auth()->user()->isInstructor())
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">Instructor</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700">Student</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Menu Items -->
+                            <a
+                                href="{{ route('student.dashboard') }}"
+                                class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                role="menuitem"
+                            >
+                                <i class="fas fa-graduation-cap w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
+                                <span>My Learning Dashboard</span>
+                            </a>
+
+                            @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
+                                <a
+                                    href="{{ route('management.courses.index') }}"
+                                    class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                    role="menuitem"
+                                >
+                                    <i class="fas fa-layer-group w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
+                                    <span>Course Management</span>
+                                </a>
+                            @endif
+
+                            <a
+                                href="{{ route('profile.show', auth()->user()) }}"
+                                class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                role="menuitem"
+                            >
+                                <i class="fas fa-user-circle w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
+                                <span>My Profile</span>
+                            </a>
+
+                            <a
+                                href="{{ route('notifications.index') }}"
+                                class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                role="menuitem"
+                            >
+                                <div class="flex items-center gap-2.5">
+                                    <i class="fas fa-bell w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
+                                    <span>Notifications</span>
+                                </div>
+                                @if ($unreadHeaderCount > 0)
+                                    <span class="px-1.5 py-0.5 rounded-full bg-lb-orange text-white text-[9px] font-bold">
+                                        {{ $unreadHeaderCount }}
+                                    </span>
+                                @endif
+                            </a>
+
+                            <div class="my-1 border-t border-neutral-100"></div>
+
+                            <!-- Sign Out in Dropdown -->
+                            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50 transition text-left cursor-pointer"
+                                    role="menuitem"
+                                >
+                                    <i class="fas fa-sign-out-alt w-4 text-center text-xs" aria-hidden="true"></i>
+                                    <span>Sign out</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Direct Quick Sign Out Icon -->
+                    <div class="relative group shrink-0">
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button
+                                type="submit"
+                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-neutral-100 hover:bg-rose-50 text-neutral-500 hover:text-rose-600 transition cursor-pointer text-xs shrink-0"
+                                aria-label="Sign out"
+                            >
+                                <i class="fas fa-sign-out-alt text-sm" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                        <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                            Sign out
+                            <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                        </div>
+                    </div>
                 </div>
             @else
-                <div class="hidden sm:flex items-center gap-2">
+                <div class="hidden sm:flex items-center gap-2 shrink-0">
                     <x-button
                         as="a"
                         href="{{ route('login') }}"
                         variant="dark"
                         size="sm"
+                        class="whitespace-nowrap"
                     >
                         Log in
                     </x-button>
@@ -148,6 +295,7 @@
                         href="{{ route('register') }}"
                         variant="primary"
                         size="sm"
+                        class="whitespace-nowrap"
                     >
                         Register
                     </x-button>
@@ -158,7 +306,7 @@
             <button
                 type="button"
                 @click="mobileNavOpen = !mobileNavOpen"
-                class="lg:hidden w-11 h-11 rounded-full flex items-center justify-center text-neutral-800 hover:text-lb-orange hover:bg-neutral-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange cursor-pointer"
+                class="lg:hidden w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-neutral-800 hover:text-lb-orange hover:bg-neutral-100 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange cursor-pointer shrink-0"
                 :aria-expanded="mobileNavOpen.toString()"
                 aria-label="Toggle mobile menu"
             >
