@@ -17,7 +17,7 @@
                         @endif
                     </span>
                     <h1 class="text-xl sm:text-2xl font-black text-lb-black">
-                        Transferring to PayHere
+                        Transferring to {{ ucfirst($checkoutData['gateway'] ?? 'Payment Gateway') }}
                     </h1>
                     <p class="text-xs sm:text-sm text-neutral-600">
                         Please do not refresh this page or press back. You will be redirected to the secure payment processor momentarily.
@@ -69,12 +69,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Automatically submit after a brief delay so users see where they are heading
+            // Automatically redirect or submit form
             setTimeout(function () {
-                var form = document.getElementById('payment-gateway-form');
-                if (form) {
-                    form.submit();
-                }
+                @if (strtoupper($checkoutData['method']) === 'GET' && empty($checkoutData['fields']))
+                    window.location.href = @js($checkoutData['action_url']);
+                @else
+                    var form = document.getElementById('payment-gateway-form');
+                    if (form) {
+                        form.submit();
+                    }
+                @endif
             }, 600);
         });
     </script>

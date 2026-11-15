@@ -284,5 +284,6 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::post('/api/webhooks/video/mux', [MuxWebhookController::class, 'handle'])->name('webhooks.video.mux');
+Route::post('/api/webhooks/payments/stripe', [PaymentWebhookController::class, 'handleStripe'])->name('webhooks.stripe');
 Route::post('/api/webhooks/payments/payhere', [PaymentWebhookController::class, 'handlePayHere'])->name('webhooks.payhere');
 Route::post('/api/webhooks/payments/mock', [PaymentWebhookController::class, 'handleMock'])->name('webhooks.mock');

@@ -96,7 +96,7 @@
                             To protect against fraud, <strong>browser redirects are not trusted as proof of payment</strong>. Enrolment access unlocks strictly after an authenticated server-to-server confirmation (IPN) is verified by LearnBuddy.
                         </p>
                         <p class="text-[11px] text-blue-700/80">
-                            This verification typically completes in a few seconds. If you just completed payment in PayHere, click the button below to refresh status.
+                            This verification typically completes in a few seconds. If you just completed payment in the gateway, click the button below to refresh status.
                         </p>
                     </div>
 

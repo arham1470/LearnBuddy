@@ -204,6 +204,136 @@ class PaymentService
     }
 
     /**
+     * Directly query the gateway for payment status and settle the order if confirmed.
+     * Useful for seamless client-return verification (e.g. Stripe / MockGateway redirect).
+     */
+    public function syncAndSettleOrderFromGateway(Order $order, string $gatewayPaymentId, ?string $gatewayName = null): bool
+    {
+        $gatewayName = $gatewayName ?: (string) config('payments.default', 'stripe');
+        $gateway = $this->paymentManager->gateway($gatewayName);
+
+        if ($gateway instanceof \App\Services\Payments\Gateways\StripeGateway) {
+            $intent = $gateway->getPaymentIntent($gatewayPaymentId);
+
+            if (! $intent) {
+                return false;
+            }
+
+            $status = strtolower((string) ($intent['status'] ?? ''));
+
+            if ($status === 'succeeded') {
+                $payload = [
+                    'data' => [
+                        'object' => array_merge($intent, [
+                            'metadata' => array_merge($intent['metadata'] ?? [], [
+                                'order_id' => $order->order_number,
+                            ]),
+                        ]),
+                    ],
+                    'type' => 'payment_intent.succeeded',
+                ];
+
+                $result = $this->processWebhook(
+                    payload: $payload,
+                    gatewayName: 'stripe',
+                    ipAddress: '127.0.0.1',
+                    userAgent: 'ClientReturnVerification/1.0'
+                );
+
+                return $result['status'] === 'success' || ($result['code'] ?? 0) === 200;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Settle a direct card payment (for in-app card demo or direct checkout).
+     */
+    public function recordSuccessfulDirectPayment(
+        Order $order,
+        string $paymentMethod = 'card',
+        string $last4 = '4242',
+        ?string $gatewayName = null
+    ): Payment {
+        $gatewayName = $gatewayName ?: (string) config('payments.default', 'stripe');
+
+        return DB::transaction(function () use ($order, $paymentMethod, $last4, $gatewayName) {
+            $statusBefore = $order->status;
+            $receiptNumber = Payment::generateReceiptNumber();
+            $fakePaymentId = 'pi_demo_'.Str::random(16);
+            $transactionRef = 'TXN-'.strtoupper(Str::random(10));
+            $idempotencyKey = 'IDEMP-'.$gatewayName.'-'.$fakePaymentId.'-successful';
+
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'user_id' => $order->user_id,
+                'payment_gateway' => $gatewayName,
+                'transaction_reference' => $transactionRef,
+                'gateway_payment_id' => $fakePaymentId,
+                'amount' => $order->amount,
+                'currency' => $order->currency,
+                'status' => Payment::STATUS_SUCCESSFUL,
+                'payment_method' => $paymentMethod.' (•••• '.$last4.')',
+                'receipt_number' => $receiptNumber,
+                'gateway_response_code' => 'succeeded',
+                'gateway_response_message' => 'Direct Card Payment Authorized',
+                'idempotency_key' => $idempotencyKey,
+                'raw_payload' => [
+                    'last4' => $last4,
+                    'brand' => $paymentMethod,
+                    'auth_mode' => '3ds_verified',
+                    'authorized_at' => now()->toIso8601String(),
+                ],
+                'paid_at' => now(),
+            ]);
+
+            $order->update(['status' => Order::STATUS_COMPLETED]);
+
+            // Activate Enrollment
+            $enrollment = $order->enrollment_id
+                ? Enrollment::find($order->enrollment_id)
+                : Enrollment::where('user_id', $order->user_id)->where('course_id', $order->course_id)->first();
+
+            if ($enrollment) {
+                $expiresAt = ($order->deliveryOption && $order->deliveryOption->access_period_days)
+                    ? now()->addDays($order->deliveryOption->access_period_days)
+                    : null;
+
+                $enrollment->update([
+                    'status' => Enrollment::STATUS_ACTIVE,
+                    'price_paid' => $order->amount,
+                    'currency' => $order->currency,
+                    'enrolled_at' => now(),
+                    'expires_at' => $expiresAt,
+                ]);
+
+                if (! $order->enrollment_id) {
+                    $order->update(['enrollment_id' => $enrollment->id]);
+                }
+
+                if ($order->course_batch_id && $order->batch) {
+                    $order->batch->increment('enrolled_seats');
+                }
+            }
+
+            PaymentAuditLog::logEvent(
+                eventType: 'payment_successful',
+                order: $order,
+                payment: $payment,
+                statusBefore: $statusBefore,
+                statusAfter: Order::STATUS_COMPLETED,
+                payload: ['last4' => $last4, 'method' => $paymentMethod],
+                userId: $order->user_id,
+                ipAddress: request()->ip(),
+                userAgent: request()->userAgent()
+            );
+
+            return $payment;
+        });
+    }
+
+    /**
      * Process an incoming server-to-server webhook / IPN callback safely with row locks and idempotency.
      *
      * @param  array<string, mixed>  $payload

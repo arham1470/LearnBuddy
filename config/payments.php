@@ -6,22 +6,29 @@ return [
     | Default Payment Gateway
     |--------------------------------------------------------------------------
     |
-    | Supported: "payhere", "mock"
+    | Supported: "payhere", "stripe", "mock"
     |
     */
-    'default' => env('PAYMENT_GATEWAY', 'payhere'),
+    'default' => env('PAYMENT_GATEWAY', 'stripe'),
 
     /*
     |--------------------------------------------------------------------------
     | Default Currency
     |--------------------------------------------------------------------------
     |
-    | Sri Lankan Rupee (LKR) is the default CBSL-compliant settlement currency.
+    | Sri Lankan Rupee (LKR) is the default settlement currency.
     |
     */
     'currency' => env('PAYMENT_DEFAULT_CURRENCY', 'LKR'),
 
     'gateways' => [
+        'stripe' => [
+            'sandbox' => env('STRIPE_SANDBOX', true),
+            'base_url' => env('STRIPE_BASE_URL', 'https://mockgateway.com/api/base/stripe-zzrjuo'),
+            'secret_key' => env('STRIPE_SECRET_KEY', 'sk_test_Bc6KMFUEs5TBCPUFKdl4t5XHr8Y2Fvw9m6jPIglvBDN66oW3IQFDDGX43zTMXQ5t9uOT0s6MF1aFerkiWAR4Ev0p8Siwnzb77qw'),
+            'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', ''),
+        ],
+
         'payhere' => [
             'sandbox' => env('PAYHERE_SANDBOX', true),
             'merchant_id' => env('PAYHERE_MERCHANT_ID', ''),

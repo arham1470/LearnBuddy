@@ -22,6 +22,12 @@ class ProcessCheckoutRequest extends FormRequest
             'billing_address' => ['nullable', 'string', 'max:255'],
             'billing_city' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string', 'max:500'],
+            'payment_flow' => ['nullable', 'string', 'in:card,hosted'],
+            'card_number' => ['nullable', 'string', 'max:30'],
+            'card_expiry' => ['nullable', 'string', 'max:10'],
+            'card_cvc' => ['nullable', 'string', 'max:6'],
+            'card_name' => ['nullable', 'string', 'max:150'],
+            'simulation_scenario' => ['nullable', 'string', 'in:success,3ds,decline'],
         ];
     }
 

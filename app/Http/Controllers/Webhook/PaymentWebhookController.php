@@ -15,6 +15,26 @@ class PaymentWebhookController extends Controller
     ) {}
 
     /**
+     * Handle incoming Stripe / MockGateway webhook.
+     */
+    public function handleStripe(Request $request): JsonResponse
+    {
+        $payload = $request->all();
+
+        $result = $this->paymentService->processWebhook(
+            payload: $payload,
+            gatewayName: 'stripe',
+            ipAddress: $request->ip(),
+            userAgent: $request->userAgent()
+        );
+
+        return response()->json([
+            'status' => $result['status'],
+            'message' => $result['message'],
+        ], $result['code']);
+    }
+
+    /**
      * Handle incoming PayHere Instant Payment Notification (IPN) webhook.
      */
     public function handlePayHere(Request $request): Response|JsonResponse

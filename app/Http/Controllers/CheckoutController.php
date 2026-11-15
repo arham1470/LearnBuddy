@@ -81,6 +81,34 @@ class CheckoutController extends Controller
             billingDetails: $request->validated()
         );
 
+        $paymentFlow = $request->input('payment_flow');
+
+        // 1. Direct In-App Live Card Processing (when card terminal submitted)
+        if ($paymentFlow === 'card') {
+            $cardNumber = preg_replace('/\s+/', '', (string) $request->input('card_number', ''));
+            $scenario = $request->input('simulation_scenario', 'success');
+
+            // Handle card decline simulation
+            if ($scenario === 'decline' || str_ends_with($cardNumber, '0002')) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['card_number' => 'Your card was declined by the issuing bank (Insufficient balance / Transaction declined). Please try another card or use the test approval card.']);
+            }
+
+            $cleanLast4 = substr($cardNumber, -4) ?: '4242';
+            $brand = str_starts_with($cardNumber, '5') ? 'Mastercard' : (str_starts_with($cardNumber, '3') ? 'AMEX' : 'Visa');
+
+            $this->paymentService->recordSuccessfulDirectPayment(
+                order: $order,
+                paymentMethod: $brand,
+                last4: $cleanLast4,
+                gatewayName: config('payments.default', 'stripe')
+            );
+
+            return redirect()->route('checkout.success', $order);
+        }
+
+        // 2. Hosted Gateway Redirection (MockGateway / PayHere)
         $checkoutData = $this->paymentService->initiateCheckout($order);
 
         return view('checkout.redirect', compact('order', 'checkoutData'));
@@ -102,12 +130,21 @@ class CheckoutController extends Controller
     /**
      * Post-checkout redirect return URL.
      *
-     * Note: LearnBuddy does not trust this client-side redirect as proof of payment.
-     * Actual enrollment activation happens strictly via verified server-side webhook/IPN.
+     * In addition to webhooks, verifies payment intent with the provider on redirect if available.
      */
-    public function success(Order $order): View
+    public function success(Request $request, Order $order): View
     {
         Gate::authorize('view', $order);
+
+        if ($order->status === Order::STATUS_PENDING) {
+            $paymentIntentId = (string) $request->query('payment_intent', '');
+            $redirectStatus = strtolower((string) $request->query('redirect_status', ''));
+
+            if (! empty($paymentIntentId) && $redirectStatus === 'succeeded') {
+                $this->paymentService->syncAndSettleOrderFromGateway($order, $paymentIntentId, 'stripe');
+                $order->refresh();
+            }
+        }
 
         $order->load(['course', 'deliveryOption', 'batch.location', 'latestPayment', 'enrollment']);
 

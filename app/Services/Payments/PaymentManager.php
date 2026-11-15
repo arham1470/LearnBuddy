@@ -5,6 +5,7 @@ namespace App\Services\Payments;
 use App\Services\Payments\Contracts\PaymentGatewayInterface;
 use App\Services\Payments\Gateways\MockPaymentGateway;
 use App\Services\Payments\Gateways\PayHereGateway;
+use App\Services\Payments\Gateways\StripeGateway;
 use InvalidArgumentException;
 
 class PaymentManager
@@ -36,6 +37,7 @@ class PaymentManager
     protected function resolve(string $name): PaymentGatewayInterface
     {
         return match ($name) {
+            'stripe' => new StripeGateway(config('payments.gateways.stripe', [])),
             'payhere' => new PayHereGateway(config('payments.gateways.payhere', [])),
             'mock' => new MockPaymentGateway(config('payments.gateways.mock', [])),
             default => throw new InvalidArgumentException("Unsupported payment gateway [{$name}]."),
