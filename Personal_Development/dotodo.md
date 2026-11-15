@@ -1,9 +1,5 @@
 
 
-[DONE] need to do real video upload (Mux direct browser-to-cloud upload with live progress bar, auto-sync & signed HLS streaming)
-
-http://127.0.0.1:8000/courses here need check serach bar and course card and automatic serach when type
-
 navigation bar fix for all
 
 when entroll, signup otp, and other notfications check email or whatsapp

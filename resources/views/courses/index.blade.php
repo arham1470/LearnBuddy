@@ -1,4 +1,10 @@
 <x-layouts.public title="Course Catalogue · LearnBuddy Sri Lanka">
+@php
+    $currentCategory = $categories->firstWhere('slug', request('category'));
+    $selectedCategoryName = $currentCategory ? $currentCategory->name : 'All Categories';
+    $selectedCategoryIcon = $currentCategory ? ($currentCategory->icon ?: 'fas fa-layer-group') : 'fas fa-th-large';
+@endphp
+
     <!-- CATALOGUE HERO & SEARCH HEADER -->
     <section class="bg-lb-peach pt-8 sm:pt-12 pb-12 sm:pb-16 rounded-b-[32px] sm:rounded-b-[48px] border-b border-orange-100">
         <div class="max-w-[1140px] mx-auto px-4 sm:px-6">
@@ -23,57 +29,155 @@
 
             <!-- Top Search Input Bar -->
             <div class="mt-8 max-w-3xl">
-                <form action="{{ route('courses.index') }}" method="GET" class="bg-white p-2 rounded-2xl sm:rounded-full shadow-lb-sm border border-neutral-200/80 flex flex-col sm:flex-row items-center gap-2">
+                <form action="{{ route('courses.index') }}" method="GET" class="bg-white p-2 sm:p-2.5 rounded-2xl shadow-lb-sm border border-neutral-200/80 flex flex-col sm:flex-row items-center gap-2">
                     <!-- Preserve existing non-search filters -->
-                    @if (request('category')) <input type="hidden" name="category" value="{{ request('category') }}"> @endif
                     @if (request('delivery_mode')) <input type="hidden" name="delivery_mode" value="{{ request('delivery_mode') }}"> @endif
                     @if (request('language')) <input type="hidden" name="language" value="{{ request('language') }}"> @endif
                     @if (request('difficulty')) <input type="hidden" name="difficulty" value="{{ request('difficulty') }}"> @endif
                     @if (request('price')) <input type="hidden" name="price" value="{{ request('price') }}"> @endif
                     @if (request('sort')) <input type="hidden" name="sort" value="{{ request('sort') }}"> @endif
 
-                    <div class="relative flex-1 w-full flex items-center">
-                        <i class="fas fa-search text-neutral-400 pl-4 pr-3 text-sm" aria-hidden="true"></i>
+                    <!-- 1. Text Input -->
+                    <div class="relative flex-1 w-full min-w-0">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+                            <i class="fas fa-search text-sm" aria-hidden="true"></i>
+                        </div>
                         <input
                             type="text"
                             name="q"
                             value="{{ request('q') }}"
                             placeholder="Search by title, topics, Laravel, UI/UX, database..."
-                            class="w-full bg-transparent border-0 text-xs sm:text-sm focus:outline-none focus:ring-0 placeholder-neutral-400 py-2.5"
+                            class="w-full bg-transparent border-0 text-xs sm:text-sm placeholder-neutral-400 py-2.5 pl-10 pr-10 focus:outline-none focus:ring-0 focus-visible:outline-none !outline-none !ring-0 !border-0"
+                            style="outline: none !important; box-shadow: none !important; border: none !important;"
                         >
                         @if (request('q'))
-                            <a href="{{ route('courses.index', request()->except('q')) }}" class="pr-3 text-neutral-400 hover:text-neutral-700 text-xs" title="Clear search">
-                                <i class="fas fa-times"></i>
-                            </a>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <a href="{{ route('courses.index', request()->except('q')) }}" class="text-neutral-400 hover:text-neutral-700 text-xs p-1 rounded-full transition" title="Clear search keyword">
+                                    <i class="fas fa-times-circle"></i>
+                                </a>
+                            </div>
                         @endif
                     </div>
 
+                    <!-- Subtle Divider on Desktop -->
+                    <div class="hidden sm:block h-7 w-px bg-neutral-200/80 shrink-0"></div>
+
+                    <!-- 2. Category Selector Dropdown -->
+                    <div
+                        x-data="{
+                            open: false,
+                            selectedSlug: @js(request('category', '')),
+                            selectedName: @js($selectedCategoryName),
+                            selectedIcon: @js($selectedCategoryIcon),
+                            selectCategory(slug, name, icon) {
+                                this.selectedSlug = slug;
+                                this.selectedName = name;
+                                this.selectedIcon = icon;
+                                this.open = false;
+                            }
+                        }"
+                        @click.outside="open = false"
+                        @keydown.escape.window="open = false"
+                        class="relative w-full sm:w-auto shrink-0"
+                    >
+                        <!-- Hidden input for category submission -->
+                        <input type="hidden" name="category" :value="selectedSlug">
+
+                        <!-- Trigger Button -->
+                        <button
+                            type="button"
+                            @click="open = !open"
+                            class="w-full sm:w-auto bg-neutral-50 hover:bg-neutral-100/80 text-xs border border-neutral-200 hover:border-neutral-300 rounded-xl px-3.5 py-2.5 text-neutral-700 inline-flex items-center justify-between gap-2.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange cursor-pointer shadow-xs min-w-[150px]"
+                            :class="{ 'border-lb-orange ring-1 ring-lb-orange bg-orange-50/40': open }"
+                            aria-haspopup="listbox"
+                            :aria-expanded="open.toString()"
+                        >
+                            <div class="flex items-center gap-2 truncate">
+                                <i :class="selectedIcon" class="text-neutral-400 text-xs shrink-0" aria-hidden="true"></i>
+                                <span class="font-medium text-neutral-800 truncate" x-text="selectedName"></span>
+                            </div>
+                            <i
+                                class="fas fa-chevron-down text-[10px] text-neutral-400 transition-transform duration-200 shrink-0 ml-1"
+                                :class="{ 'rotate-180 text-lb-orange': open }"
+                                aria-hidden="true"
+                            ></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div
+                            x-show="open"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 -translate-y-1 sm:translate-y-1 sm:scale-95"
+                            x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                            x-transition:leave-end="opacity-0 -translate-y-1 sm:translate-y-1 sm:scale-95"
+                            class="w-full sm:w-72 absolute left-0 sm:left-auto sm:right-0 top-full mt-1.5 rounded-2xl bg-white shadow-xl border border-neutral-100 p-1.5 z-50 text-xs"
+                            role="listbox"
+                        >
+                            <div class="px-2.5 py-1.5 text-[10px] font-bold text-neutral-400 uppercase tracking-wider flex items-center justify-between border-b border-neutral-100 mb-1">
+                                <span>Filter by Category</span>
+                                <button
+                                    type="button"
+                                    @click="open = false"
+                                    class="sm:hidden text-neutral-400 hover:text-neutral-600 p-0.5"
+                                    aria-label="Close category list"
+                                >
+                                    <i class="fas fa-times text-[10px]" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                            <div class="max-h-56 overflow-y-auto space-y-0.5 overscroll-contain">
+                                <!-- All Categories Option -->
+                                <button
+                                    type="button"
+                                    @click="selectCategory('', 'All Categories', 'fas fa-th-large')"
+                                    class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition text-left cursor-pointer group active:scale-[0.99]"
+                                    :class="selectedSlug === '' ? 'bg-orange-50 text-lb-orange font-semibold' : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'"
+                                    role="option"
+                                    :aria-selected="(selectedSlug === '').toString()"
+                                >
+                                    <div class="flex items-center gap-2.5 truncate">
+                                        <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition" :class="selectedSlug === '' ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500 group-hover:bg-white group-hover:text-neutral-800'">
+                                            <i class="fas fa-th-large text-[11px]" aria-hidden="true"></i>
+                                        </span>
+                                        <span class="truncate font-medium">All Categories</span>
+                                    </div>
+                                    <i class="fas fa-check text-xs text-lb-orange shrink-0 ml-2" x-show="selectedSlug === ''" aria-hidden="true"></i>
+                                </button>
+
+                                @foreach ($categories as $cat)
+                                    <button
+                                        type="button"
+                                        @click="selectCategory(@js($cat->slug), @js($cat->name), @js($cat->icon ?: 'fas fa-layer-group'))"
+                                        class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition text-left cursor-pointer group active:scale-[0.99]"
+                                        :class="selectedSlug === @js($cat->slug) ? 'bg-orange-50 text-lb-orange font-semibold' : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'"
+                                        role="option"
+                                        :aria-selected="(selectedSlug === @js($cat->slug)).toString()"
+                                    >
+                                        <div class="flex items-center gap-2.5 truncate">
+                                            <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition" :class="selectedSlug === @js($cat->slug) ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500 group-hover:bg-white group-hover:text-neutral-800'">
+                                                <i class="{{ $cat->icon ?: 'fas fa-layer-group' }} text-[11px]" aria-hidden="true"></i>
+                                            </span>
+                                            <span class="truncate font-medium">{{ $cat->name }}</span>
+                                        </div>
+                                        <i class="fas fa-check text-xs text-lb-orange shrink-0 ml-2" x-show="selectedSlug === @js($cat->slug)" aria-hidden="true"></i>
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Search Submit Button -->
                     <button
                         type="submit"
-                        class="w-full sm:w-auto px-6 py-2.5 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs font-semibold transition shrink-0 cursor-pointer shadow-sm"
+                        class="w-full sm:w-auto bg-lb-orange hover:bg-lb-orange-hover text-white rounded-xl px-6 py-2.5 text-xs font-bold transition shrink-0 cursor-pointer shadow-xs flex items-center justify-center gap-2"
                     >
-                        Search Courses
+                        <i class="fas fa-search text-xs"></i>
+                        <span>Search</span>
                     </button>
                 </form>
-
-                <!-- Category Quick Pills -->
-                <div class="flex items-center gap-2 mt-4 overflow-x-auto pb-1 no-overflow-x scrollbar-none text-xs">
-                    <span class="text-neutral-400 font-semibold shrink-0">Popular:</span>
-                    <a
-                        href="{{ route('courses.index') }}"
-                        class="px-3 py-1 rounded-full whitespace-nowrap transition {{ !request('category') ? 'bg-neutral-900 text-white font-semibold' : 'bg-white text-neutral-600 hover:bg-orange-50 border border-neutral-200' }}"
-                    >
-                        All Categories
-                    </a>
-                    @foreach ($categories as $cat)
-                        <a
-                            href="{{ route('courses.index', array_merge(request()->except('page'), ['category' => $cat->slug])) }}"
-                            class="px-3 py-1 rounded-full whitespace-nowrap transition {{ request('category') === $cat->slug ? 'bg-lb-orange text-white font-semibold' : 'bg-white text-neutral-600 hover:bg-orange-50 border border-neutral-200' }}"
-                        >
-                            {{ $cat->name }}
-                        </a>
-                    @endforeach
-                </div>
             </div>
         </div>
     </section>
