@@ -40,4 +40,14 @@ class NullVideoProvider implements VideoProviderInterface
     {
         return [];
     }
+
+    public function getUpload(string $uploadId): ?array
+    {
+        return null;
+    }
+
+    public function getAsset(string $assetId): ?array
+    {
+        return null;
+    }
 }

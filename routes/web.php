@@ -227,6 +227,7 @@ Route::middleware('auth')->group(function () {
         Route::post('sections/{section}/lessons', [CurriculumController::class, 'storeLesson'])->name('sections.lessons.store');
         Route::delete('lessons/{lesson}', [CurriculumController::class, 'destroyLesson'])->name('lessons.destroy');
         Route::post('courses/{course}/lessons/{lesson}/video-upload', [LessonVideoUploadController::class, 'createUploadSession'])->name('lessons.video-upload');
+        Route::post('courses/{course}/lessons/{lesson}/video-sync', [LessonVideoUploadController::class, 'syncUploadStatus'])->name('lessons.video-sync');
 
         // Assignment Management
         Route::get('courses/{course}/assignments', [AssignmentManagementController::class, 'index'])->name('courses.assignments.index');

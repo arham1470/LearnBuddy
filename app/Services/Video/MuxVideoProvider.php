@@ -248,4 +248,38 @@ class MuxVideoProvider implements VideoProviderInterface
     {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
+
+    public function getUpload(string $uploadId): ?array
+    {
+        if (! $this->isConfigured()) {
+            throw VideoProviderException::notConfigured($this->getProviderName());
+        }
+
+        $response = Http::withBasicAuth($this->tokenId, $this->tokenSecret)
+            ->acceptJson()
+            ->get("{$this->baseUrl}/video/v1/uploads/{$uploadId}");
+
+        if (! $response->successful()) {
+            return null;
+        }
+
+        return $response->json('data');
+    }
+
+    public function getAsset(string $assetId): ?array
+    {
+        if (! $this->isConfigured()) {
+            throw VideoProviderException::notConfigured($this->getProviderName());
+        }
+
+        $response = Http::withBasicAuth($this->tokenId, $this->tokenSecret)
+            ->acceptJson()
+            ->get("{$this->baseUrl}/video/v1/assets/{$assetId}");
+
+        if (! $response->successful()) {
+            return null;
+        }
+
+        return $response->json('data');
+    }
 }

@@ -46,4 +46,18 @@ interface VideoProviderInterface
      * @return array<string, mixed>
      */
     public function parseWebhookEvent(string $rawPayload): array;
+
+    /**
+     * Fetch direct upload session details by upload ID.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getUpload(string $uploadId): ?array;
+
+    /**
+     * Fetch asset details by asset ID.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getAsset(string $assetId): ?array;
 }

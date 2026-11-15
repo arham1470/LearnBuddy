@@ -1,9 +1,6 @@
 
 
-[DONE] http://127.0.0.1:8000/management/courses/3 here delete lesson need delete dailog pop up instead of traditional
-
-
-need to do real video upload
+[DONE] need to do real video upload (Mux direct browser-to-cloud upload with live progress bar, auto-sync & signed HLS streaming)
 
 http://127.0.0.1:8000/courses here need check serach bar and course card and automatic serach when type
 
@@ -21,7 +18,7 @@ here need to check scrollbar below the video player
 check lesson note writte for that lesson or whole
 
 
-need to check how video upload and work here
+[DONE] need to check how video upload and work here (Mux architecture with token signing, student watermarking, and local sync completed)
 
 
 check asssignment upload work pdf or any file formet then how it come to instrcuter

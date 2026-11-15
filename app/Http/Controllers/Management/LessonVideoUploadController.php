@@ -51,4 +51,28 @@ class LessonVideoUploadController extends Controller
             ], 502);
         }
     }
+
+    /**
+     * Poll and synchronize the latest video encoding status directly from the video provider.
+     */
+    public function syncUploadStatus(Request $request, Course $course, Lesson $lesson, VideoService $videoService): JsonResponse
+    {
+        Gate::authorize('uploadVideo', $course);
+
+        // Strict hierarchy check
+        $lesson->loadMissing('section');
+        if (! $lesson->section || (int) $lesson->section->course_id !== (int) $course->id) {
+            abort(404, 'The requested lesson does not belong to this course.');
+        }
+
+        $result = $videoService->syncLessonVideoStatus($lesson);
+
+        return response()->json([
+            'success' => true,
+            'status' => $result['status'],
+            'message' => $result['message'],
+            'duration_minutes' => $result['duration_minutes'],
+            'playback_id' => $result['playback_id'] ?? null,
+        ]);
+    }
 }

@@ -189,4 +189,107 @@ class VideoService
                 break;
         }
     }
+
+    /**
+     * Poll and synchronize the latest video encoding status directly from the video provider.
+     *
+     * @return array{status: string, message: string, duration_minutes: ?int, playback_id: ?string}
+     */
+    public function syncLessonVideoStatus(Lesson $lesson): array
+    {
+        if (! $this->provider->isConfigured()) {
+            return [
+                'status' => 'unconfigured',
+                'message' => 'Video streaming provider credentials (Mux) are not configured.',
+                'duration_minutes' => $lesson->duration_minutes,
+                'playback_id' => $lesson->video_playback_id,
+            ];
+        }
+
+        // 1. If we have an upload_id but no asset_id yet, query the direct upload endpoint
+        if (empty($lesson->video_asset_id) && ! empty($lesson->video_upload_id)) {
+            $uploadData = $this->provider->getUpload($lesson->video_upload_id);
+            if ($uploadData && ! empty($uploadData['asset_id'])) {
+                $lesson->update([
+                    'video_asset_id' => $uploadData['asset_id'],
+                    'video_status' => 'processing',
+                ]);
+            } elseif ($uploadData && ($uploadData['status'] ?? '') === 'errored') {
+                $lesson->update([
+                    'video_status' => 'errored',
+                    'video_error_message' => $uploadData['error']['message'] ?? 'Direct upload encountered an error on Mux.',
+                ]);
+            }
+        }
+
+        // 2. If we have an asset_id, query the asset details directly
+        if (! empty($lesson->video_asset_id)) {
+            $assetData = $this->provider->getAsset($lesson->video_asset_id);
+            if ($assetData) {
+                $status = $assetData['status'] ?? 'unknown';
+
+                if ($status === 'ready') {
+                    $playbackId = null;
+                    if (! empty($assetData['playback_ids']) && is_array($assetData['playback_ids'])) {
+                        $signed = collect($assetData['playback_ids'])->firstWhere('policy', 'signed');
+                        $playbackId = $signed['id'] ?? ($assetData['playback_ids'][0]['id'] ?? null);
+                    }
+
+                    $durationSeconds = isset($assetData['duration']) ? (float) $assetData['duration'] : null;
+                    $durationMinutes = $durationSeconds ? (int) ceil($durationSeconds / 60) : $lesson->duration_minutes;
+
+                    $lesson->update([
+                        'video_playback_id' => $playbackId ?? $lesson->video_playback_id,
+                        'video_status' => 'ready',
+                        'video_aspect_ratio' => $assetData['aspect_ratio'] ?? $lesson->video_aspect_ratio,
+                        'duration_minutes' => $durationMinutes ?: $lesson->duration_minutes,
+                        'video_error_message' => null,
+                    ]);
+
+                    return [
+                        'status' => 'ready',
+                        'message' => 'Video is encoded and ready for secure streaming.',
+                        'duration_minutes' => $lesson->duration_minutes,
+                        'playback_id' => $lesson->video_playback_id,
+                    ];
+                }
+
+                if ($status === 'errored') {
+                    $errorMsg = 'Asset encoding failed on Mux.';
+                    if (! empty($assetData['errors']['messages']) && is_array($assetData['errors']['messages'])) {
+                        $errorMsg = implode('; ', $assetData['errors']['messages']);
+                    }
+
+                    $lesson->update([
+                        'video_status' => 'errored',
+                        'video_error_message' => $errorMsg,
+                    ]);
+
+                    return [
+                        'status' => 'errored',
+                        'message' => $errorMsg,
+                        'duration_minutes' => $lesson->duration_minutes,
+                        'playback_id' => $lesson->video_playback_id,
+                    ];
+                }
+
+                // Still preparing
+                $lesson->update(['video_status' => 'processing']);
+
+                return [
+                    'status' => 'processing',
+                    'message' => 'Video is currently being encoded and optimized by Mux streaming servers.',
+                    'duration_minutes' => $lesson->duration_minutes,
+                    'playback_id' => $lesson->video_playback_id,
+                ];
+            }
+        }
+
+        return [
+            'status' => $lesson->video_status ?? 'none',
+            'message' => $lesson->video_error_message ?? 'No video upload session started yet.',
+            'duration_minutes' => $lesson->duration_minutes,
+            'playback_id' => $lesson->video_playback_id,
+        ];
+    }
 }
