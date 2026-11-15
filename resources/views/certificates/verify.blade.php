@@ -16,23 +16,34 @@
 
             <!-- SEARCH FORM -->
             <form action="{{ route('certificates.search') }}" method="GET" class="pt-4 max-w-lg mx-auto">
-                <div class="relative flex items-center shadow-md rounded-2xl overflow-hidden bg-white border border-neutral-200 focus-within:border-lb-orange focus-within:ring-2 focus-within:ring-orange-200 transition">
-                    <span class="pl-4 text-neutral-400">
-                        <i class="fas fa-search"></i>
-                    </span>
-                    <input
-                        type="text"
-                        name="code"
-                        value="{{ $lookupQuery ?? '' }}"
-                        placeholder="e.g. LB-CERT-2026-XXXXXXXX"
-                        required
-                        class="w-full px-3 py-3.5 text-xs sm:text-sm font-mono text-neutral-800 placeholder-neutral-400 border-0 focus:outline-none focus:ring-0"
-                    >
+                <div class="relative flex items-center bg-white p-1.5 sm:p-2 rounded-2xl shadow-lb-sm border border-neutral-200/90 focus-within:border-lb-orange focus-within:ring-2 focus-within:ring-orange-200/60 transition-all duration-200">
+                    <div class="relative flex-1 min-w-0">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 sm:pl-4 flex items-center pointer-events-none text-neutral-400">
+                            <i class="fas fa-search text-xs sm:text-sm" aria-hidden="true"></i>
+                        </div>
+                        <input
+                            type="text"
+                            name="code"
+                            value="{{ $lookupQuery ?? '' }}"
+                            placeholder="e.g. LB-CERT-2026-XXXXXXXX"
+                            required
+                            class="w-full bg-transparent border-0 text-xs sm:text-sm font-mono text-neutral-800 placeholder-neutral-400 py-2 sm:py-2.5 pl-10 sm:pl-11 pr-8 focus:outline-none focus:ring-0 focus-visible:outline-none !border-0 !outline-none !ring-0"
+                            style="border: none !important; outline: none !important; box-shadow: none !important;"
+                        >
+                        @if (!empty($lookupQuery))
+                            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center">
+                                <a href="{{ route('certificates.search') }}" class="text-neutral-400 hover:text-neutral-700 text-xs p-1 rounded-full transition" title="Clear search">
+                                    <i class="fas fa-times-circle"></i>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
                     <button
                         type="submit"
-                        class="px-5 py-3.5 bg-lb-orange hover:bg-orange-600 text-white text-xs sm:text-sm font-bold transition shrink-0"
+                        class="px-5 sm:px-6 py-2.5 bg-lb-orange hover:bg-lb-orange-hover active:bg-orange-700 text-white text-xs sm:text-sm font-bold rounded-xl transition duration-150 shrink-0 cursor-pointer shadow-xs flex items-center gap-2"
                     >
-                        Verify Now
+                        <i class="fas fa-shield-alt text-xs hidden sm:inline" aria-hidden="true"></i>
+                        <span>Verify Now</span>
                     </button>
                 </div>
                 <p class="text-[11px] text-neutral-500 mt-2">

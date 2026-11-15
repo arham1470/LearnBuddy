@@ -1,23 +1,132 @@
 <x-layouts.public :title="'Official Certificate: ' . $certificate->course->title . ' · LearnBuddy'">
-    <!-- PRINT STYLES -->
+    <!-- PRINT STYLES (A4 LANDSCAPE SPECIFICATION) -->
     <style>
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
         @media print {
-            header, footer, nav, .no-print {
-                display: none !important;
+            *, *::before, *::after {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                box-sizing: border-box !important;
             }
+
+            /* Completely hide all website chrome */
+            header,
+            footer,
+            nav,
+            aside,
+            .no-print,
+            [role="alert"],
+            [aria-label="Skip to main content"],
+            #search-modal,
+            #confirm-dialog,
+            a[href="#main-content"] {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            html,
             body {
-                background: #ffffff !important;
+                width: 297mm !important;
+                height: 210mm !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                background: #ffffff !important;
+                overflow: hidden !important;
+                font-size: 11pt !important;
             }
-            .certificate-container {
-                border: 4px double #18181b !important;
-                box-shadow: none !important;
-                margin: 0 auto !important;
+
+            main#main-content {
+                width: 297mm !important;
+                height: 210mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
+                background: #ffffff !important;
+            }
+
+            .certificate-canvas-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: #ffffff !important;
+                min-height: 210mm !important;
+                height: 210mm !important;
+                width: 297mm !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .cert-outer-wrapper {
                 width: 100% !important;
                 max-width: 100% !important;
-                page-break-inside: avoid;
-                padding: 2.5rem !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .certificate-container {
+                width: 283mm !important;
+                height: 196mm !important;
+                max-width: 283mm !important;
+                max-height: 196mm !important;
+                margin: 7mm auto !important;
+                padding: 6mm 12mm !important;
+                border: 4px double #18181b !important;
+                outline: 1.5px solid #d97706 !important;
+                outline-offset: -5px !important;
+                border-radius: 4px !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+            }
+
+            /* Compact vertical rhythm for A4 print */
+            .cert-content {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                height: 100% !important;
+                gap: 0 !important;
+            }
+
+            .cert-header {
+                margin-bottom: 2mm !important;
+            }
+
+            .cert-recipient {
+                margin-top: 1.5mm !important;
+                margin-bottom: 1.5mm !important;
+            }
+
+            .cert-course {
+                margin-top: 1.5mm !important;
+                margin-bottom: 1.5mm !important;
+            }
+
+            .cert-meta {
+                margin-top: 1.5mm !important;
+                margin-bottom: 1.5mm !important;
+            }
+
+            .cert-signatures {
+                padding-top: 3mm !important;
+                margin-top: 2mm !important;
+            }
+
+            .cert-footer {
+                padding-top: 2mm !important;
+                margin-top: 1.5mm !important;
             }
         }
     </style>
@@ -96,8 +205,8 @@
     @endif
 
     <!-- MAIN CERTIFICATE CANVAS SECTION -->
-    <section class="py-8 sm:py-16 bg-neutral-100 min-h-[800px] flex items-center justify-center">
-        <div class="max-w-[1050px] w-full mx-auto px-4 sm:px-6">
+    <section class="certificate-canvas-wrapper py-8 sm:py-16 bg-neutral-100 min-h-[800px] flex items-center justify-center">
+        <div class="cert-outer-wrapper max-w-[1050px] w-full mx-auto px-4 sm:px-6">
 
             <!-- CERTIFICATE CARD -->
             <div class="certificate-container relative bg-white rounded-3xl sm:rounded-[36px] shadow-2xl border-8 border-neutral-900 p-6 sm:p-14 overflow-hidden text-neutral-800">
@@ -125,10 +234,10 @@
                     </div>
                 @endif
 
-                <div class="relative z-10 space-y-8 sm:space-y-10 text-center">
+                <div class="cert-content relative z-10 space-y-8 sm:space-y-10 text-center flex-1 flex flex-col justify-between">
 
                     <!-- 1. INSTITUTION LOGO & HEADER -->
-                    <div class="space-y-3">
+                    <div class="cert-header space-y-3">
                         <div class="inline-flex items-center gap-3">
                             <div class="w-12 h-12 rounded-2xl bg-lb-orange text-white flex items-center justify-center text-2xl shadow-md">
                                 <i class="fas fa-graduation-cap"></i>
@@ -154,7 +263,7 @@
                     </div>
 
                     <!-- 2. RECIPIENT SECTION -->
-                    <div class="space-y-3 max-w-2xl mx-auto">
+                    <div class="cert-recipient space-y-3 max-w-2xl mx-auto">
                         <p class="text-xs sm:text-sm text-neutral-500 italic font-serif">
                             This is officially awarded and accredited to
                         </p>
@@ -171,7 +280,7 @@
                     </div>
 
                     <!-- 3. COURSE TITLE -->
-                    <div class="py-2 max-w-2xl mx-auto">
+                    <div class="cert-course py-2 max-w-2xl mx-auto">
                         <h3 class="text-2xl sm:text-3xl font-extrabold text-lb-orange tracking-tight">
                             {{ $certificate->course->title }}
                         </h3>
@@ -183,7 +292,7 @@
                     </div>
 
                     <!-- 4. ACADEMIC PERFORMANCE (IF APPLICABLE) -->
-                    <div class="flex items-center justify-center gap-6 text-xs text-neutral-600">
+                    <div class="cert-meta flex items-center justify-center gap-6 text-xs text-neutral-600">
                         @if ($certificate->final_grade)
                             <div>
                                 <span class="text-neutral-400 block text-[10px] uppercase font-bold tracking-wider">Overall Grade</span>
@@ -207,7 +316,7 @@
                     </div>
 
                     <!-- 5. SIGNATURES & VERIFICATION SEAL -->
-                    <div class="pt-8 sm:pt-12 grid grid-cols-1 sm:grid-cols-3 items-end gap-6 border-t border-neutral-200">
+                    <div class="cert-signatures pt-6 sm:pt-10 grid grid-cols-1 sm:grid-cols-3 items-end gap-6 border-t border-neutral-200">
                         <!-- Instructor Signature -->
                         <div class="text-center sm:text-left space-y-1">
                             <div class="font-serif italic text-lg sm:text-xl text-neutral-800 font-bold tracking-wider">
@@ -221,8 +330,8 @@
 
                         <!-- Central Verified Seal -->
                         <div class="flex justify-center">
-                            <div class="relative w-24 h-24 rounded-full border-4 border-amber-500 bg-amber-50/60 flex flex-col items-center justify-center text-amber-700 shadow-inner">
-                                <i class="fas fa-certificate text-3xl"></i>
+                            <div class="relative w-22 h-22 sm:w-24 sm:h-24 rounded-full border-4 border-amber-500 bg-amber-50/70 flex flex-col items-center justify-center text-amber-700 shadow-inner">
+                                <i class="fas fa-certificate text-2xl sm:text-3xl text-amber-600"></i>
                                 <span class="text-[7px] font-black uppercase tracking-widest mt-1 text-center leading-tight">
                                     LearnBuddy<br>Verified
                                 </span>
@@ -242,7 +351,7 @@
                     </div>
 
                     <!-- 6. FOOTER SECURITY & VERIFICATION CREDENTIALS -->
-                    <div class="pt-6 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-neutral-500">
+                    <div class="cert-footer pt-4 sm:pt-6 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-neutral-500">
                         <div class="text-left font-mono space-y-0.5">
                             <div>Credential ID: <strong class="text-neutral-800">{{ $certificate->certificate_code }}</strong></div>
                             <div class="text-[10px] text-neutral-400">Security Hash: {{ substr($certificate->verification_hash, 0, 20) }}...</div>
