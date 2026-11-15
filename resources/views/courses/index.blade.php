@@ -438,143 +438,297 @@
                     :class="{ 'fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-sm flex justify-start': mobileFiltersOpen, 'hidden lg:block': !mobileFiltersOpen }"
                 >
                     <div
-                        class="bg-white rounded-3xl border border-neutral-200/80 shadow-lb-sm p-6 space-y-6 w-full lg:w-auto max-w-sm lg:max-w-none overflow-y-auto max-h-[90vh] lg:max-h-none"
+                        class="bg-white rounded-3xl border border-neutral-200/80 shadow-lb-sm p-5 space-y-5 w-full lg:w-auto max-w-sm lg:max-w-none overflow-y-auto max-h-[90vh] lg:max-h-none lg:sticky lg:top-24"
                         @click.outside="mobileFiltersOpen = false"
                     >
-                        <div class="flex items-center justify-between pb-4 border-b border-neutral-100">
-                            <h2 class="text-sm font-bold text-neutral-900 flex items-center gap-2">
-                                <i class="fas fa-filter text-lb-orange text-xs" aria-hidden="true"></i>
-                                <span>Filter By</span>
-                            </h2>
+                        <!-- Header -->
+                        <div class="flex items-center justify-between pb-3.5 border-b border-neutral-100 gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-7 h-7 rounded-lg bg-orange-50 border border-orange-100 text-lb-orange flex items-center justify-center shrink-0 shadow-xs">
+                                    <i class="fas fa-sliders text-[11px]" aria-hidden="true"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <h2 class="text-xs sm:text-[13px] font-bold text-neutral-900 leading-tight whitespace-nowrap">Filter Courses</h2>
+                                    <p class="text-[10px] text-neutral-400 truncate">Refine catalogue</p>
+                                </div>
+                            </div>
 
-                            @if ($activeFiltersCount > 0)
-                                <a href="{{ route('courses.index') }}" class="text-[11px] font-semibold text-rose-600 hover:underline">
-                                    Reset
-                                </a>
-                            @endif
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                @if ($activeFiltersCount > 0)
+                                    <a
+                                        href="{{ route('courses.index') }}"
+                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors shrink-0"
+                                        title="Clear all filters"
+                                    >
+                                        <i class="fas fa-rotate-left text-[9px]"></i>
+                                        <span>Reset</span>
+                                        <span class="w-3.5 h-3.5 rounded-full bg-rose-200/70 text-[9px] flex items-center justify-center ml-0.5">{{ $activeFiltersCount }}</span>
+                                    </a>
+                                @endif
 
-                            <button
-                                type="button"
-                                @click="mobileFiltersOpen = false"
-                                class="lg:hidden p-1 text-neutral-400 hover:text-neutral-700"
-                                aria-label="Close filters"
-                            >
-                                <i class="fas fa-times text-sm"></i>
-                            </button>
+                                <button
+                                    type="button"
+                                    @click="mobileFiltersOpen = false"
+                                    class="lg:hidden w-7 h-7 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-neutral-800 flex items-center justify-center transition-colors shrink-0"
+                                    aria-label="Close filters"
+                                >
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
                         </div>
 
-                        <form action="{{ route('courses.index') }}" method="GET" class="space-y-6">
+                        <form action="{{ route('courses.index') }}" method="GET" class="space-y-5">
                             @if (request('q')) <input type="hidden" name="q" value="{{ request('q') }}"> @endif
                             @if (request('sort')) <input type="hidden" name="sort" value="{{ request('sort') }}"> @endif
 
                             <!-- Category Filter -->
-                            <div class="space-y-2.5">
-                                <span class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">Category</span>
-                                <div class="space-y-1.5">
-                                    <label class="flex items-center justify-between text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <div class="flex items-center gap-2">
-                                            <input type="radio" name="category" value="" {{ !request('category') ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                            <span>All Categories</span>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fas fa-shapes text-neutral-400 text-xs"></i>
+                                        <span>Category</span>
+                                    </span>
+                                    @if (request('category'))
+                                        <label class="text-[10px] font-semibold text-lb-orange hover:underline cursor-pointer">
+                                            <input type="radio" name="category" value="" onchange="this.form.submit()" class="sr-only">
+                                            Clear
+                                        </label>
+                                    @endif
+                                </div>
+                                <div class="space-y-1 max-h-56 overflow-y-auto pr-1">
+                                    <label class="group flex items-center justify-between px-3 py-2 rounded-xl text-xs cursor-pointer transition-all duration-150 border {{ !request('category') ? 'bg-orange-50/80 border-orange-200/80 text-lb-orange font-bold shadow-xs' : 'border-transparent text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 font-medium' }}">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <input type="radio" name="category" value="" {{ !request('category') ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                            <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-xs {{ !request('category') ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500 group-hover:bg-neutral-200/60' }}">
+                                                <i class="fas fa-th-large text-[10px]"></i>
+                                            </span>
+                                            <span class="truncate">All Categories</span>
                                         </div>
+                                        @if (!request('category'))
+                                            <i class="fas fa-check text-[10px] text-lb-orange shrink-0"></i>
+                                        @endif
                                     </label>
                                     @foreach ($categories as $cat)
-                                        <label class="flex items-center justify-between text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                            <div class="flex items-center gap-2">
+                                        @php $isSelected = request('category') === $cat->slug; @endphp
+                                        <label class="group flex items-center justify-between px-3 py-2 rounded-xl text-xs cursor-pointer transition-all duration-150 border {{ $isSelected ? 'bg-orange-50/80 border-orange-200/80 text-lb-orange font-bold shadow-xs' : 'border-transparent text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 font-medium' }}">
+                                            <div class="flex items-center gap-2.5 min-w-0">
                                                 <input
                                                     type="radio"
                                                     name="category"
                                                     value="{{ $cat->slug }}"
-                                                    {{ request('category') === $cat->slug ? 'checked' : '' }}
+                                                    {{ $isSelected ? 'checked' : '' }}
                                                     onchange="this.form.submit()"
-                                                    class="text-lb-orange focus:ring-lb-orange"
+                                                    class="sr-only"
                                                 >
-                                                <span>{{ $cat->name }}</span>
+                                                <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-xs {{ $isSelected ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500 group-hover:bg-neutral-200/60' }}">
+                                                    <i class="fas fa-folder text-[10px]"></i>
+                                                </span>
+                                                <span class="truncate">{{ $cat->name }}</span>
                                             </div>
-                                            <span class="text-[11px] font-semibold text-neutral-400">({{ $cat->published_courses_count }})</span>
+                                            <div class="flex items-center gap-1.5 shrink-0 ml-2">
+                                                <span class="px-1.5 py-0.5 rounded-md text-[10px] font-semibold {{ $isSelected ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-400 group-hover:text-neutral-600' }}">
+                                                    {{ $cat->published_courses_count }}
+                                                </span>
+                                                @if ($isSelected)
+                                                    <i class="fas fa-check text-[10px] text-lb-orange"></i>
+                                                @endif
+                                            </div>
                                         </label>
                                     @endforeach
                                 </div>
                             </div>
 
                             <!-- Delivery Mode Filter -->
-                            <div class="pt-4 border-t border-neutral-100 space-y-2.5">
-                                <span class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">Delivery Mode</span>
+                            <div class="pt-5 border-t border-neutral-100 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fas fa-chalkboard-user text-neutral-400 text-xs"></i>
+                                        <span>Delivery Mode</span>
+                                    </span>
+                                    @if (request('delivery_mode'))
+                                        <label class="text-[10px] font-semibold text-lb-orange hover:underline cursor-pointer">
+                                            <input type="radio" name="delivery_mode" value="" onchange="this.form.submit()" class="sr-only">
+                                            Clear
+                                        </label>
+                                    @endif
+                                </div>
                                 <div class="space-y-1.5">
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="delivery_mode" value="" {{ !request('delivery_mode') ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>All Delivery Modes</span>
+                                    <label class="flex items-center gap-3 p-2.5 rounded-2xl border cursor-pointer transition-all duration-150 {{ !request('delivery_mode') ? 'bg-orange-50/80 border-orange-200/90 text-lb-orange font-bold shadow-xs' : 'border-neutral-200/70 hover:border-neutral-300 hover:bg-neutral-50/60 text-neutral-700 font-medium' }}">
+                                        <input type="radio" name="delivery_mode" value="" {{ !request('delivery_mode') ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                        <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 {{ !request('delivery_mode') ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500' }}">
+                                            <i class="fas fa-layer-group text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-xs leading-tight">All Delivery Modes</div>
+                                            <div class="text-[10px] {{ !request('delivery_mode') ? 'text-lb-orange/80' : 'text-neutral-400' }} font-normal truncate">Online & Classroom</div>
+                                        </div>
+                                        @if (!request('delivery_mode'))
+                                            <i class="fas fa-circle-check text-xs text-lb-orange shrink-0"></i>
+                                        @endif
                                     </label>
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="delivery_mode" value="online" {{ request('delivery_mode') === 'online' ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>Online Self-Paced</span>
+
+                                    <label class="flex items-center gap-3 p-2.5 rounded-2xl border cursor-pointer transition-all duration-150 {{ request('delivery_mode') === 'online' ? 'bg-orange-50/80 border-orange-200/90 text-lb-orange font-bold shadow-xs' : 'border-neutral-200/70 hover:border-neutral-300 hover:bg-neutral-50/60 text-neutral-700 font-medium' }}">
+                                        <input type="radio" name="delivery_mode" value="online" {{ request('delivery_mode') === 'online' ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                        <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 {{ request('delivery_mode') === 'online' ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500' }}">
+                                            <i class="fas fa-laptop-code text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-xs leading-tight">Online Self-Paced</div>
+                                            <div class="text-[10px] {{ request('delivery_mode') === 'online' ? 'text-lb-orange/80' : 'text-neutral-400' }} font-normal truncate">Recorded video & tasks</div>
+                                        </div>
+                                        @if (request('delivery_mode') === 'online')
+                                            <i class="fas fa-circle-check text-xs text-lb-orange shrink-0"></i>
+                                        @endif
                                     </label>
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="delivery_mode" value="physical" {{ request('delivery_mode') === 'physical' ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>Physical Classroom Batch</span>
+
+                                    <label class="flex items-center gap-3 p-2.5 rounded-2xl border cursor-pointer transition-all duration-150 {{ request('delivery_mode') === 'physical' ? 'bg-orange-50/80 border-orange-200/90 text-lb-orange font-bold shadow-xs' : 'border-neutral-200/70 hover:border-neutral-300 hover:bg-neutral-50/60 text-neutral-700 font-medium' }}">
+                                        <input type="radio" name="delivery_mode" value="physical" {{ request('delivery_mode') === 'physical' ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                        <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 {{ request('delivery_mode') === 'physical' ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500' }}">
+                                            <i class="fas fa-building-columns text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-xs leading-tight">Physical Classroom</div>
+                                            <div class="text-[10px] {{ request('delivery_mode') === 'physical' ? 'text-lb-orange/80' : 'text-neutral-400' }} font-normal truncate">In-person mentor labs</div>
+                                        </div>
+                                        @if (request('delivery_mode') === 'physical')
+                                            <i class="fas fa-circle-check text-xs text-lb-orange shrink-0"></i>
+                                        @endif
                                     </label>
                                 </div>
                             </div>
 
                             <!-- Price Filter -->
-                            <div class="pt-4 border-t border-neutral-100 space-y-2.5">
-                                <span class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">Tuition Price</span>
+                            <div class="pt-5 border-t border-neutral-100 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fas fa-tag text-neutral-400 text-xs"></i>
+                                        <span>Tuition Price</span>
+                                    </span>
+                                    @if (request('price'))
+                                        <label class="text-[10px] font-semibold text-lb-orange hover:underline cursor-pointer">
+                                            <input type="radio" name="price" value="" onchange="this.form.submit()" class="sr-only">
+                                            Clear
+                                        </label>
+                                    @endif
+                                </div>
+                                <div class="grid grid-cols-3 gap-1.5 p-1 bg-neutral-100/80 rounded-2xl border border-neutral-200/60">
+                                    <label class="relative flex flex-col items-center justify-center py-2 px-1 text-center cursor-pointer rounded-xl transition-all duration-150 {{ !request('price') ? 'bg-white text-lb-orange font-bold shadow-xs' : 'text-neutral-600 hover:text-neutral-900 font-medium' }}">
+                                        <input type="radio" name="price" value="" {{ !request('price') ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                        <i class="fas fa-tags text-xs mb-1 {{ !request('price') ? 'text-lb-orange' : 'text-neutral-400' }}"></i>
+                                        <span class="text-[11px] leading-none">All</span>
+                                    </label>
+                                    <label class="relative flex flex-col items-center justify-center py-2 px-1 text-center cursor-pointer rounded-xl transition-all duration-150 {{ request('price') === 'free' ? 'bg-white text-emerald-600 font-bold shadow-xs' : 'text-neutral-600 hover:text-neutral-900 font-medium' }}">
+                                        <input type="radio" name="price" value="free" {{ request('price') === 'free' ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                        <i class="fas fa-gift text-xs mb-1 {{ request('price') === 'free' ? 'text-emerald-500' : 'text-neutral-400' }}"></i>
+                                        <span class="text-[11px] leading-none">Free</span>
+                                    </label>
+                                    <label class="relative flex flex-col items-center justify-center py-2 px-1 text-center cursor-pointer rounded-xl transition-all duration-150 {{ request('price') === 'paid' ? 'bg-white text-lb-orange font-bold shadow-xs' : 'text-neutral-600 hover:text-neutral-900 font-medium' }}">
+                                        <input type="radio" name="price" value="paid" {{ request('price') === 'paid' ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                        <i class="fas fa-wallet text-xs mb-1 {{ request('price') === 'paid' ? 'text-lb-orange' : 'text-neutral-400' }}"></i>
+                                        <span class="text-[11px] leading-none">Paid</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Difficulty Level Filter -->
+                            <div class="pt-5 border-t border-neutral-100 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fas fa-signal text-neutral-400 text-xs"></i>
+                                        <span>Difficulty Level</span>
+                                    </span>
+                                    @if (request('difficulty'))
+                                        <label class="text-[10px] font-semibold text-lb-orange hover:underline cursor-pointer">
+                                            <input type="radio" name="difficulty" value="" onchange="this.form.submit()" class="sr-only">
+                                            Clear
+                                        </label>
+                                    @endif
+                                </div>
                                 <div class="space-y-1.5">
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="price" value="" {{ !request('price') ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>All Prices</span>
+                                    <label class="flex items-center justify-between px-3 py-2 rounded-xl border text-xs cursor-pointer transition-all duration-150 {{ !request('difficulty') ? 'bg-orange-50/80 border-orange-200 text-lb-orange font-bold shadow-xs' : 'border-neutral-200/70 hover:border-neutral-300 hover:bg-neutral-50/60 text-neutral-700 font-medium' }}">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <input type="radio" name="difficulty" value="" {{ !request('difficulty') ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                            <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-xs {{ !request('difficulty') ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500' }}">
+                                                <i class="fas fa-bars-staggered text-[11px]"></i>
+                                            </span>
+                                            <span class="leading-tight">All Levels</span>
+                                        </div>
+                                        @if (!request('difficulty'))
+                                            <i class="fas fa-check text-[10px] text-lb-orange shrink-0 ml-2"></i>
+                                        @endif
                                     </label>
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="price" value="free" {{ request('price') === 'free' ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>Free Courses</span>
+
+                                    <label class="flex items-center justify-between px-3 py-2 rounded-xl border text-xs cursor-pointer transition-all duration-150 {{ request('difficulty') === 'beginner' ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold shadow-xs' : 'border-neutral-200/70 hover:border-neutral-300 hover:bg-neutral-50/60 text-neutral-700 font-medium' }}">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <input type="radio" name="difficulty" value="beginner" {{ request('difficulty') === 'beginner' ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                            <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-xs {{ request('difficulty') === 'beginner' ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-500' }}">
+                                                <i class="fas fa-seedling text-[11px]"></i>
+                                            </span>
+                                            <span class="leading-tight">Beginner</span>
+                                        </div>
+                                        @if (request('difficulty') === 'beginner')
+                                            <i class="fas fa-check text-[10px] text-emerald-600 shrink-0 ml-2"></i>
+                                        @endif
                                     </label>
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="price" value="paid" {{ request('price') === 'paid' ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>Paid (LKR)</span>
+
+                                    <label class="flex items-center justify-between px-3 py-2 rounded-xl border text-xs cursor-pointer transition-all duration-150 {{ request('difficulty') === 'intermediate' ? 'bg-sky-50 border-sky-200 text-sky-800 font-bold shadow-xs' : 'border-neutral-200/70 hover:border-neutral-300 hover:bg-neutral-50/60 text-neutral-700 font-medium' }}">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <input type="radio" name="difficulty" value="intermediate" {{ request('difficulty') === 'intermediate' ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                            <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-xs {{ request('difficulty') === 'intermediate' ? 'bg-sky-100 text-sky-700' : 'bg-neutral-100 text-neutral-500' }}">
+                                                <i class="fas fa-chart-line text-[11px]"></i>
+                                            </span>
+                                            <span class="leading-tight">Intermediate</span>
+                                        </div>
+                                        @if (request('difficulty') === 'intermediate')
+                                            <i class="fas fa-check text-[10px] text-sky-600 shrink-0 ml-2"></i>
+                                        @endif
+                                    </label>
+
+                                    <label class="flex items-center justify-between px-3 py-2 rounded-xl border text-xs cursor-pointer transition-all duration-150 {{ request('difficulty') === 'advanced' ? 'bg-purple-50 border-purple-200 text-purple-800 font-bold shadow-xs' : 'border-neutral-200/70 hover:border-neutral-300 hover:bg-neutral-50/60 text-neutral-700 font-medium' }}">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <input type="radio" name="difficulty" value="advanced" {{ request('difficulty') === 'advanced' ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                            <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-xs {{ request('difficulty') === 'advanced' ? 'bg-purple-100 text-purple-700' : 'bg-neutral-100 text-neutral-500' }}">
+                                                <i class="fas fa-fire text-[11px]"></i>
+                                            </span>
+                                            <span class="leading-tight">Advanced</span>
+                                        </div>
+                                        @if (request('difficulty') === 'advanced')
+                                            <i class="fas fa-check text-[10px] text-purple-600 shrink-0 ml-2"></i>
+                                        @endif
                                     </label>
                                 </div>
                             </div>
 
                             <!-- Language Filter -->
                             @if ($availableLanguages->isNotEmpty())
-                                <div class="pt-4 border-t border-neutral-100 space-y-2.5">
-                                    <span class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">Language</span>
-                                    <div class="space-y-1.5">
-                                        <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                            <input type="radio" name="language" value="" {{ !request('language') ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                            <span>All Languages</span>
+                                <div class="pt-5 border-t border-neutral-100 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                                            <i class="fas fa-language text-neutral-400 text-xs"></i>
+                                            <span>Language</span>
+                                        </span>
+                                        @if (request('language'))
+                                            <label class="text-[10px] font-semibold text-lb-orange hover:underline cursor-pointer">
+                                                <input type="radio" name="language" value="" onchange="this.form.submit()" class="sr-only">
+                                                Clear
+                                            </label>
+                                        @endif
+                                    </div>
+                                    <div class="flex flex-wrap gap-1.5">
+                                        <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs cursor-pointer transition-all duration-150 border {{ !request('language') ? 'bg-orange-50 border-orange-200 text-lb-orange font-bold shadow-xs' : 'border-neutral-200/80 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 font-medium' }}">
+                                            <input type="radio" name="language" value="" {{ !request('language') ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
+                                            <i class="fas fa-globe text-[10px] {{ !request('language') ? 'text-lb-orange' : 'text-neutral-400' }}"></i>
+                                            <span>All</span>
                                         </label>
                                         @foreach ($availableLanguages as $lang)
-                                            <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                                <input type="radio" name="language" value="{{ $lang }}" {{ request('language') === $lang ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
+                                            <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs cursor-pointer transition-all duration-150 border {{ request('language') === $lang ? 'bg-orange-50 border-orange-200 text-lb-orange font-bold shadow-xs' : 'border-neutral-200/80 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 font-medium' }}">
+                                                <input type="radio" name="language" value="{{ $lang }}" {{ request('language') === $lang ? 'checked' : '' }} onchange="this.form.submit()" class="sr-only">
                                                 <span>{{ $lang }}</span>
                                             </label>
                                         @endforeach
                                     </div>
                                 </div>
                             @endif
-
-                            <!-- Difficulty Level Filter -->
-                            <div class="pt-4 border-t border-neutral-100 space-y-2.5">
-                                <span class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">Difficulty</span>
-                                <div class="space-y-1.5">
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="difficulty" value="" {{ !request('difficulty') ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>All Levels</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="difficulty" value="beginner" {{ request('difficulty') === 'beginner' ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>Beginner</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="difficulty" value="intermediate" {{ request('difficulty') === 'intermediate' ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>Intermediate</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 text-xs text-neutral-700 hover:text-lb-orange cursor-pointer py-1">
-                                        <input type="radio" name="difficulty" value="advanced" {{ request('difficulty') === 'advanced' ? 'checked' : '' }} onchange="this.form.submit()" class="text-lb-orange focus:ring-lb-orange">
-                                        <span>Advanced</span>
-                                    </label>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </aside>
