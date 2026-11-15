@@ -126,18 +126,107 @@ body {
     display: none !important;
 }
 
-/* Scrollbar-hide utilities */
+/* ==========================================================================
+   LearnBuddy Modern Brand Custom Scrollbar System
+   ========================================================================== */
+
+/* Firefox standard */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+}
+
+/* WebKit & Chromium (Chrome, Edge, Safari, Brave, Opera) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.22);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-lb-orange, #FF5F00);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: var(--color-lb-orange-hover, #E65500);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Dark mode and dark container scrollbars */
+.bg-neutral-900,
+.bg-neutral-950,
+.bg-lb-black,
+.bg-black,
+.dark-scrollbar {
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.bg-neutral-900::-webkit-scrollbar-thumb,
+.bg-neutral-950::-webkit-scrollbar-thumb,
+.bg-lb-black::-webkit-scrollbar-thumb,
+.bg-black::-webkit-scrollbar-thumb,
+.dark-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.bg-neutral-900::-webkit-scrollbar-thumb:hover,
+.bg-neutral-950::-webkit-scrollbar-thumb:hover,
+.bg-lb-black::-webkit-scrollbar-thumb:hover,
+.bg-black::-webkit-scrollbar-thumb:hover,
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-lb-orange, #FF5F00);
+}
+
+/* Slim scrollbar utility for compact UI components (dropdowns, drawers, code blocks) */
+.scrollbar-thin {
+    scrollbar-width: thin;
+}
+.scrollbar-thin::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+/* Always-orange branded scrollbar utility */
+.scrollbar-orange {
+    scrollbar-color: var(--color-lb-orange, #FF5F00) transparent;
+}
+.scrollbar-orange::-webkit-scrollbar-thumb {
+    background-color: var(--color-lb-orange, #FF5F00);
+}
+.scrollbar-orange::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-lb-orange-hover, #E65500);
+}
+
+/* Scrollbar-hide utilities (highest specificity) */
 .scrollbar-none::-webkit-scrollbar,
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
 .scrollbar-none,
 .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none !important; /* IE and Edge */
+    scrollbar-width: none !important; /* Firefox */
 }
 
 
