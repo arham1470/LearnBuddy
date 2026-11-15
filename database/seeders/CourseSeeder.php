@@ -117,7 +117,7 @@ class CourseSeeder extends Seeder
         // Add curriculum sections & lessons
         if ($course1->sections()->doesntExist()) {
             $section1 = $course1->sections()->create([
-                'title' => 'Module 1: Architecture & Laravel Core Foundations',
+                'title' => 'Architecture & Laravel Core Foundations',
                 'description' => 'Understand the MVC lifecycle, service containers, and migration patterns.',
                 'sort_order' => 1,
                 'is_published' => true,
@@ -144,7 +144,7 @@ class CourseSeeder extends Seeder
             ]);
 
             $section2 = $course1->sections()->create([
-                'title' => 'Module 2: Authentication, Authorization & IDOR Protection',
+                'title' => 'Authentication, Authorization & IDOR Protection',
                 'description' => 'Deep dive into server-side Gates, Policies, and login throttling.',
                 'sort_order' => 2,
                 'is_published' => true,

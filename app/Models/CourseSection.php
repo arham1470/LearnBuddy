@@ -36,4 +36,13 @@ class CourseSection extends Model
     {
         return $this->hasMany(Lesson::class, 'section_id')->orderBy('sort_order');
     }
+
+    /**
+     * Get title without redundant 'Module X:' or 'Section X:' prefix.
+     */
+    public function getCleanTitleAttribute(): string
+    {
+        $clean = preg_replace('/^(?:module|section)\s*\d+\s*[:\-–—.]\s*/i', '', $this->title ?? '');
+        return trim($clean) !== '' ? trim($clean) : ($this->title ?? '');
+    }
 }

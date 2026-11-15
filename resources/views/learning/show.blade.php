@@ -351,7 +351,7 @@
                                     {{ $lesson->type ?? 'Video' }}
                                 </span>
                                 <span class="text-[11px] sm:text-xs text-neutral-300 font-medium truncate max-w-[130px] sm:max-w-none">
-                                    {{ $lesson->section->title ?? 'Section' }}
+                                    {{ $lesson->section->clean_title ?? $lesson->section->title ?? 'Section' }}
                                 </span>
                             </div>
 
@@ -698,7 +698,7 @@
                     <div>
                         <h3 class="text-lg sm:text-xl font-bold text-white mb-1.5 sm:mb-2">{{ $lesson->title }}</h3>
                         <p class="text-xs sm:text-sm text-neutral-400">
-                            Part of module: <span class="text-neutral-200 font-medium">{{ $lesson->section->title ?? 'Curriculum' }}</span>
+                            Part of module: <span class="text-neutral-200 font-medium">{{ $lesson->section->clean_title ?? $lesson->section->title ?? 'Curriculum' }}</span>
                         </p>
                     </div>
 

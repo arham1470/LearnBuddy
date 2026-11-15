@@ -5,6 +5,10 @@
     $selectedCategoryIcon = $currentCategory ? ($currentCategory->icon ?: 'fas fa-layer-group') : 'fas fa-th-large';
 @endphp
 
+<div
+    x-data
+    @keydown.window="if ((($event.ctrlKey || $event.metaKey) && $event.key.toLowerCase() === 'k')) { $event.preventDefault(); $dispatch('open-modal', 'search-modal'); }"
+>
 <x-modal name="search-modal" maxWidth="lg">
     <div class="space-y-4">
         <div class="flex items-center justify-between pb-2 border-b border-neutral-100">
@@ -168,3 +172,4 @@
         </div>
     </div>
 </x-modal>
+</div>

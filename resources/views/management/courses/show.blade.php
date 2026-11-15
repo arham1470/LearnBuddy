@@ -497,7 +497,7 @@
                                         <i class="fas" :class="open ? 'fa-chevron-down' : 'fa-chevron-right'" class="text-xs text-neutral-400"></i>
                                         <div>
                                             <span class="text-xs font-bold text-neutral-500 uppercase tracking-wider">Module {{ $index + 1 }}:</span>
-                                            <h3 class="text-sm font-bold text-neutral-900 inline ml-1">{{ $section->title }}</h3>
+                                            <h3 class="text-sm font-bold text-neutral-900 inline ml-1">{{ $section->clean_title }}</h3>
                                             @if ($section->description)
                                                 <p class="text-[11px] text-neutral-500 mt-0.5">{{ $section->description }}</p>
                                             @endif

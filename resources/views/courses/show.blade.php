@@ -268,17 +268,13 @@
                                         </ul>
                                     </div>
 
-                                    <div class="pt-3 border-t border-neutral-200/60 flex items-center justify-between gap-2">
-                                        <div>
-                                            <span class="text-xs text-neutral-500 block">Tuition Fee:</span>
-                                            <span class="text-base font-extrabold text-neutral-900">{{ $opt->formattedPrice() }}</span>
-                                        </div>
-
+                                    <div class="pt-3 border-t border-neutral-200/60">
                                         <a
                                             href="{{ route('enrollments.create', ['course' => $course, 'option_id' => $opt->id]) }}"
-                                            class="px-4 py-2 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs font-bold transition shadow-sm"
+                                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs sm:text-sm font-bold transition shadow-lb-sm hover:shadow-md cursor-pointer group"
                                         >
-                                            Select &bull; {{ $opt->formattedPrice() }}
+                                            <span>Select Option &bull; {{ $opt->formattedPrice() }}</span>
+                                            <i class="fas fa-arrow-right text-xs transition-transform group-hover:translate-x-1" aria-hidden="true"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -344,7 +340,7 @@
                     @endif
 
                     <!-- Course Curriculum & Sections Accordion -->
-                    <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-lb-sm p-6 sm:p-8 space-y-6">
+                    <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-lb-sm p-5 sm:p-7 space-y-6">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-4">
                             <div>
                                 <h2 class="text-base sm:text-lg font-bold text-neutral-900 flex items-center gap-2">
@@ -364,21 +360,25 @@
                         @else
                             <div class="space-y-3">
                                 @foreach ($course->sections as $index => $section)
+                                    @php
+                                        $cleanTitle = $section->clean_title ?? preg_replace('/^(?:module|section)\s*\d+\s*[:\-–—.]\s*/i', '', $section->title ?? '');
+                                        $cleanTitle = trim($cleanTitle) !== '' ? trim($cleanTitle) : $section->title;
+                                    @endphp
                                     <div class="border border-neutral-200 rounded-2xl overflow-hidden" x-data="{ open: {{ $index === 0 ? 'true' : 'false' }} }">
                                         <button
                                             type="button"
                                             @click="open = !open"
-                                            class="w-full bg-neutral-50 px-5 py-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-neutral-100/80 transition"
+                                            class="w-full bg-neutral-50 px-4 sm:px-5 py-3 sm:py-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-neutral-100/80 transition"
                                         >
-                                            <div class="flex items-center gap-3">
-                                                <i class="fas text-xs text-neutral-400" :class="open ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
-                                                <div>
-                                                    <span class="text-xs font-bold text-neutral-500 uppercase tracking-wider">Module {{ $index + 1 }}:</span>
-                                                    <h3 class="text-sm font-bold text-neutral-900 inline ml-1">{{ $section->title }}</h3>
+                                            <div class="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 pr-3 sm:pr-4">
+                                                <i class="fas text-xs text-neutral-400 shrink-0 transition-transform duration-200" :class="open ? 'fa-chevron-down text-lb-orange' : 'fa-chevron-right'"></i>
+                                                <div class="min-w-0 flex-1">
+                                                    <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mr-1.5 whitespace-nowrap">Module {{ $index + 1 }}:</span>
+                                                    <h3 class="text-xs sm:text-[13px] font-bold text-neutral-900 inline leading-snug">{{ $cleanTitle }}</h3>
                                                 </div>
                                             </div>
 
-                                            <div class="flex items-center gap-3 text-xs text-neutral-500">
+                                            <div class="flex items-center gap-2 sm:gap-3 text-xs text-neutral-500 shrink-0">
                                                 <span>{{ $section->lessons->count() }} Lessons</span>
                                                 <span class="hidden sm:inline">&bull;</span>
                                                 <span class="hidden sm:inline">{{ $section->lessons->sum('duration_minutes') }} min</span>

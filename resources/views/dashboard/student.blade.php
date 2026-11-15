@@ -28,30 +28,36 @@
                     </p>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex flex-wrap items-center gap-3 shrink-0">
+                    <!-- Primary Prominent Action: Explore Courses -->
                     <a
                         href="{{ route('courses.index') }}"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs font-bold transition shadow-md cursor-pointer"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-lb-orange hover:bg-lb-orange-hover text-white text-xs sm:text-sm font-bold transition shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer shrink-0"
                     >
-                        <i class="fas fa-search text-xs"></i>
+                        <i class="fas fa-compass text-xs" aria-hidden="true"></i>
                         <span>Explore Courses</span>
                     </a>
 
-                    <a
-                        href="{{ route('receipts.index') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition"
-                    >
-                        <i class="fas fa-file-invoice"></i>
-                        <span>Receipts</span>
-                    </a>
+                    <!-- Subdued Secondary Button Group: Receipts & My Profile -->
+                    <div class="inline-flex items-center p-0.5 rounded-full bg-white/5 border border-white/15 backdrop-blur-xs shrink-0">
+                        <a
+                            href="{{ route('receipts.index') }}"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium text-neutral-300 hover:text-white hover:bg-white/10 transition"
+                        >
+                            <i class="fas fa-file-invoice text-[11px] text-neutral-400" aria-hidden="true"></i>
+                            <span>Receipts</span>
+                        </a>
 
-                    <a
-                        href="{{ route('profile.show', $user) }}"
-                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition"
-                    >
-                        <i class="fas fa-user-circle"></i>
-                        <span>My Profile</span>
-                    </a>
+                        <div class="w-px h-3.5 bg-white/15 my-auto" aria-hidden="true"></div>
+
+                        <a
+                            href="{{ route('profile.show', $user) }}"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium text-neutral-300 hover:text-white hover:bg-white/10 transition"
+                        >
+                            <i class="fas fa-user-circle text-[11px] text-neutral-400" aria-hidden="true"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
