@@ -868,7 +868,15 @@
                         <!-- Preview Thumbnail -->
                         <div class="relative h-48 rounded-2xl bg-gradient-to-tr from-neutral-900 to-neutral-800 overflow-hidden shadow-sm">
                             @if ($course->thumbnail_url)
-                                <img src="{{ asset('storage/' . $course->thumbnail_url) }}" alt="{{ $course->title }}" class="w-full h-full object-cover">
+                                <img
+                                    src="{{ $course->thumbnail_url }}"
+                                    alt="{{ $course->title }}"
+                                    class="w-full h-full object-cover"
+                                    onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                                >
+                                <div class="w-full h-full items-center justify-center bg-gradient-to-tr from-orange-100 via-white to-neutral-100 hidden">
+                                    <i class="{{ $course->category?->icon ?? 'fas fa-graduation-cap' }} text-5xl text-lb-orange/40" aria-hidden="true"></i>
+                                </div>
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gradient-to-tr from-orange-100 via-white to-neutral-100">
                                     <i class="{{ $course->category?->icon ?? 'fas fa-graduation-cap' }} text-5xl text-lb-orange/40" aria-hidden="true"></i>

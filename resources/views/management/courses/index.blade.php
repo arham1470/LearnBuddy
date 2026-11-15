@@ -183,7 +183,15 @@
                                         <td class="py-4 px-4 sm:px-6">
                                             <div class="flex items-center gap-3">
                                                 @if ($course->thumbnail_url)
-                                                    <img src="{{ $course->thumbnail_url }}" alt="" class="w-12 h-12 rounded-xl object-cover shrink-0 border border-neutral-100">
+                                                    <img
+                                                        src="{{ $course->thumbnail_url }}"
+                                                        alt=""
+                                                        class="w-12 h-12 rounded-xl object-cover shrink-0 border border-neutral-100"
+                                                        onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                                                    >
+                                                    <div class="w-12 h-12 rounded-xl bg-orange-100 text-lb-orange items-center justify-center shrink-0 font-bold text-sm hidden">
+                                                        <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                                                    </div>
                                                 @else
                                                     <div class="w-12 h-12 rounded-xl bg-orange-100 text-lb-orange flex items-center justify-center shrink-0 text-base font-bold">
                                                         <i class="fas fa-graduation-cap" aria-hidden="true"></i>

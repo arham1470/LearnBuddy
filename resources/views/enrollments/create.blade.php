@@ -234,7 +234,15 @@
                             <div class="flex items-center gap-3 pb-4 border-b border-neutral-100">
                                 <div class="w-14 h-14 rounded-xl bg-neutral-100 flex items-center justify-center text-lb-orange shrink-0 overflow-hidden border border-neutral-200">
                                     @if ($course->thumbnail_url)
-                                        <img src="{{ asset('storage/' . $course->thumbnail_url) }}" alt="{{ $course->title }}" class="w-full h-full object-cover">
+                                        <img
+                                            src="{{ $course->thumbnail_url }}"
+                                            alt="{{ $course->title }}"
+                                            class="w-full h-full object-cover"
+                                            onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                                        >
+                                        <div class="w-full h-full items-center justify-center bg-gradient-to-tr from-orange-100 to-neutral-100 hidden">
+                                            <i class="fas fa-graduation-cap text-2xl text-lb-orange/40"></i>
+                                        </div>
                                     @else
                                         <i class="{{ $course->category?->icon ?? 'fas fa-graduation-cap' }} text-xl"></i>
                                     @endif

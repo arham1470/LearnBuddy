@@ -35,7 +35,15 @@
                 <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
                     <div class="flex flex-col sm:flex-row items-start gap-5">
                         @if ($course->thumbnail_url)
-                            <img src="{{ $course->thumbnail_url }}" alt="" class="w-full sm:w-44 h-32 rounded-2xl object-cover shrink-0 border border-neutral-100 shadow-sm">
+                            <img
+                                src="{{ $course->thumbnail_url }}"
+                                alt="{{ $course->title }}"
+                                class="w-full sm:w-44 h-32 rounded-2xl object-cover shrink-0 border border-neutral-100 shadow-sm"
+                                onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                            >
+                            <div class="w-full sm:w-44 h-32 rounded-2xl bg-orange-100 text-lb-orange items-center justify-center shrink-0 text-3xl font-extrabold shadow-sm hidden">
+                                <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                            </div>
                         @else
                             <div class="w-full sm:w-44 h-32 rounded-2xl bg-orange-100 text-lb-orange flex items-center justify-center shrink-0 text-3xl font-extrabold shadow-sm">
                                 <i class="fas fa-graduation-cap" aria-hidden="true"></i>

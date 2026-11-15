@@ -187,7 +187,12 @@
                         </label>
                         @if ($course->thumbnail_url)
                             <div class="mb-3 flex items-center gap-4">
-                                <img src="{{ $course->thumbnail_url }}" alt="Current thumbnail" class="w-24 h-16 rounded-xl object-cover border border-neutral-200">
+                                <img
+                                    src="{{ $course->thumbnail_url }}"
+                                    alt="Current thumbnail"
+                                    class="w-24 h-16 rounded-xl object-cover border border-neutral-200"
+                                    onerror="this.style.display='none';"
+                                >
                                 <span class="text-xs text-neutral-500">Current active thumbnail</span>
                             </div>
                         @endif

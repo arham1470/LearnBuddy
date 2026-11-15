@@ -18,11 +18,15 @@
     <a href="{{ route('courses.show', $course) }}" class="block relative h-44 sm:h-48 bg-gradient-to-tr from-neutral-900 to-neutral-800 overflow-hidden shrink-0" aria-label="{{ $course->title }}">
         @if ($course->thumbnail_url)
             <img
-                src="{{ asset('storage/' . $course->thumbnail_url) }}"
+                src="{{ $course->thumbnail_url }}"
                 alt="{{ $course->title }}"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
+                onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
             >
+            <div class="w-full h-full items-center justify-center bg-gradient-to-tr from-orange-50 via-white to-neutral-100 group-hover:scale-105 transition-transform duration-500 hidden">
+                <i class="{{ $course->category?->icon ?? 'fas fa-graduation-cap' }} text-4xl text-neutral-300 group-hover:text-lb-orange transition-colors duration-300" aria-hidden="true"></i>
+            </div>
         @else
             <div class="w-full h-full flex items-center justify-center bg-gradient-to-tr from-orange-50 via-white to-neutral-100 group-hover:scale-105 transition-transform duration-500">
                 <i class="{{ $course->category?->icon ?? 'fas fa-graduation-cap' }} text-4xl text-neutral-300 group-hover:text-lb-orange transition-colors duration-300" aria-hidden="true"></i>

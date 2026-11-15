@@ -56,6 +56,16 @@ Route::get('/certificates/verify', [CertificateController::class, 'search'])->na
 
 Route::view('/design-system', 'design-system')->name('design-system');
 
+// Public Storage Asset Fallback (Ensures uploaded course media displays across local Windows/XAMPP environments)
+Route::get('/storage/{path}', function (string $path) {
+    $fullPath = storage_path('app/public/'.$path);
+    if (! file_exists($fullPath)) {
+        abort(404);
+    }
+
+    return response()->file($fullPath);
+})->where('path', '.*')->name('storage.local');
+
 // Health Check Endpoint
 Route::get('/up/database', function () {
     try {

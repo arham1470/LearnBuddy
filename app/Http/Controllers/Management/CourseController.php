@@ -182,6 +182,7 @@ class CourseController extends Controller
                 if ($course->thumbnail_url && Str::startsWith($course->thumbnail_url, '/storage/')) {
                     $oldPath = Str::replaceFirst('/storage/', '', $course->thumbnail_url);
                     Storage::disk('public')->delete($oldPath);
+                    @unlink(public_path('storage/'.$oldPath));
                 }
 
                 $thumbnailUrl = $this->handleThumbnailUpload($request->file('thumbnail'), $request->title);
@@ -288,7 +289,14 @@ class CourseController extends Controller
         $safeName = Str::slug($title).'-'.Str::uuid().'.'.$extension;
         $path = $file->storeAs('courses/thumbnails', $safeName, 'public');
 
-        return Storage::disk('public')->url($path);
+        // Automatically sync to public/storage if not symlinked (Windows compatibility)
+        $publicDestDir = public_path('storage/courses/thumbnails');
+        if (! file_exists($publicDestDir)) {
+            @mkdir($publicDestDir, 0755, true);
+        }
+        @copy(storage_path('app/public/'.$path), public_path('storage/'.$path));
+
+        return '/storage/'.$path;
     }
 
     /**

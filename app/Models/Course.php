@@ -123,6 +123,31 @@ class Course extends Model
         return $this->hasMany(Assignment::class)->where('is_published', true);
     }
 
+    /**
+     * Get normalized thumbnail URL (resolves absolute, relative, or storage-linked paths cleanly).
+     */
+    public function getThumbnailUrlAttribute(?string $value): ?string
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        if (Str::startsWith($value, ['http://', 'https://'])) {
+            $parsed = parse_url($value);
+            if (isset($parsed['path']) && Str::startsWith($parsed['path'], '/storage/')) {
+                return asset(ltrim($parsed['path'], '/'));
+            }
+
+            return $value;
+        }
+
+        $cleanPath = Str::startsWith($value, '/storage/')
+            ? Str::after($value, '/storage/')
+            : (Str::startsWith($value, 'storage/') ? Str::after($value, 'storage/') : ltrim($value, '/'));
+
+        return asset('storage/' . $cleanPath);
+    }
+
     public function quizzes(): HasMany
     {
         return $this->hasMany(Quiz::class);
