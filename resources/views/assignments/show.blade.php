@@ -12,30 +12,108 @@
 
             <!-- Flash Status Messages -->
             @if (session('status'))
-                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-start gap-3" role="status">
-                    <i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0" aria-hidden="true"></i>
-                    <span>{{ session('status') }}</span>
+                <div
+                    x-data="{ show: true }"
+                    x-show="show"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-2"
+                    class="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/90 shadow-xs flex items-center justify-between gap-4 text-emerald-950"
+                    role="status"
+                >
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20 text-emerald-600 flex items-center justify-center shrink-0 shadow-2xs">
+                            <i class="fas fa-check text-sm" aria-hidden="true"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-800">Status Update</h4>
+                            <p class="text-xs sm:text-sm font-semibold text-emerald-900 mt-0.5 leading-snug">
+                                {{ session('status') }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200/80">
+                            <i class="fas fa-circle-check text-[9px]"></i> Success
+                        </span>
+                        <button
+                            type="button"
+                            @click="show = false"
+                            class="w-7 h-7 rounded-lg text-emerald-600 hover:text-emerald-900 hover:bg-emerald-100/70 flex items-center justify-center transition-colors"
+                            aria-label="Dismiss message"
+                        >
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    </div>
                 </div>
             @endif
 
             @if (session('error'))
-                <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3" role="alert">
-                    <i class="fas fa-exclamation-circle text-rose-500 mt-0.5 shrink-0" aria-hidden="true"></i>
-                    <span>{{ session('error') }}</span>
+                <div
+                    x-data="{ show: true }"
+                    x-show="show"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-2"
+                    class="p-4 rounded-2xl bg-rose-50/80 border border-rose-200/90 shadow-xs flex items-center justify-between gap-4 text-rose-950"
+                    role="alert"
+                >
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <div class="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/20 text-rose-600 flex items-center justify-center shrink-0 shadow-2xs">
+                            <i class="fas fa-exclamation text-sm" aria-hidden="true"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-rose-800">Notice</h4>
+                            <p class="text-xs sm:text-sm font-semibold text-rose-900 mt-0.5 leading-snug">
+                                {{ session('error') }}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        @click="show = false"
+                        class="w-7 h-7 rounded-lg text-rose-600 hover:text-rose-900 hover:bg-rose-100/70 flex items-center justify-center transition-colors shrink-0"
+                        aria-label="Dismiss error"
+                    >
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
                 </div>
             @endif
 
             @if ($errors->any())
-                <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3" role="alert">
-                    <i class="fas fa-exclamation-circle text-rose-500 mt-0.5 shrink-0" aria-hidden="true"></i>
-                    <div>
-                        <p class="font-semibold">Submission failed:</p>
-                        <ul class="mt-1 list-disc list-inside space-y-1 text-xs">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                <div
+                    x-data="{ show: true }"
+                    x-show="show"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-2"
+                    class="p-4 rounded-2xl bg-rose-50/80 border border-rose-200/90 shadow-xs text-rose-950 space-y-3"
+                    role="alert"
+                >
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/20 text-rose-600 flex items-center justify-center shrink-0 shadow-2xs">
+                                <i class="fas fa-triangle-exclamation text-sm" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-rose-800">Submission Error</h4>
+                                <p class="text-xs font-semibold text-rose-900">Please correct the following issues:</p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            @click="show = false"
+                            class="w-7 h-7 rounded-lg text-rose-600 hover:text-rose-900 hover:bg-rose-100/70 flex items-center justify-center transition-colors shrink-0"
+                            aria-label="Dismiss errors"
+                        >
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
                     </div>
+                    <ul class="pl-13 space-y-1 text-xs text-rose-800 list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
@@ -80,23 +158,44 @@
                 </div>
 
                 <!-- Assignment Metadata Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-neutral-100 text-xs">
-                    <div class="bg-neutral-50 rounded-2xl p-4">
-                        <span class="text-neutral-400 block font-semibold mb-1">Due Date</span>
-                        @if ($assignment->due_date)
-                            <span class="font-bold text-neutral-800">{{ $assignment->due_date->timezone('Asia/Colombo')->format('M d, Y · h:i A') }}</span>
-                            <span class="block text-[10px] text-neutral-500 mt-0.5">({{ $assignment->due_date->diffForHumans() }})</span>
-                        @else
-                            <span class="font-bold text-neutral-800">No strict deadline</span>
-                        @endif
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-5 border-t border-neutral-100 text-xs">
+                    <div class="bg-neutral-50/80 hover:bg-neutral-50 border border-neutral-200/70 rounded-2xl p-4 flex items-start gap-3 transition-colors">
+                        <div class="w-9 h-9 rounded-xl bg-orange-100/70 text-lb-orange flex items-center justify-center shrink-0">
+                            <i class="fas fa-calendar-day text-xs"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-neutral-400 block font-semibold text-[11px] uppercase tracking-wider mb-0.5">Due Date</span>
+                            @if ($assignment->due_date)
+                                <span class="font-bold text-neutral-800 block text-xs leading-tight">{{ $assignment->due_date->timezone('Asia/Colombo')->format('M d, Y · h:i A') }}</span>
+                                <span class="inline-block text-[10px] font-medium text-neutral-500 mt-1 px-1.5 py-0.5 rounded-md bg-neutral-100">
+                                    {{ $assignment->due_date->diffForHumans() }}
+                                </span>
+                            @else
+                                <span class="font-bold text-neutral-800 block text-xs">No strict deadline</span>
+                            @endif
+                        </div>
                     </div>
-                    <div class="bg-neutral-50 rounded-2xl p-4">
-                        <span class="text-neutral-400 block font-semibold mb-1">Permitted File Types</span>
-                        <span class="font-bold text-neutral-800 uppercase">{{ implode(', ', $assignment->allowedFileTypesArray()) }}</span>
+
+                    <div class="bg-neutral-50/80 hover:bg-neutral-50 border border-neutral-200/70 rounded-2xl p-4 flex items-start gap-3 transition-colors">
+                        <div class="w-9 h-9 rounded-xl bg-sky-100/70 text-sky-600 flex items-center justify-center shrink-0">
+                            <i class="fas fa-file-code text-xs"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-neutral-400 block font-semibold text-[11px] uppercase tracking-wider mb-0.5">Permitted Files</span>
+                            <span class="font-bold text-neutral-800 uppercase block text-xs truncate">{{ implode(', ', $assignment->allowedFileTypesArray()) }}</span>
+                            <span class="inline-block text-[10px] text-neutral-500 mt-1">Direct upload</span>
+                        </div>
                     </div>
-                    <div class="bg-neutral-50 rounded-2xl p-4">
-                        <span class="text-neutral-400 block font-semibold mb-1">Max File Size</span>
-                        <span class="font-bold text-neutral-800">{{ $assignment->max_file_size_mb }} MB</span>
+
+                    <div class="bg-neutral-50/80 hover:bg-neutral-50 border border-neutral-200/70 rounded-2xl p-4 flex items-start gap-3 transition-colors">
+                        <div class="w-9 h-9 rounded-xl bg-purple-100/70 text-purple-600 flex items-center justify-center shrink-0">
+                            <i class="fas fa-hard-drive text-xs"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-neutral-400 block font-semibold text-[11px] uppercase tracking-wider mb-0.5">Max File Size</span>
+                            <span class="font-bold text-neutral-800 block text-xs">{{ $assignment->max_file_size_mb }} MB limit</span>
+                            <span class="inline-block text-[10px] text-neutral-500 mt-1">Per submission</span>
+                        </div>
                     </div>
                 </div>
 
