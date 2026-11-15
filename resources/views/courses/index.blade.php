@@ -283,7 +283,7 @@
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <!-- SIDEBAR FILTERS (Desktop & Mobile Drawer) -->
                 <aside
                     class="lg:col-span-3"
@@ -454,8 +454,8 @@
                             </div>
                         </div>
                     @else
-                        <!-- Course Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Course Grid (Auto-fill Responsive Grid with Uniform Card Heights) -->
+                        <div class="grid gap-6" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
                             @foreach ($courses as $course)
                                 <x-course-card :course="$course" />
                             @endforeach
