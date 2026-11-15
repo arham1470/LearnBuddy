@@ -1,8 +1,6 @@
-need to check email verification in login authentication | whatsapp otp is also prefred
 
-need to add design to the unauthorized login page "403 This action is unauthorized"
 
-http://127.0.0.1:8000/management/courses/3 here delete lesson need delete dailog pop up instead of traditional
+[DONE] http://127.0.0.1:8000/management/courses/3 here delete lesson need delete dailog pop up instead of traditional
 
 
 need to do real video upload
@@ -32,7 +30,7 @@ check assignment after sumbited
 
 need to add notifcation after get assignment and quiz marks from lecture
 
-need to edit Ayubowan in student dashbaord
+[DONE] need to edit Ayubowan in student dashbaord (Sinhala greetings removed; English only across app)
 
 need to check sumbit quix dailog box for confirmation, check can go to other tab in quiz? and donwload option of their result
 
@@ -42,7 +40,7 @@ allow batch craeate wwhich course have physical
 
 need Live Meeting Provider Not Configured
 
-and check dailog box whole app
+[DONE] and check dailog box whole app (modernized confirm-dialog with rounded-3xl theme, danger/warning/success variants, and zero browser confirm alerts)
 
 NEED TO CHECK AND SETUP PAYHERE IN APPLICATION
 

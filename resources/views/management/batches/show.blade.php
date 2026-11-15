@@ -274,17 +274,24 @@
                                     </div>
 
                                     @can('update', $batch)
-                                        <form method="POST" action="{{ route('management.courses.batches.schedules.destroy', [$course, $batch, $slot]) }}" onsubmit="return confirm('Remove this weekly schedule slot?');" class="shrink-0">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button
-                                                type="submit"
-                                                class="w-7 h-7 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition cursor-pointer"
-                                                title="Delete Slot"
-                                            >
-                                                <i class="fas fa-trash-alt text-xs"></i>
-                                            </button>
-                                        </form>
+                                        <button
+                                            type="button"
+                                            data-item="{{ $slot->day_of_week }} (Room: {{ $slot->room_number ?? 'Main Classroom' }})"
+                                            data-action="{{ route('management.courses.batches.schedules.destroy', [$course, $batch, $slot]) }}"
+                                            onclick="confirmDialog({
+                                                title: 'Remove Schedule Slot?',
+                                                itemName: this.dataset.item,
+                                                message: 'Are you sure you want to remove this weekly recurring classroom schedule slot?',
+                                                action: this.dataset.action,
+                                                method: 'DELETE',
+                                                confirmText: 'Remove Slot',
+                                                confirmVariant: 'danger'
+                                            })"
+                                            class="w-7 h-7 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition cursor-pointer shrink-0"
+                                            title="Delete Slot"
+                                        >
+                                            <i class="fas fa-trash-alt text-xs"></i>
+                                        </button>
                                     @endcan
                                 </div>
                             @endforeach

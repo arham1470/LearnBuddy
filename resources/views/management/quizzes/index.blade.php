@@ -122,13 +122,23 @@
                                                 Edit
                                             </a>
 
-                                            <form action="{{ route('management.courses.quizzes.destroy', [$course, $quiz]) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this quiz and all questions/attempts?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 font-semibold">
-                                                    Delete
-                                                </button>
-                                            </form>
+                                            <button
+                                                type="button"
+                                                data-item="{{ $quiz->title }}"
+                                                data-action="{{ route('management.courses.quizzes.destroy', [$course, $quiz]) }}"
+                                                onclick="confirmDialog({
+                                                    title: 'Delete Quiz',
+                                                    itemName: this.dataset.item,
+                                                    message: 'Are you sure you want to delete this quiz? All questions, student attempts, and score histories will be permanently deleted.',
+                                                    action: this.dataset.action,
+                                                    method: 'DELETE',
+                                                    confirmText: 'Delete Quiz',
+                                                    confirmVariant: 'danger'
+                                                })"
+                                                class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 font-semibold cursor-pointer"
+                                            >
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach

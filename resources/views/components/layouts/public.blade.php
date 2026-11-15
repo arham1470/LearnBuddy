@@ -32,7 +32,7 @@
     <x-header />
 
     <!-- Main Content Slot -->
-    <main id="main-content" class="flex-grow w-full">
+    <main id="main-content" class="flex-grow w-full" x-data>
         {{ $slot }}
     </main>
 
@@ -41,6 +41,9 @@
 
     <!-- Shared Search Modal -->
     <x-search-modal />
+
+    <!-- Modern Shared Confirmation & Delete Dialog -->
+    <x-confirm-dialog />
 
     @stack('scripts')
 </body>

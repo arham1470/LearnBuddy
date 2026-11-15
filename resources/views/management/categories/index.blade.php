@@ -104,13 +104,24 @@
                                             @endcan
 
                                             @can('delete', $cat)
-                                                <form method="POST" action="{{ route('management.categories.destroy', $cat) }}" onsubmit="return confirm('Delete category {{ $cat->name }}?');" class="inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="p-2 text-neutral-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer" title="Delete Category">
-                                                        <i class="fas fa-trash-alt text-xs"></i>
-                                                    </button>
-                                                </form>
+                                                <button
+                                                    type="button"
+                                                    data-item="{{ $cat->name }}"
+                                                    data-action="{{ route('management.categories.destroy', $cat) }}"
+                                                    onclick="confirmDialog({
+                                                        title: 'Delete Category',
+                                                        itemName: this.dataset.item,
+                                                        message: 'Are you sure you want to delete this category? Courses belonging to this category will become uncategorized.',
+                                                        action: this.dataset.action,
+                                                        method: 'DELETE',
+                                                        confirmText: 'Delete Category',
+                                                        confirmVariant: 'danger'
+                                                    })"
+                                                    class="p-2 text-neutral-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                                    title="Delete Category"
+                                                >
+                                                    <i class="fas fa-trash-alt text-xs"></i>
+                                                </button>
                                             @endcan
                                         </div>
                                     </td>

@@ -24,14 +24,25 @@
                         {{ $isModerator ? 'Host / Moderator' : 'Student Participant' }}
                     </span>
 
-                    <a
-                        href="{{ route('courses.live-classes.show', [$course->slug, $liveClass]) }}"
-                        class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm"
-                        onclick="return confirm('Leave this live classroom session?');"
+                    <button
+                        type="button"
+                        data-item="{{ $liveClass->title }}"
+                        data-action="{{ route('courses.live-classes.show', [$course->slug, $liveClass]) }}"
+                        onclick="confirmDialog({
+                            title: 'Leave Live Classroom?',
+                            itemName: this.dataset.item,
+                            message: 'Are you sure you want to exit this active live classroom session? You can re-enter at any time while the session is live.',
+                            action: this.dataset.action,
+                            method: 'GET',
+                            confirmText: 'Leave Room',
+                            confirmVariant: 'danger',
+                            icon: 'fas fa-sign-out-alt'
+                        })"
+                        class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm cursor-pointer"
                     >
                         <i class="fas fa-sign-out-alt text-xs"></i>
                         <span>Leave Room</span>
-                    </a>
+                    </button>
                 </div>
             </div>
 

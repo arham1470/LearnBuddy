@@ -191,13 +191,23 @@
                                     </div>
                                 </div>
 
-                                <form action="{{ route('management.courses.quizzes.questions.destroy', [$course, $quiz, $question]) }}" method="POST" onsubmit="return confirm('Delete this question?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-xs text-rose-500 hover:text-rose-700 font-semibold p-1">
-                                        <i class="fas fa-trash-alt mr-1" aria-hidden="true"></i> Delete
-                                    </button>
-                                </form>
+                                <button
+                                    type="button"
+                                    data-item="Question #{{ $index + 1 }}"
+                                    data-action="{{ route('management.courses.quizzes.questions.destroy', [$course, $quiz, $question]) }}"
+                                    onclick="confirmDialog({
+                                        title: 'Delete Question?',
+                                        itemName: this.dataset.item,
+                                        message: 'Are you sure you want to permanently delete this question and all its answer options? This action cannot be undone.',
+                                        action: this.dataset.action,
+                                        method: 'DELETE',
+                                        confirmText: 'Delete Question',
+                                        confirmVariant: 'danger'
+                                    })"
+                                    class="text-xs text-rose-500 hover:text-rose-700 font-semibold p-1 cursor-pointer"
+                                >
+                                    <i class="fas fa-trash-alt mr-1" aria-hidden="true"></i> Delete
+                                </button>
                             </div>
 
                             <!-- Options display -->

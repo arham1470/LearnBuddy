@@ -179,39 +179,49 @@
                                         <!-- Actions -->
                                         <td class="py-4 px-5 text-right">
                                             <div class="flex items-center justify-end gap-2">
-                                                <!-- Approve Form -->
-                                                <form
-                                                    method="POST"
-                                                    action="{{ route('management.users.approve', $pendingUser) }}"
-                                                    onsubmit="return confirm('Approve account for {{ addslashes($pendingUser->name) }}? A welcome notification email will be dispatched immediately.');"
+                                                <!-- Approve Button (Modern Dialog) -->
+                                                <button
+                                                    type="button"
+                                                    data-item="{{ $pendingUser->name }} ({{ $pendingUser->email }})"
+                                                    data-action="{{ route('management.users.approve', $pendingUser) }}"
+                                                    onclick="confirmDialog({
+                                                        title: 'Approve User Account',
+                                                        itemName: this.dataset.item,
+                                                        message: 'Approving will activate this student account and immediately dispatch a welcome confirmation email via Mailjet.',
+                                                        action: this.dataset.action,
+                                                        method: 'POST',
+                                                        confirmText: 'Approve Account',
+                                                        confirmVariant: 'success',
+                                                        icon: 'fas fa-user-check'
+                                                    })"
+                                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                                                    title="Approve and notify user"
                                                 >
-                                                    @csrf
-                                                    <button
-                                                        type="submit"
-                                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                                                        title="Approve and notify user"
-                                                    >
-                                                        <i class="fas fa-check text-[10px]" aria-hidden="true"></i>
-                                                        <span>Approve</span>
-                                                    </button>
-                                                </form>
+                                                    <i class="fas fa-check text-[10px]" aria-hidden="true"></i>
+                                                    <span>Approve</span>
+                                                </button>
 
-                                                <!-- Reject Form -->
-                                                <form
-                                                    method="POST"
-                                                    action="{{ route('management.users.reject', $pendingUser) }}"
-                                                    onsubmit="return confirm('Reject registration for {{ addslashes($pendingUser->name) }}? This user will not be allowed to access the platform.');"
+                                                <!-- Reject Button (Modern Dialog) -->
+                                                <button
+                                                    type="button"
+                                                    data-item="{{ $pendingUser->name }} ({{ $pendingUser->email }})"
+                                                    data-action="{{ route('management.users.reject', $pendingUser) }}"
+                                                    onclick="confirmDialog({
+                                                        title: 'Reject User Registration',
+                                                        itemName: this.dataset.item,
+                                                        message: 'Are you sure you want to reject this registration? The user account will be deactivated and removed from pending reviews.',
+                                                        action: this.dataset.action,
+                                                        method: 'POST',
+                                                        confirmText: 'Reject Registration',
+                                                        confirmVariant: 'danger',
+                                                        icon: 'fas fa-user-times'
+                                                    })"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-neutral-200 hover:border-rose-300 hover:bg-rose-50 text-neutral-600 hover:text-rose-600 font-semibold text-xs transition cursor-pointer"
+                                                    title="Reject registration"
                                                 >
-                                                    @csrf
-                                                    <button
-                                                        type="submit"
-                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-neutral-200 hover:border-rose-300 hover:bg-rose-50 text-neutral-600 hover:text-rose-600 font-semibold text-xs transition cursor-pointer"
-                                                        title="Reject registration"
-                                                    >
-                                                        <i class="fas fa-times text-[10px]" aria-hidden="true"></i>
-                                                        <span>Reject</span>
-                                                    </button>
-                                                </form>
+                                                    <i class="fas fa-times text-[10px]" aria-hidden="true"></i>
+                                                    <span>Reject</span>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

@@ -35,7 +35,6 @@
                 method="POST"
                 id="quiz-form"
                 class="space-y-6"
-                onsubmit="return confirm('Are you sure you want to finish and submit your answers?');"
             >
                 @csrf
 
@@ -88,8 +87,18 @@
                         </a>
 
                         <button
-                            type="submit"
-                            class="px-7 py-3 rounded-full bg-lb-orange text-white hover:bg-orange-600 font-bold text-xs shadow-md transition"
+                            type="button"
+                            data-item="{{ $quiz->title }}"
+                            onclick="confirmDialog({
+                                title: 'Submit Quiz Answers?',
+                                itemName: this.dataset.item,
+                                message: 'Are you sure you want to finish and submit your answers? Once submitted, your score will be calculated and you will not be able to change your choices.',
+                                targetForm: 'quiz-form',
+                                confirmText: 'Submit Quiz',
+                                confirmVariant: 'primary',
+                                icon: 'fas fa-paper-plane'
+                            })"
+                            class="px-7 py-3 rounded-full bg-lb-orange text-white hover:bg-orange-600 font-bold text-xs shadow-md transition cursor-pointer"
                         >
                             <i class="fas fa-check-circle mr-1.5" aria-hidden="true"></i>
                             Submit Quiz

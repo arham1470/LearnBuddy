@@ -202,17 +202,24 @@
 
                                                 @can('delete', $batch)
                                                     @if ($batch->enrolled_seats === 0)
-                                                        <form method="POST" action="{{ route('management.courses.batches.destroy', [$course, $batch]) }}" onsubmit="return confirm('Delete batch {{ $batch->batch_code }}? This action cannot be undone.');" class="inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button
-                                                                type="submit"
-                                                                class="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
-                                                                title="Delete Batch"
-                                                            >
-                                                                <i class="fas fa-trash-alt text-xs" aria-hidden="true"></i>
-                                                            </button>
-                                                        </form>
+                                                        <button
+                                                            type="button"
+                                                            data-item="{{ $batch->batch_code }}"
+                                                            data-action="{{ route('management.courses.batches.destroy', [$course, $batch]) }}"
+                                                            onclick="confirmDialog({
+                                                                title: 'Delete Physical Batch',
+                                                                itemName: this.dataset.item,
+                                                                message: 'Are you sure you want to permanently delete this physical classroom batch? This action cannot be undone.',
+                                                                action: this.dataset.action,
+                                                                method: 'DELETE',
+                                                                confirmText: 'Delete Batch',
+                                                                confirmVariant: 'danger'
+                                                            })"
+                                                            class="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                                                            title="Delete Batch"
+                                                        >
+                                                            <i class="fas fa-trash-alt text-xs" aria-hidden="true"></i>
+                                                        </button>
                                                     @endif
                                                 @endcan
                                             </div>

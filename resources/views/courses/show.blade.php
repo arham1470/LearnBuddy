@@ -567,16 +567,21 @@
                                             >
                                                 <i class="fas fa-edit mr-1"></i> Edit
                                             </button>
-                                            <form action="{{ route('courses.reviews.destroy', [$course, $existingReview]) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove your review?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button
-                                                    type="submit"
-                                                    class="px-2.5 py-1 text-xs font-semibold text-red-600 hover:text-red-700 bg-white border border-neutral-200 rounded-lg transition"
-                                                >
-                                                    <i class="fas fa-trash-alt mr-1"></i> Delete
-                                                </button>
-                                            </form>
+                                            <button
+                                                type="button"
+                                                data-action="{{ route('courses.reviews.destroy', [$course, $existingReview]) }}"
+                                                onclick="confirmDialog({
+                                                    title: 'Remove Review?',
+                                                    message: 'Are you sure you want to remove your review for this course?',
+                                                    action: this.dataset.action,
+                                                    method: 'DELETE',
+                                                    confirmText: 'Remove Review',
+                                                    confirmVariant: 'danger'
+                                                })"
+                                                class="px-2.5 py-1 text-xs font-semibold text-red-600 hover:text-red-700 bg-white border border-neutral-200 rounded-lg transition cursor-pointer"
+                                            >
+                                                <i class="fas fa-trash-alt mr-1"></i> Delete
+                                            </button>
                                         </div>
                                     </div>
 
@@ -829,16 +834,23 @@
                                                         </button>
                                                     </form>
 
-                                                    <form action="{{ route('courses.reviews.destroy', [$course, $rev]) }}" method="POST" onsubmit="return confirm('Permanently delete this inappropriate review?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button
-                                                            type="submit"
-                                                            class="px-2.5 py-1 rounded text-[11px] font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition"
-                                                        >
-                                                            Delete
-                                                        </button>
-                                                    </form>
+                                                    <button
+                                                        type="button"
+                                                        data-item="Review by {{ $rev->user->name }}"
+                                                        data-action="{{ route('courses.reviews.destroy', [$course, $rev]) }}"
+                                                        onclick="confirmDialog({
+                                                            title: 'Delete Review?',
+                                                            itemName: this.dataset.item,
+                                                            message: 'Permanently delete this inappropriate review from the course discussion?',
+                                                            action: this.dataset.action,
+                                                            method: 'DELETE',
+                                                            confirmText: 'Delete Review',
+                                                            confirmVariant: 'danger'
+                                                        })"
+                                                        class="px-2.5 py-1 rounded text-[11px] font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition cursor-pointer"
+                                                    >
+                                                        Delete
+                                                    </button>
                                                 </div>
                                             </div>
                                         @endif

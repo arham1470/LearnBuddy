@@ -317,9 +317,11 @@ class AuthTest extends TestCase
         $student = User::factory()->student()->create();
         $admin = User::factory()->admin()->create();
 
-        // Student accessing admin route -> 403 Forbidden
+        // Student accessing admin route -> 403 Forbidden with custom view
         $studentResponse = $this->actingAs($student)->get('/test-admin-gate');
         $studentResponse->assertStatus(403);
+        $studentResponse->assertSee('This action is unauthorized');
+        $studentResponse->assertSee('Access Restricted');
 
         // Admin accessing admin route -> 200 OK
         $adminResponse = $this->actingAs($admin)->get('/test-admin-gate');

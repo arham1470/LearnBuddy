@@ -185,17 +185,24 @@
 
                                                 @can('delete', $session)
                                                     @if ($session->isScheduled())
-                                                        <form method="POST" action="{{ route('management.courses.live-classes.destroy', [$course, $session]) }}" onsubmit="return confirm('Remove live class {{ $session->title }}?');" class="inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button
-                                                                type="submit"
-                                                                class="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
-                                                                title="Delete Session"
-                                                            >
-                                                                <i class="fas fa-trash-alt text-xs"></i>
-                                                            </button>
-                                                        </form>
+                                                        <button
+                                                            type="button"
+                                                            data-item="{{ $session->title }}"
+                                                            data-action="{{ route('management.courses.live-classes.destroy', [$course, $session]) }}"
+                                                            onclick="confirmDialog({
+                                                                title: 'Delete Live Class',
+                                                                itemName: this.dataset.item,
+                                                                message: 'Are you sure you want to remove this interactive live class session? Enrolled students will no longer see this session.',
+                                                                action: this.dataset.action,
+                                                                method: 'DELETE',
+                                                                confirmText: 'Delete Live Class',
+                                                                confirmVariant: 'danger'
+                                                            })"
+                                                            class="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                                                            title="Delete Session"
+                                                        >
+                                                            <i class="fas fa-trash-alt text-xs"></i>
+                                                        </button>
                                                     @endif
                                                 @endcan
                                             </div>

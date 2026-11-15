@@ -120,13 +120,23 @@
                                             @endcan
 
                                             @can('delete', $loc)
-                                                <form action="{{ route('management.locations.destroy', $loc) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this campus location?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 font-semibold">
-                                                        Delete
-                                                    </button>
-                                                </form>
+                                                <button
+                                                    type="button"
+                                                    data-item="{{ $loc->name }}"
+                                                    data-action="{{ route('management.locations.destroy', $loc) }}"
+                                                    onclick="confirmDialog({
+                                                        title: 'Delete Campus Location',
+                                                        itemName: this.dataset.item,
+                                                        message: 'Are you sure you want to delete this campus location? Physical batches assigned to this location must be reassigned.',
+                                                        action: this.dataset.action,
+                                                        method: 'DELETE',
+                                                        confirmText: 'Delete Location',
+                                                        confirmVariant: 'danger'
+                                                    })"
+                                                    class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 font-semibold cursor-pointer"
+                                                >
+                                                    Delete
+                                                </button>
                                             @endcan
                                         </td>
                                     </tr>

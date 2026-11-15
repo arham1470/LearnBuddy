@@ -147,17 +147,24 @@
                                 </div>
 
                                 @if (auth()->user()->isAdmin() || auth()->id() === $announcement->user_id)
-                                    <form action="{{ route('courses.announcements.destroy', ['course' => $course, 'announcement' => $announcement]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this announcement?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button
-                                            type="submit"
-                                            class="text-neutral-400 hover:text-rose-600 text-xs transition p-1 cursor-pointer"
-                                            title="Delete announcement"
-                                        >
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
+                                    <button
+                                        type="button"
+                                        data-item="{{ $announcement->title }}"
+                                        data-action="{{ route('courses.announcements.destroy', ['course' => $course, 'announcement' => $announcement]) }}"
+                                        onclick="confirmDialog({
+                                            title: 'Delete Announcement?',
+                                            itemName: this.dataset.item,
+                                            message: 'Are you sure you want to delete this announcement? Students will no longer see it.',
+                                            action: this.dataset.action,
+                                            method: 'DELETE',
+                                            confirmText: 'Delete Announcement',
+                                            confirmVariant: 'danger'
+                                        })"
+                                        class="text-neutral-400 hover:text-rose-600 text-xs transition p-1 cursor-pointer"
+                                        title="Delete announcement"
+                                    >
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 @endif
                             </div>
 

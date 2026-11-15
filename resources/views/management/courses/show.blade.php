@@ -209,13 +209,25 @@
                         <!-- Archive (Published -> Archived) -->
                         @if ($course->isPublished())
                             @can('archive', $course)
-                                <form method="POST" action="{{ route('management.courses.status', $course) }}" onsubmit="return confirm('Archive this course from active discovery?');">
-                                    @csrf
-                                    <input type="hidden" name="status" value="archived">
-                                    <button type="submit" class="px-4 py-2 rounded-full bg-neutral-700 hover:bg-rose-700 text-xs font-semibold text-white transition cursor-pointer">
-                                        <i class="fas fa-archive mr-1" aria-hidden="true"></i> Archive Course
-                                    </button>
-                                </form>
+                                <button
+                                    type="button"
+                                    data-item="{{ $course->title }}"
+                                    data-action="{{ route('management.courses.status', $course) }}"
+                                    onclick="confirmDialog({
+                                        title: 'Archive Course?',
+                                        itemName: this.dataset.item,
+                                        message: 'Archiving will remove this course from public discovery and search while preserving all current student enrollments and records.',
+                                        action: this.dataset.action,
+                                        method: 'POST',
+                                        fields: { status: 'archived' },
+                                        confirmText: 'Archive Course',
+                                        confirmVariant: 'warning',
+                                        icon: 'fas fa-archive'
+                                    })"
+                                    class="px-4 py-2 rounded-full bg-neutral-700 hover:bg-rose-700 text-xs font-semibold text-white transition cursor-pointer"
+                                >
+                                    <i class="fas fa-archive mr-1" aria-hidden="true"></i> Archive Course
+                                </button>
                             @endcan
                         @endif
 
@@ -505,13 +517,24 @@
                                                 <i class="fas fa-plus text-[10px] text-lb-orange mr-1"></i> Add Lesson
                                             </button>
 
-                                            <form method="POST" action="{{ route('management.sections.destroy', $section) }}" onsubmit="return confirm('Delete this entire section and its lessons?');" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="p-1.5 text-neutral-400 hover:text-rose-600 transition cursor-pointer" title="Delete Section">
-                                                    <i class="fas fa-trash-alt text-xs"></i>
-                                                </button>
-                                            </form>
+                                            <button
+                                                type="button"
+                                                data-item="{{ $section->title }}"
+                                                data-action="{{ route('management.sections.destroy', $section) }}"
+                                                onclick="confirmDialog({
+                                                    title: 'Delete Module Section',
+                                                    itemName: this.dataset.item,
+                                                    message: 'Are you sure you want to delete this module section? All lessons inside this section will be permanently deleted.',
+                                                    action: this.dataset.action,
+                                                    method: 'DELETE',
+                                                    confirmText: 'Delete Section',
+                                                    confirmVariant: 'danger'
+                                                })"
+                                                class="p-1.5 text-neutral-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                                title="Delete Section"
+                                            >
+                                                <i class="fas fa-trash-alt text-xs"></i>
+                                            </button>
                                         @endcan
                                     </div>
                                 </div>
@@ -532,13 +555,24 @@
                                                 <span class="text-xs text-neutral-400 font-mono">{{ $lesson->duration_minutes }} min</span>
 
                                                 @can('update', $course)
-                                                    <form method="POST" action="{{ route('management.lessons.destroy', $lesson) }}" onsubmit="return confirm('Delete this lesson?');" class="inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-neutral-300 hover:text-rose-500 p-1 cursor-pointer" title="Delete Lesson">
-                                                            <i class="fas fa-times text-xs"></i>
-                                                        </button>
-                                                    </form>
+                                                    <button
+                                                        type="button"
+                                                        data-item="{{ $lesson->title }}"
+                                                        data-action="{{ route('management.lessons.destroy', $lesson) }}"
+                                                        onclick="confirmDialog({
+                                                            title: 'Delete Lesson',
+                                                            itemName: this.dataset.item,
+                                                            message: 'Are you sure you want to permanently delete this lesson? Student progress and materials associated with this lesson will be removed.',
+                                                            action: this.dataset.action,
+                                                            method: 'DELETE',
+                                                            confirmText: 'Delete Lesson',
+                                                            confirmVariant: 'danger'
+                                                        })"
+                                                        class="text-neutral-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition cursor-pointer"
+                                                        title="Delete Lesson"
+                                                    >
+                                                        <i class="fas fa-times text-xs"></i>
+                                                    </button>
                                                 @endcan
                                             </div>
                                         </div>

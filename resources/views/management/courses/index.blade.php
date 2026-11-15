@@ -1,5 +1,5 @@
 <x-layouts.public title="Course Management - LearnBuddy" description="Manage curriculum, publication status, delivery modes, and batches.">
-    <section class="min-h-[calc(100vh-140px)] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-neutral-50/60">
+    <section class="min-h-[calc(100vh-140px)] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-neutral-50/60" x-data>
         <div class="max-w-7xl mx-auto">
             <!-- Breadcrumbs / Scope Indicator -->
             <div class="mb-4 flex items-center gap-2 text-xs text-neutral-500">
@@ -323,17 +323,25 @@
                                                 @endcan
 
                                                 @can('delete', $course)
-                                                    <form method="POST" action="{{ route('management.courses.destroy', $course) }}" onsubmit="return confirm('Are you sure you want to delete this course draft?');" class="inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button
-                                                            type="submit"
-                                                            class="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
-                                                            title="Delete Draft"
-                                                        >
-                                                            <i class="fas fa-trash-alt text-sm" aria-hidden="true"></i>
-                                                        </button>
-                                                    </form>
+                                                    <button
+                                                        type="button"
+                                                        data-title="{{ $course->isDraft() ? 'Delete Course Draft' : 'Delete Course' }}"
+                                                        data-item="{{ $course->title }}"
+                                                        data-action="{{ route('management.courses.destroy', $course) }}"
+                                                        onclick="confirmDialog({
+                                                            title: this.dataset.title,
+                                                            itemName: this.dataset.item,
+                                                            message: 'Are you sure you want to permanently delete this course? This action cannot be undone.',
+                                                            action: this.dataset.action,
+                                                            method: 'DELETE',
+                                                            confirmText: 'Delete Course',
+                                                            confirmVariant: 'danger'
+                                                        })"
+                                                        class="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                                                        title="{{ $course->isDraft() ? 'Delete Draft' : 'Delete Course' }}"
+                                                    >
+                                                        <i class="fas fa-trash-alt text-sm" aria-hidden="true"></i>
+                                                    </button>
                                                 @endcan
                                             </div>
                                         </td>

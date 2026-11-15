@@ -112,13 +112,23 @@
                                                 Edit
                                             </a>
 
-                                            <form action="{{ route('management.courses.assignments.destroy', [$course, $assignment]) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this assignment and all submissions?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 font-semibold">
-                                                    Delete
-                                                </button>
-                                            </form>
+                                            <button
+                                                type="button"
+                                                data-item="{{ $assignment->title }}"
+                                                data-action="{{ route('management.courses.assignments.destroy', [$course, $assignment]) }}"
+                                                onclick="confirmDialog({
+                                                    title: 'Delete Assignment',
+                                                    itemName: this.dataset.item,
+                                                    message: 'Are you sure you want to delete this assignment? All associated student submissions and grading records will be deleted.',
+                                                    action: this.dataset.action,
+                                                    method: 'DELETE',
+                                                    confirmText: 'Delete Assignment',
+                                                    confirmVariant: 'danger'
+                                                })"
+                                                class="inline-flex items-center px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 font-semibold cursor-pointer"
+                                            >
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
