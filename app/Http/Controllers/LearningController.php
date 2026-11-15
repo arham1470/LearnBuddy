@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Certificate;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
 use App\Models\LessonResource;
+use App\Services\Certificates\CertificateService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +18,9 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LearningController extends Controller
 {
+    public function __construct(
+        protected CertificateService $certificateService
+    ) {}
     /**
      * Entry point: redirects the student to their next accessible lesson in the course.
      */
@@ -100,6 +105,14 @@ class LearningController extends Controller
         // 8. Overall course completion percentage
         $progressPercentage = $course->calculateProgressPercentageFor($user);
 
+        // 9. Certificate status & eligibility for quick access
+        $certificate = Certificate::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->first();
+
+        $certificateEligibility = $this->certificateService->checkEligibility($user, $course);
+        $isCertificateEligible = (bool) ($certificateEligibility['is_eligible'] ?? false);
+
         return view('learning.show', compact(
             'course',
             'lesson',
@@ -109,7 +122,9 @@ class LearningController extends Controller
             'nextLesson',
             'lessonProgress',
             'completedLessonIds',
-            'progressPercentage'
+            'progressPercentage',
+            'certificate',
+            'isCertificateEligible'
         ));
     }
 
@@ -164,6 +179,21 @@ class LearningController extends Controller
 
         $courseProgressPercentage = $course->calculateProgressPercentageFor($user);
 
+        // Certificate status & eligibility verification
+        $certificate = Certificate::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->first();
+
+        $eligibility = $this->certificateService->checkEligibility($user, $course);
+        $isEligible = (bool) ($eligibility['is_eligible'] ?? false);
+        $certificateUrl = null;
+
+        if ($certificate) {
+            $certificateUrl = route('certificates.show', $certificate);
+        } elseif ($isEligible) {
+            $certificateUrl = route('certificates.eligibility', $course);
+        }
+
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
@@ -171,6 +201,9 @@ class LearningController extends Controller
                 'completed_at' => $progress->completed_at?->toISOString(),
                 'notes' => $progress->notes,
                 'course_progress_percentage' => $courseProgressPercentage,
+                'has_certificate' => (bool) $certificate,
+                'is_certificate_eligible' => $isEligible,
+                'certificate_url' => $certificateUrl,
                 'message' => $progress->is_completed ? 'Lesson marked as complete!' : 'Lesson marked as incomplete.',
             ]);
         }

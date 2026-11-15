@@ -28,7 +28,7 @@ need Live Meeting Provider Not Configured
 
 need to setup notification and test that comepletly
 
-show button for certificate get if eligible in the frontend without complicated
+[DONE] show button for certificate get if eligible in the frontend without complicated (Added golden certificate badge button to learning theater header and curriculum drawer with 1-click access to claim or download certificate)
 
 need to customize the certificate pdf
 

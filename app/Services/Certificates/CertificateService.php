@@ -61,7 +61,7 @@ class CertificateService
         }
 
         // 2. Lessons Completion Verification
-        $lessonIds = $course->lessons()->pluck('lessons.id');
+        $lessonIds = $course->lessons()->where('lessons.is_published', true)->pluck('lessons.id');
         $totalLessons = $lessonIds->count();
         $completedLessons = 0;
 

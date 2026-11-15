@@ -416,4 +416,39 @@ class StudentLearningTest extends TestCase
 
         $unauthResponse->assertForbidden();
     }
+
+    public function test_learning_theater_displays_certificate_action_when_completed_and_eligible(): void
+    {
+        // 1. Initially student has not completed lessons, so isCertificateEligible is false
+        $initialResponse = $this->actingAs($this->student)
+            ->get(route('learning.show', [$this->course, $this->lesson1]));
+
+        $initialResponse->assertOk();
+        $initialResponse->assertViewHas('isCertificateEligible', false);
+
+        // 2. Complete all accessible lessons for this course
+        $this->actingAs($this->student)
+            ->postJson(route('learning.progress', [$this->course, $this->lesson1]), [
+                'is_completed' => 1,
+            ])->assertOk();
+
+        $updateResponse = $this->actingAs($this->student)
+            ->postJson(route('learning.progress', [$this->course, $this->lesson2]), [
+                'is_completed' => 1,
+            ]);
+
+        $updateResponse->assertOk();
+        $updateResponse->assertJson([
+            'is_certificate_eligible' => true,
+        ]);
+
+        // 3. Visiting the learning show page now renders the certificate button
+        $completedResponse = $this->actingAs($this->student)
+            ->get(route('learning.show', [$this->course, $this->lesson1]));
+
+        $completedResponse->assertOk();
+        $completedResponse->assertViewHas('isCertificateEligible', true);
+        $completedResponse->assertSee('Get Certificate');
+        $completedResponse->assertSee(route('certificates.eligibility', $this->course));
+    }
 }
