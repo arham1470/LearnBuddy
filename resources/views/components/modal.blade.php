@@ -2,6 +2,7 @@
     'name',
     'title' => null,
     'maxWidth' => 'md',
+    'overflow' => 'overflow-visible',
 ])
 
 @php
@@ -48,7 +49,7 @@ $maxWidthClasses = match ($maxWidth) {
         x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        class="bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all w-full {{ $maxWidthClasses }} z-10 border border-neutral-100"
+        class="bg-white rounded-2xl {{ $overflow }} shadow-2xl transform transition-all w-full {{ $maxWidthClasses }} z-10 border border-neutral-100"
         @click.stop
     >
         @if ($title)
@@ -67,7 +68,7 @@ $maxWidthClasses = match ($maxWidth) {
             </div>
         @endif
 
-        <div class="px-6 py-5">
+        <div class="p-4 sm:px-6 sm:py-5">
             {{ $slot }}
         </div>
 
