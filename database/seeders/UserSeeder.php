@@ -31,6 +31,8 @@ class UserSeeder extends Seeder
                 'locale' => 'en',
                 'timezone' => 'Asia/Colombo',
                 'is_active' => true,
+                'is_approved' => true,
+                'approved_at' => now(),
             ]
         );
         $admin->assignRole('admin');
@@ -52,6 +54,8 @@ class UserSeeder extends Seeder
                 'locale' => 'en',
                 'timezone' => 'Asia/Colombo',
                 'is_active' => true,
+                'is_approved' => true,
+                'approved_at' => now(),
             ]
         );
         $instructor->assignRole('instructor');
@@ -73,6 +77,8 @@ class UserSeeder extends Seeder
                 'locale' => 'en',
                 'timezone' => 'Asia/Colombo',
                 'is_active' => true,
+                'is_approved' => true,
+                'approved_at' => now(),
             ]
         );
         $student->assignRole('student');
@@ -93,6 +99,8 @@ class UserSeeder extends Seeder
                 'locale' => 'en',
                 'timezone' => 'Asia/Colombo',
                 'is_active' => false,
+                'is_approved' => true,
+                'approved_at' => now(),
             ]
         );
         $inactive->assignRole('student');

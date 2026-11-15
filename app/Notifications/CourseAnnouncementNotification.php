@@ -44,7 +44,7 @@ class CourseAnnouncementNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject("Course Announcement: {$this->announcement->title} · {$course->title}")
-            ->greeting("Ayubowan, {$notifiable->name}!")
+            ->greeting("Hello, {$notifiable->name}!")
             ->line("An announcement was posted by **{$authorName}** in **{$course->title}**:")
             ->line("### {$this->announcement->title}")
             ->line($this->announcement->content)

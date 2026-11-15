@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Mail\SendEmailOtpMail;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Throwable;
 
 class RegisterController extends Controller
 {
@@ -32,15 +34,25 @@ class RegisterController extends Controller
             'password' => $request->password,
             'locale' => 'en',
             'timezone' => 'Asia/Colombo',
-            'is_active' => true,
+            'is_active' => false,
+            'is_approved' => false,
         ]);
 
         $user->assignRole('student');
 
-        event(new Registered($user));
+        $otpCode = $user->generateEmailOtp();
 
-        Auth::login($user);
+        try {
+            Mail::to($user->email)->send(new SendEmailOtpMail($user, $otpCode));
+        } catch (Throwable $e) {
+            Log::error('Failed to dispatch registration OTP email: '.$e->getMessage(), [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+        }
 
-        return redirect()->route('verification.notice');
+        session(['otp_user_id' => $user->id]);
+
+        return redirect()->route('otp.verify.show')->with('status', __('A 6-digit verification code has been sent to your email address.'));
     }
 }

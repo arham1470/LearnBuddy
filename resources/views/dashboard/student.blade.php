@@ -21,7 +21,7 @@
                     </div>
 
                     <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
-                        Ayubowan, <span class="text-lb-orange">{{ $user->name }}</span>
+                        Welcome back, <span class="text-lb-orange">{{ $user->name }}</span>
                     </h1>
                     <p class="text-xs sm:text-sm text-neutral-300 max-w-xl">
                         Track your enrolled courses, campus classroom batches, laboratory intakes, and upcoming academic milestones.

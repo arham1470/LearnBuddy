@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', env('MAILJET_API_KEY') ? 'mailjet' : 'log'),
 
     /*
     |--------------------------------------------------------------------------
@@ -37,14 +37,21 @@ return [
 
     'mailers' => [
 
+        'mailjet' => [
+            'transport' => 'mailjet',
+            'key' => env('MAILJET_API_KEY'),
+            'secret' => env('MAILJET_API_SECRET'),
+        ],
+
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'host' => env('MAIL_HOST', 'in-v3.mailjet.com'),
+            'port' => (int) env('MAIL_PORT', 587),
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'username' => env('MAIL_USERNAME', env('MAILJET_API_KEY')),
+            'password' => env('MAIL_PASSWORD', env('MAILJET_API_SECRET')),
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
@@ -111,8 +118,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+        'address' => env('MAILJET_SENDER_EMAIL', env('MAIL_FROM_ADDRESS', 'arhamaca@teacher.semar.edu.pl')),
+        'name' => env('MAILJET_SENDER_NAME', env('MAIL_FROM_NAME', env('APP_NAME', 'LearnBuddy'))),
     ],
 
 ];

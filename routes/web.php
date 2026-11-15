@@ -4,6 +4,7 @@ use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CertificateController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Management\LessonVideoUploadController;
 use App\Http\Controllers\Management\LiveClassManagementController;
 use App\Http\Controllers\Management\PhysicalLocationController;
 use App\Http\Controllers\Management\QuizManagementController;
+use App\Http\Controllers\Management\UserApprovalController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\PublicCourseController;
@@ -91,6 +93,12 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
     Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+
+    // 6-digit Email OTP Verification Flow
+    Route::get('/verify-otp', [OtpVerificationController::class, 'show'])->name('otp.verify.show');
+    Route::post('/verify-otp', [OtpVerificationController::class, 'verify'])->name('otp.verify.submit');
+    Route::post('/verify-otp/resend', [OtpVerificationController::class, 'resend'])->middleware('throttle:6,1')->name('otp.verify.resend');
+    Route::get('/pending-approval', [OtpVerificationController::class, 'pendingApproval'])->name('approval.notice');
 });
 
 /*
@@ -255,6 +263,17 @@ Route::middleware('auth')->group(function () {
 
         // Category Management
         Route::resource('categories', CategoryController::class)->except(['show']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Administrator-Only User Approval Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:admin')->prefix('management')->as('management.')->group(function () {
+        Route::get('users/approvals', [UserApprovalController::class, 'index'])->name('users.approvals');
+        Route::post('users/{user}/approve', [UserApprovalController::class, 'approve'])->name('users.approve');
+        Route::post('users/{user}/reject', [UserApprovalController::class, 'reject'])->name('users.reject');
     });
 });
 

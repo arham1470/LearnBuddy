@@ -47,7 +47,7 @@ class AssignmentNotification extends Notification implements ShouldQueue
         if ($this->eventType === 'graded') {
             return (new MailMessage)
                 ->subject("Assignment Graded: {$this->assignment->title} · LearnBuddy")
-                ->greeting("Ayubowan, {$notifiable->name}!")
+                ->greeting("Hello, {$notifiable->name}!")
                 ->line("Your submission for **{$this->assignment->title}** in **{$course->title}** has been reviewed.")
                 ->line("Grade: **{$this->submission?->grade} / {$this->assignment->max_score}**")
                 ->action('View Feedback & Score', route('courses.assignments.show', ['course' => $course->slug, 'assignment' => $this->assignment->slug]));
@@ -59,7 +59,7 @@ class AssignmentNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject("New Assignment: {$this->assignment->title} · LearnBuddy")
-            ->greeting("Ayubowan, {$notifiable->name}!")
+            ->greeting("Hello, {$notifiable->name}!")
             ->line("A new assignment **{$this->assignment->title}** was published in **{$course->title}**.")
             ->line("Due Date: **{$dueFormatted} (Asia/Colombo)**")
             ->action('View Assignment Instructions', route('courses.assignments.show', ['course' => $course->slug, 'assignment' => $this->assignment->slug]));

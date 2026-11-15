@@ -44,7 +44,7 @@ class EnrollmentConfirmationNotification extends Notification implements ShouldQ
 
         return (new MailMessage)
             ->subject("Enrolment Confirmed: {$course->title} · LearnBuddy")
-            ->greeting("Ayubowan, {$notifiable->name}!")
+            ->greeting("Welcome, {$notifiable->name}!")
             ->line("Your enrolment in **{$course->title}** ({$deliveryMode}) is confirmed and active.")
             ->line("Enrolment Code: **{$this->enrollment->enrollment_code}**")
             ->action('Access Course', route('learning.index', $course))

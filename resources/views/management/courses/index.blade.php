@@ -21,6 +21,17 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
+                    @if (auth()->user()->isAdmin())
+                        <a
+                            href="{{ route('management.users.approvals') }}"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-purple-200 bg-purple-50/60 text-xs font-semibold text-purple-700 hover:bg-purple-100 transition shadow-sm"
+                            title="Review pending student registrations"
+                        >
+                            <i class="fas fa-user-check text-purple-600" aria-hidden="true"></i>
+                            <span>User Approvals</span>
+                        </a>
+                    @endif
+
                     @can('viewAny', \App\Models\PhysicalLocation::class)
                         <a
                             href="{{ route('management.locations.index') }}"

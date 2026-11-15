@@ -14,7 +14,7 @@
                             Payment Verified & Course Enrolment Active
                         </x-badge>
                         <h1 class="text-2xl sm:text-3xl font-black text-lb-black">
-                            Ayubowan! Enrolment Confirmed
+                            Welcome! Enrolment Confirmed
                         </h1>
                         <p class="text-xs sm:text-sm text-neutral-600 max-w-md mx-auto">
                             Your payment has been cryptographically verified server-side. Your course content, lessons, and student materials are now fully unlocked.

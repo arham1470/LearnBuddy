@@ -45,7 +45,7 @@ class LiveClassReminderNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject("Live Class Reminder: {$this->liveClass->title} · LearnBuddy")
-            ->greeting("Ayubowan, {$notifiable->name}!")
+            ->greeting("Hello, {$notifiable->name}!")
             ->line("Reminder: Your interactive live class **{$this->liveClass->title}** for **{$this->liveClass->course->title}** starts in {$this->minutesBefore} minutes.")
             ->line("Scheduled Start Time: **{$timeColombo} (Asia/Colombo)**")
             ->action('Join Live Classroom', $joinUrl)

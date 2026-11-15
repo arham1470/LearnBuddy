@@ -218,6 +218,27 @@
                                 </a>
                             @endif
 
+                            @if (auth()->user()->isAdmin())
+                                @php
+                                    $pendingApprovalsCount = \App\Models\User::where('is_approved', false)->whereNotNull('email_verified_at')->count();
+                                @endphp
+                                <a
+                                    href="{{ route('management.users.approvals') }}"
+                                    class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                    role="menuitem"
+                                >
+                                    <div class="flex items-center gap-2.5">
+                                        <i class="fas fa-user-check w-4 text-center text-purple-600 text-xs" aria-hidden="true"></i>
+                                        <span>User Approvals</span>
+                                    </div>
+                                    @if ($pendingApprovalsCount > 0)
+                                        <span class="px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-bold">
+                                            {{ $pendingApprovalsCount }}
+                                        </span>
+                                    @endif
+                                </a>
+                            @endif
+
                             <a
                                 href="{{ route('profile.show', auth()->user()) }}"
                                 class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
@@ -426,13 +447,34 @@
                             <a
                                 href="{{ route('management.courses.index') }}"
                                 @click="mobileNavOpen = false"
-                                class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-medium transition {{ request()->is('management*') ? 'bg-orange-50 text-lb-orange font-bold' : 'text-neutral-800 hover:bg-neutral-50' }}"
+                                class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-medium transition {{ request()->is('management/courses*') ? 'bg-orange-50 text-lb-orange font-bold' : 'text-neutral-800 hover:bg-neutral-50' }}"
                             >
                                 <span class="flex items-center gap-2">
                                     <i class="fas fa-layer-group text-lb-orange" aria-hidden="true"></i>
                                     <span>Course Management</span>
                                 </span>
                                 <i class="fas fa-chevron-right text-xs opacity-50" aria-hidden="true"></i>
+                            </a>
+                        @endif
+
+                        @if (auth()->user()->isAdmin())
+                            <a
+                                href="{{ route('management.users.approvals') }}"
+                                @click="mobileNavOpen = false"
+                                class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-medium transition {{ request()->routeIs('management.users.*') ? 'bg-orange-50 text-lb-orange font-bold' : 'text-neutral-800 hover:bg-neutral-50' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-user-check text-purple-600" aria-hidden="true"></i>
+                                    <span>User Approvals</span>
+                                </span>
+                                @php
+                                    $pendingApprovalsCount = \App\Models\User::where('is_approved', false)->whereNotNull('email_verified_at')->count();
+                                @endphp
+                                @if ($pendingApprovalsCount > 0)
+                                    <span class="px-2 py-0.5 rounded-full bg-amber-500 text-white text-xs font-bold">
+                                        {{ $pendingApprovalsCount }}
+                                    </span>
+                                @endif
                             </a>
                         @endif
                     @endauth

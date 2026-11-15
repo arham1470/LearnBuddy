@@ -29,7 +29,7 @@ class RegistrationVerificationNotification extends Notification implements Shoul
 
         return (new MailMessage)
             ->subject('Verify Your Email Address · LearnBuddy Sri Lanka')
-            ->greeting("Ayubowan, {$notifiable->name}!")
+            ->greeting("Welcome, {$notifiable->name}!")
             ->line('Welcome to LearnBuddy! Please verify your email address to activate your full student access.')
             ->action('Verify Email Address', $verificationUrl)
             ->line('This verification link will expire in 60 minutes.')

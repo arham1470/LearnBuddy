@@ -46,7 +46,7 @@ class BatchScheduleChangeNotification extends Notification implements ShouldQueu
 
         $mail = (new MailMessage)
             ->subject(($isCancelled ? 'Campus Batch Cancelled: ' : 'Campus Schedule Update: ').$this->batch->batch_code.' · LearnBuddy')
-            ->greeting("Ayubowan, {$notifiable->name}!");
+            ->greeting("Hello, {$notifiable->name}!");
 
         if ($isCancelled) {
             $mail->line("Physical intake batch **{$this->batch->batch_code}** has been cancelled.");

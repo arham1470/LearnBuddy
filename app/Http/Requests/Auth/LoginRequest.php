@@ -2,14 +2,19 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Mail\SendEmailOtpMail;
 use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class LoginRequest extends FormRequest
 {
@@ -58,7 +63,39 @@ class LoginRequest extends FormRequest
         /** @var User $user */
         $user = Auth::user();
 
-        // Enforce account active status
+        // 1. Enforce Email Verification via OTP
+        if (! $user->hasVerifiedEmail()) {
+            Auth::logout();
+
+            // Refresh or generate OTP if expired or missing
+            if (empty($user->email_otp) || empty($user->email_otp_expires_at) || now()->isAfter($user->email_otp_expires_at)) {
+                $otpCode = $user->generateEmailOtp();
+                try {
+                    Mail::to($user->email)->send(new SendEmailOtpMail($user, $otpCode));
+                } catch (Throwable $e) {
+                    Log::error('Failed to send login OTP email: '.$e->getMessage(), ['user_id' => $user->id]);
+                }
+            }
+
+            $this->session()->put('otp_user_id', $user->id);
+
+            throw new HttpResponseException(
+                redirect()->route('otp.verify.show')->with('status', __('Please verify your email address. A 6-digit code has been sent to your inbox.'))
+            );
+        }
+
+        // 2. Enforce Administrator Approval
+        if (! $user->isApproved()) {
+            Auth::logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => __('Your account has been verified, but is awaiting administrator approval. You will receive an email once approved.'),
+            ]);
+        }
+
+        // 3. Enforce Account Active Status
         if (! $user->is_active) {
             Auth::logout();
             $this->session()->invalidate();

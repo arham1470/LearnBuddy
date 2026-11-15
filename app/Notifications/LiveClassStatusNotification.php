@@ -47,7 +47,7 @@ class LiveClassStatusNotification extends Notification implements ShouldQueue
 
         $mail = (new MailMessage)
             ->subject("Live Class {$statusWord}: {$this->liveClass->title} · LearnBuddy")
-            ->greeting("Ayubowan, {$notifiable->name}!");
+            ->greeting("Hello, {$notifiable->name}!");
 
         if ($isCancelled) {
             $mail->line("The live class session **{$this->liveClass->title}** for **{$this->liveClass->course->title}** has been cancelled.");

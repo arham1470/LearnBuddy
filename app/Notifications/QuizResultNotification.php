@@ -45,7 +45,7 @@ class QuizResultNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject("Quiz Result [{$statusWord}]: {$this->quiz->title} · LearnBuddy")
-            ->greeting("Ayubowan, {$notifiable->name}!")
+            ->greeting("Hello, {$notifiable->name}!")
             ->line("Your attempt #{$this->attempt->attempt_number} for **{$this->quiz->title}** has been scored.")
             ->line("Score: **{$this->attempt->score} / {$this->quiz->total_marks}** ({$this->attempt->percentage}%)")
             ->line('Status: **'.($this->attempt->is_passed ? 'Passed 🎉' : 'Needs Review').'**')

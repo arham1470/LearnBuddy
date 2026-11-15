@@ -43,7 +43,7 @@ class PaymentConfirmationNotification extends Notification implements ShouldQueu
     {
         return (new MailMessage)
             ->subject("Payment Receipt: {$this->order->formattedAmount()} · LearnBuddy")
-            ->greeting("Ayubowan, {$notifiable->name}!")
+            ->greeting("Hello, {$notifiable->name}!")
             ->line("We have received your payment of **{$this->order->formattedAmount()}** for **{$this->order->course->title}**.")
             ->line("Order Number: **{$this->order->order_number}**")
             ->line("Receipt Number: **{$this->payment->receipt_number}**")

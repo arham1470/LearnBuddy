@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Mail\MailjetTransport;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Category;
@@ -39,6 +40,7 @@ use App\Services\Payments\PaymentManager;
 use App\Services\Video\VideoProviderInterface;
 use App\Services\Video\VideoService;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -106,6 +108,14 @@ class AppServiceProvider extends ServiceProvider
             return Password::min(8)
                 ->letters()
                 ->numbers();
+        });
+
+        // Register custom Mailjet API HTTP Transport
+        Mail::extend('mailjet', function (array $config = []) {
+            return new MailjetTransport(
+                apiKey: (string) ($config['key'] ?? env('MAILJET_API_KEY')),
+                apiSecret: (string) ($config['secret'] ?? env('MAILJET_API_SECRET')),
+            );
         });
     }
 }

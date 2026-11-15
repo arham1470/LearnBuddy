@@ -42,7 +42,7 @@ class CertificateIssuedNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject("Certificate of Completion: {$this->course->title} · LearnBuddy")
-            ->greeting("Ayubowan, {$notifiable->name}!")
+            ->greeting("Congratulations, {$notifiable->name}!")
             ->line("Congratulations on completing **{$this->course->title}**!")
             ->line('Your official Certificate of Completion has been issued.')
             ->line("Certificate Credential ID: **{$this->certificateCode}**")

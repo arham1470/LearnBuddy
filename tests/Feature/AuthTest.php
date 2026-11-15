@@ -32,8 +32,6 @@ class AuthTest extends TestCase
 
     public function test_new_users_can_register_with_valid_sri_lankan_phone(): void
     {
-        Event::fake([Registered::class]);
-
         $response = $this->post('/register', [
             'name' => 'Sahan Jayawardena',
             'email' => 'sahan@example.com',
@@ -43,17 +41,22 @@ class AuthTest extends TestCase
             'terms' => '1',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('verification.notice'));
+        $this->assertGuest();
+        $response->assertRedirect(route('otp.verify.show'));
 
         $this->assertDatabaseHas('users', [
             'email' => 'sahan@example.com',
             'phone' => '+94771234567', // Normalized to E.164
             'locale' => 'en',
             'timezone' => 'Asia/Colombo',
+            'is_approved' => false,
+            'is_active' => false,
         ]);
 
-        Event::assertDispatched(Registered::class);
+        $user = User::where('email', 'sahan@example.com')->first();
+        $this->assertNotNull($user->email_otp);
+        $this->assertEquals(6, strlen($user->email_otp));
+        $this->assertNotNull($user->email_otp_expires_at);
     }
 
     public function test_registration_normalizes_various_sri_lankan_phone_formats(): void
@@ -80,8 +83,6 @@ class AuthTest extends TestCase
                 'email' => $email,
                 'phone' => $expected,
             ]);
-
-            auth()->logout();
         }
     }
 
@@ -323,5 +324,102 @@ class AuthTest extends TestCase
         // Admin accessing admin route -> 200 OK
         $adminResponse = $this->actingAs($admin)->get('/test-admin-gate');
         $adminResponse->assertStatus(200);
+    }
+
+    public function test_user_can_verify_email_with_valid_otp(): void
+    {
+        $user = User::factory()->unapproved()->create([
+            'email_verified_at' => null,
+            'is_active' => false,
+        ]);
+        $otp = $user->generateEmailOtp();
+
+        $response = $this->withSession(['otp_user_id' => $user->id])
+            ->post('/verify-otp', [
+                'otp' => $otp,
+            ]);
+
+        $response->assertRedirect(route('approval.notice'));
+
+        $user->refresh();
+        $this->assertNotNull($user->email_verified_at);
+        $this->assertNull($user->email_otp);
+        $this->assertNull($user->email_otp_expires_at);
+        $this->assertFalse($user->isApproved());
+    }
+
+    public function test_user_cannot_verify_with_invalid_otp(): void
+    {
+        $user = User::factory()->unapproved()->create([
+            'email_verified_at' => null,
+        ]);
+        $user->generateEmailOtp();
+
+        $response = $this->withSession(['otp_user_id' => $user->id])
+            ->post('/verify-otp', [
+                'otp' => '000000',
+            ]);
+
+        $response->assertSessionHasErrors(['otp']);
+        $user->refresh();
+        $this->assertNull($user->email_verified_at);
+    }
+
+    public function test_unapproved_user_cannot_authenticate(): void
+    {
+        $user = User::factory()->unapproved()->create([
+            'email' => 'pending@learnbuddy.lk',
+            'password' => 'ValidPass123!',
+            'is_active' => true,
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => 'pending@learnbuddy.lk',
+            'password' => 'ValidPass123!',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors(['email']);
+    }
+
+    public function test_administrator_can_view_pending_approvals_and_approve_user(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $pendingUser = User::factory()->unapproved()->student()->create([
+            'email_verified_at' => now(),
+            'is_active' => false,
+        ]);
+
+        // Admin views approvals list
+        $viewResponse = $this->actingAs($admin)->get(route('management.users.approvals'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertSee($pendingUser->name);
+        $viewResponse->assertSee($pendingUser->email);
+
+        // Admin approves pending user
+        $approveResponse = $this->actingAs($admin)->post(route('management.users.approve', $pendingUser));
+        $approveResponse->assertRedirect();
+
+        $pendingUser->refresh();
+        $this->assertTrue($pendingUser->isApproved());
+        $this->assertTrue($pendingUser->is_active);
+        $this->assertNotNull($pendingUser->approved_at);
+        $this->assertEquals($admin->id, $pendingUser->approved_by);
+    }
+
+    public function test_administrator_can_reject_pending_user(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $pendingUser = User::factory()->unapproved()->student()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $rejectResponse = $this->actingAs($admin)->post(route('management.users.reject', $pendingUser));
+        $rejectResponse->assertRedirect();
+
+        $this->assertSoftDeleted('users', [
+            'id' => $pendingUser->id,
+            'is_active' => false,
+        ]);
     }
 }

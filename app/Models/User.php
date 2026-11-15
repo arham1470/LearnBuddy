@@ -7,6 +7,7 @@ use App\Notifications\RegistrationVerificationNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -41,6 +42,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'locale',
         'timezone',
         'is_active',
+        'is_approved',
+        'approved_at',
+        'approved_by',
+        'email_otp',
+        'email_otp_expires_at',
         'two_factor_secret',
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
@@ -54,6 +60,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'email_otp',
         'two_factor_secret',
         'two_factor_recovery_codes',
     ];
@@ -68,8 +75,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
+            'email_otp_expires_at' => 'datetime',
+            'approved_at' => 'datetime',
             'two_factor_confirmed_at' => 'datetime',
             'is_active' => 'boolean',
+            'is_approved' => 'boolean',
             'password' => 'hashed',
         ];
     }
@@ -292,6 +302,76 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Administrator who approved this user.
+     */
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Determine if the user's account has been approved by an administrator.
+     */
+    public function isApproved(): bool
+    {
+        return (bool) $this->is_approved;
+    }
+
+    /**
+     * Approve the user's account and activate access.
+     */
+    public function approve(?User $approver = null): void
+    {
+        $this->forceFill([
+            'is_approved' => true,
+            'is_active' => true,
+            'approved_at' => now(),
+            'approved_by' => $approver?->id ?? auth()->id(),
+        ])->save();
+    }
+
+    /**
+     * Generate a new 6-digit numeric OTP valid for 15 minutes.
+     */
+    public function generateEmailOtp(): string
+    {
+        $code = str_pad((string) random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+
+        $this->forceFill([
+            'email_otp' => $code,
+            'email_otp_expires_at' => now()->addMinutes(15),
+        ])->save();
+
+        return $code;
+    }
+
+    /**
+     * Verify an entered 6-digit OTP code.
+     */
+    public function verifyEmailOtp(string $code): bool
+    {
+        if (empty($this->email_otp) || empty($this->email_otp_expires_at)) {
+            return false;
+        }
+
+        if (now()->isAfter($this->email_otp_expires_at)) {
+            return false;
+        }
+
+        if (trim($code) !== trim($this->email_otp)) {
+            return false;
+        }
+
+        $this->forceFill([
+            'email_verified_at' => now(),
+            'email_otp' => null,
+            'email_otp_expires_at' => null,
+        ])->save();
+
+        return true;
     }
 
     /**

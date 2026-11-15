@@ -34,7 +34,20 @@ class UserFactory extends Factory
             'locale' => 'en',
             'timezone' => 'Asia/Colombo',
             'is_active' => true,
+            'is_approved' => true,
+            'approved_at' => now(),
         ];
+    }
+
+    /**
+     * Indicate that the model's account is pending admin approval.
+     */
+    public function unapproved(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_approved' => false,
+            'approved_at' => null,
+        ]);
     }
 
     /**
