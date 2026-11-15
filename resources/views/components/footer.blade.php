@@ -6,9 +6,9 @@
             <div class="lg:col-span-4 space-y-4">
                 <a href="{{ url('/') }}" class="inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange rounded-lg">
                     @if (file_exists(public_path('images/logo.png')))
-                        <img src="{{ asset('images/logo.png') }}" alt="LearnBuddy" class="h-8 w-auto">
+                        <img src="{{ asset('images/logo.png') }}" alt="LearnBuddy" class="h-10 sm:h-12 w-auto object-contain">
                     @else
-                        <span class="text-2xl font-extrabold tracking-tight text-lb-black">Learn<span class="text-lb-orange">Buddy</span>.</span>
+                        <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-lb-black">Learn<span class="text-lb-orange">Buddy</span>.</span>
                     @endif
                 </a>
                 <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed max-w-sm">
@@ -116,21 +116,63 @@
         </div>
 
         <!-- Footer Bottom Bar -->
-        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-600">
+        <div class="pt-8 flex flex-col lg:flex-row items-center justify-between gap-5 text-xs text-neutral-600">
             <!-- Payment Badges (Sri Lanka Focus) -->
-            <div class="flex items-center gap-3 text-neutral-700">
-                <span class="font-semibold text-[11px] uppercase tracking-wider text-neutral-500">Supported Payments:</span>
-                <div class="flex items-center gap-2 text-base text-neutral-800">
-                    <i class="fab fa-cc-visa" title="Visa" aria-hidden="true"></i>
-                    <i class="fab fa-cc-mastercard" title="Mastercard" aria-hidden="true"></i>
-                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white border border-neutral-300">LKR</span>
-                    <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-white border border-neutral-300">Bank Transfer</span>
+            <div class="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 text-neutral-700">
+                <span class="font-bold text-[11px] uppercase tracking-wider text-neutral-500 flex items-center gap-1.5 shrink-0">
+                    <i class="fas fa-lock text-[10px] text-lb-orange" aria-hidden="true"></i>
+                    <span>Secure Payments:</span>
+                </span>
+
+                <div class="flex items-center flex-wrap justify-center sm:justify-start gap-1.5">
+                    <!-- PayHere (CBSL Approved IPG) -->
+                    <div class="h-7 px-2.5 bg-white rounded-lg border border-neutral-200/80 shadow-xs flex items-center gap-1.5 hover:border-orange-300 transition-colors" title="PayHere - Central Bank of Sri Lanka (CBSL) Approved Payment Gateway">
+                        <span class="w-1.5 h-1.5 rounded-full bg-lb-orange"></span>
+                        <span class="text-[11px] font-extrabold tracking-tight text-neutral-900">Pay<span class="text-lb-orange">Here</span></span>
+                    </div>
+
+                    <!-- Visa -->
+                    <div class="h-7 px-2.5 bg-white rounded-lg border border-neutral-200/80 shadow-xs flex items-center justify-center hover:border-blue-300 transition-colors" title="Visa Debit & Credit Cards">
+                        <span class="text-[11px] font-black italic tracking-wider text-[#1A1F71]">VISA</span>
+                    </div>
+
+                    <!-- Mastercard -->
+                    <div class="h-7 px-2 bg-white rounded-lg border border-neutral-200/80 shadow-xs flex items-center gap-1 justify-center hover:border-amber-300 transition-colors" title="Mastercard Debit & Credit Cards">
+                        <span class="flex items-center -space-x-1.5" aria-hidden="true">
+                            <span class="w-3.5 h-3.5 rounded-full bg-[#EB001B]"></span>
+                            <span class="w-3.5 h-3.5 rounded-full bg-[#F79E1B] opacity-90"></span>
+                        </span>
+                        <span class="text-[10px] font-bold tracking-tight text-neutral-800 hidden sm:inline">Mastercard</span>
+                    </div>
+
+                    <!-- AMEX -->
+                    <div class="h-7 px-2 bg-white rounded-lg border border-neutral-200/80 shadow-xs flex items-center justify-center hover:border-blue-300 transition-colors" title="American Express">
+                        <span class="text-[10px] font-black tracking-tight text-[#006FCF]">AMEX</span>
+                    </div>
+
+                    <!-- LankaQR (Sri Lanka National QR Standard) -->
+                    <div class="h-7 px-2 bg-white rounded-lg border border-neutral-200/80 shadow-xs flex items-center gap-1 hover:border-red-300 transition-colors" title="LankaQR - Central Bank of Sri Lanka National QR Payment Standard">
+                        <span class="w-3.5 h-3.5 rounded bg-[#D0021B] flex items-center justify-center text-white text-[7px] font-black">
+                            <i class="fas fa-qrcode text-[8px]" aria-hidden="true"></i>
+                        </span>
+                        <span class="text-[10px] font-black tracking-tight text-[#D0021B]">Lanka<span class="text-neutral-900">QR</span></span>
+                    </div>
+
+                    <!-- Direct Bank Transfer (LKR) -->
+                    <div class="h-7 px-2 bg-white rounded-lg border border-neutral-200/80 shadow-xs flex items-center gap-1.5 hover:border-emerald-300 transition-colors" title="Direct Island-wide Bank Deposit / Online Banking Transfer (LKR)">
+                        <i class="fas fa-university text-neutral-500 text-[10px]" aria-hidden="true"></i>
+                        <span class="text-[10px] font-semibold text-neutral-700">Bank Transfer <span class="text-[9px] font-bold text-neutral-400">LKR</span></span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Copyright -->
-            <div class="text-center sm:text-right">
+            <!-- Copyright & Regulatory Trust -->
+            <div class="text-center lg:text-right shrink-0 space-y-1">
                 <p>&copy; {{ date('Y') }} LearnBuddy. Sri Lanka. All rights reserved.</p>
+                <p class="text-[11px] text-neutral-500 flex items-center justify-center lg:justify-end gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span>CBSL Regulated IPG &bull; 100% Secure LKR Payments</span>
+                </p>
             </div>
         </div>
     </div>

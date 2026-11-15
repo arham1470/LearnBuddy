@@ -11,10 +11,10 @@
                 <img
                     src="{{ asset('images/logo.png') }}"
                     alt="LearnBuddy - Smart Learning Platform"
-                    class="h-8 sm:h-9 w-auto object-contain"
+                    class="h-9 sm:h-11 w-auto object-contain"
                 >
             @else
-                <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-lb-black whitespace-nowrap">
+                <span class="text-2xl sm:text-[26px] font-extrabold tracking-tight text-lb-black whitespace-nowrap">
                     Learn<span class="text-lb-orange">Buddy</span>.
                 </span>
             @endif
@@ -354,9 +354,9 @@
                 <div class="flex items-center justify-between pb-6 border-b border-neutral-100">
                     <a href="{{ url('/') }}" @click="mobileNavOpen = false" class="flex items-center gap-2">
                         @if (file_exists(public_path('images/logo.png')))
-                            <img src="{{ asset('images/logo.png') }}" alt="LearnBuddy" class="h-7 w-auto">
+                            <img src="{{ asset('images/logo.png') }}" alt="LearnBuddy" class="h-8 sm:h-9 w-auto object-contain">
                         @else
-                            <span class="text-lg font-extrabold text-lb-black">Learn<span class="text-lb-orange">Buddy</span>.</span>
+                            <span class="text-xl sm:text-2xl font-extrabold text-lb-black">Learn<span class="text-lb-orange">Buddy</span>.</span>
                         @endif
                     </a>
 
