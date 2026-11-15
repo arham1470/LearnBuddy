@@ -267,10 +267,19 @@
                             <div class="my-1 border-t border-neutral-100"></div>
 
                             <!-- Sign Out in Dropdown -->
-                            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            <form method="POST" action="{{ route('logout') }}" class="w-full" id="header-dropdown-logout-form">
                                 @csrf
                                 <button
-                                    type="submit"
+                                    type="button"
+                                    onclick="confirmDialog({
+                                        title: 'Sign Out of LearnBuddy?',
+                                        message: 'Are you sure you want to sign out of your account? You can sign back in at any time to resume your courses.',
+                                        action: '{{ route('logout') }}',
+                                        method: 'POST',
+                                        confirmText: 'Sign Out',
+                                        confirmVariant: 'danger',
+                                        icon: 'fas fa-sign-out-alt'
+                                    })"
                                     class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50 transition text-left cursor-pointer"
                                     role="menuitem"
                                 >
@@ -283,10 +292,19 @@
 
                     <!-- Direct Quick Sign Out Icon -->
                     <div class="relative group shrink-0">
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                        <form method="POST" action="{{ route('logout') }}" class="inline" id="header-quick-logout-form">
                             @csrf
                             <button
-                                type="submit"
+                                type="button"
+                                onclick="confirmDialog({
+                                    title: 'Sign Out of LearnBuddy?',
+                                    message: 'Are you sure you want to sign out of your account? You can sign back in at any time to resume your courses.',
+                                    action: '{{ route('logout') }}',
+                                    method: 'POST',
+                                    confirmText: 'Sign Out',
+                                    confirmVariant: 'danger',
+                                    icon: 'fas fa-sign-out-alt'
+                                })"
                                 class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-neutral-100 hover:bg-rose-50 text-neutral-500 hover:text-rose-600 transition cursor-pointer text-xs shrink-0"
                                 aria-label="Sign out"
                             >
@@ -514,10 +532,19 @@
                         My Profile
                     </x-button>
 
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    <form method="POST" action="{{ route('logout') }}" class="w-full" id="header-mobile-logout-form">
                         @csrf
                         <button
-                            type="submit"
+                            type="button"
+                            onclick="confirmDialog({
+                                title: 'Sign Out of LearnBuddy?',
+                                message: 'Are you sure you want to sign out of your account? You can sign back in at any time to resume your courses.',
+                                action: '{{ route('logout') }}',
+                                method: 'POST',
+                                confirmText: 'Sign Out',
+                                confirmVariant: 'danger',
+                                icon: 'fas fa-sign-out-alt'
+                            })"
                             class="w-full py-2.5 px-4 rounded-full border border-neutral-200 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <i class="fas fa-sign-out-alt text-xs" aria-hidden="true"></i>

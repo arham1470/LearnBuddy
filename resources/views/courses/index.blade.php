@@ -208,24 +208,172 @@
                 </div>
 
                 <!-- Sort Control -->
+                @php
+                    $sortLabels = [
+                        'newest' => 'Newest Releases',
+                        'price_asc' => 'Price: Low to High',
+                        'price_desc' => 'Price: High to Low',
+                        'duration_asc' => 'Duration: Shortest',
+                        'duration_desc' => 'Duration: Longest',
+                    ];
+                    $currentSortLabel = $sortLabels[$sort ?? 'newest'] ?? 'Newest Releases';
+                @endphp
                 <form action="{{ route('courses.index') }}" method="GET" class="flex items-center gap-2 text-xs">
                     @foreach (request()->except(['sort', 'page']) as $k => $v)
                         <input type="hidden" name="{{ $k }}" value="{{ $v }}">
                     @endforeach
 
                     <label for="sort-select" class="text-neutral-500 font-medium whitespace-nowrap hidden sm:inline">Sort by:</label>
+
+                    <!-- Native select for standard form submission and selector compatibility -->
                     <select
                         id="sort-select"
                         name="sort"
                         onchange="this.form.submit()"
-                        class="bg-white border border-neutral-200 rounded-full px-4 py-2 text-xs font-semibold text-neutral-800 focus:outline-none focus:ring-2 focus:ring-lb-orange cursor-pointer shadow-sm"
+                        class="sr-only"
+                        tabindex="-1"
+                        aria-hidden="true"
                     >
-                        <option value="newest" {{ $sort === 'newest' ? 'selected' : '' }}>Newest Releases</option>
-                        <option value="price_asc" {{ $sort === 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
-                        <option value="price_desc" {{ $sort === 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
-                        <option value="duration_asc" {{ $sort === 'duration_asc' ? 'selected' : '' }}>Duration: Shortest</option>
-                        <option value="duration_desc" {{ $sort === 'duration_desc' ? 'selected' : '' }}>Duration: Longest</option>
+                        <option value="newest" {{ ($sort ?? 'newest') === 'newest' ? 'selected' : '' }}>Newest Releases</option>
+                        <option value="price_asc" {{ ($sort ?? '') === 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
+                        <option value="price_desc" {{ ($sort ?? '') === 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
+                        <option value="duration_asc" {{ ($sort ?? '') === 'duration_asc' ? 'selected' : '' }}>Duration: Shortest</option>
+                        <option value="duration_desc" {{ ($sort ?? '') === 'duration_desc' ? 'selected' : '' }}>Duration: Longest</option>
                     </select>
+
+                    <!-- Custom Dropdown Menu Component -->
+                    <div
+                        x-data="{
+                            open: false,
+                            selected: @js($sort ?? 'newest'),
+                            selectedLabel: @js($currentSortLabel),
+                            choose(val, label) {
+                                this.selected = val;
+                                this.selectedLabel = label;
+                                this.open = false;
+                                const selectEl = document.getElementById('sort-select');
+                                if (selectEl) {
+                                    selectEl.value = val;
+                                    selectEl.form.submit();
+                                }
+                            }
+                        }"
+                        @click.outside="open = false"
+                        @keydown.escape.window="open = false"
+                        class="relative inline-block text-left"
+                    >
+                        <!-- Pill-shaped Trigger matching search bar -->
+                        <button
+                            type="button"
+                            @click="open = !open"
+                            class="bg-white hover:bg-neutral-50 border border-neutral-200 hover:border-neutral-300 rounded-full px-4 py-2 text-xs font-semibold text-neutral-800 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange cursor-pointer shadow-sm inline-flex items-center gap-2 select-none"
+                            :class="{ 'border-lb-orange ring-1 ring-lb-orange bg-orange-50/20': open }"
+                            aria-haspopup="listbox"
+                            :aria-expanded="open.toString()"
+                        >
+                            <span x-text="selectedLabel">{{ $currentSortLabel }}</span>
+                            <i
+                                class="fas fa-chevron-down text-[10px] text-neutral-400 transition-transform duration-200 shrink-0"
+                                :class="{ 'rotate-180 text-lb-orange': open }"
+                                aria-hidden="true"
+                            ></i>
+                        </button>
+
+                        <!-- Custom Menu Component with Rounded Corners, Drop Shadow & Soft Orange / Dark Gray States -->
+                        <div
+                            x-show="open"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                            class="w-48 sm:w-52 absolute right-0 top-full mt-1.5 rounded-2xl bg-white shadow-xl border border-neutral-100 p-1.5 z-50 text-xs"
+                            role="listbox"
+                        >
+                            <div class="px-2.5 py-1.5 text-[10px] font-bold text-neutral-400 uppercase tracking-wider border-b border-neutral-100 mb-1">
+                                Sort Courses
+                            </div>
+
+                            <div class="space-y-0.5">
+                                <button
+                                    type="button"
+                                    @click="choose('newest', 'Newest Releases')"
+                                    class="w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left cursor-pointer group active:scale-[0.99]"
+                                    :class="selected === 'newest' ? 'bg-orange-50 text-lb-orange font-semibold' : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'"
+                                    role="option"
+                                    :aria-selected="(selected === 'newest').toString()"
+                                >
+                                    <div class="flex items-center gap-2 truncate">
+                                        <i class="fas fa-sparkles text-[10px]" :class="selected === 'newest' ? 'text-lb-orange' : 'text-neutral-400 group-hover:text-neutral-700'" aria-hidden="true"></i>
+                                        <span class="truncate">Newest Releases</span>
+                                    </div>
+                                    <i class="fas fa-check text-xs text-lb-orange shrink-0 ml-2" x-show="selected === 'newest'" aria-hidden="true"></i>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="choose('price_asc', 'Price: Low to High')"
+                                    class="w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left cursor-pointer group active:scale-[0.99]"
+                                    :class="selected === 'price_asc' ? 'bg-orange-50 text-lb-orange font-semibold' : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'"
+                                    role="option"
+                                    :aria-selected="(selected === 'price_asc').toString()"
+                                >
+                                    <div class="flex items-center gap-2 truncate">
+                                        <i class="fas fa-sort-amount-down-alt text-[10px]" :class="selected === 'price_asc' ? 'text-lb-orange' : 'text-neutral-400 group-hover:text-neutral-700'" aria-hidden="true"></i>
+                                        <span class="truncate">Price: Low to High</span>
+                                    </div>
+                                    <i class="fas fa-check text-xs text-lb-orange shrink-0 ml-2" x-show="selected === 'price_asc'" aria-hidden="true"></i>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="choose('price_desc', 'Price: High to Low')"
+                                    class="w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left cursor-pointer group active:scale-[0.99]"
+                                    :class="selected === 'price_desc' ? 'bg-orange-50 text-lb-orange font-semibold' : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'"
+                                    role="option"
+                                    :aria-selected="(selected === 'price_desc').toString()"
+                                >
+                                    <div class="flex items-center gap-2 truncate">
+                                        <i class="fas fa-sort-amount-up-alt text-[10px]" :class="selected === 'price_desc' ? 'text-lb-orange' : 'text-neutral-400 group-hover:text-neutral-700'" aria-hidden="true"></i>
+                                        <span class="truncate">Price: High to Low</span>
+                                    </div>
+                                    <i class="fas fa-check text-xs text-lb-orange shrink-0 ml-2" x-show="selected === 'price_desc'" aria-hidden="true"></i>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="choose('duration_asc', 'Duration: Shortest')"
+                                    class="w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left cursor-pointer group active:scale-[0.99]"
+                                    :class="selected === 'duration_asc' ? 'bg-orange-50 text-lb-orange font-semibold' : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'"
+                                    role="option"
+                                    :aria-selected="(selected === 'duration_asc').toString()"
+                                >
+                                    <div class="flex items-center gap-2 truncate">
+                                        <i class="fas fa-hourglass-start text-[10px]" :class="selected === 'duration_asc' ? 'text-lb-orange' : 'text-neutral-400 group-hover:text-neutral-700'" aria-hidden="true"></i>
+                                        <span class="truncate">Duration: Shortest</span>
+                                    </div>
+                                    <i class="fas fa-check text-xs text-lb-orange shrink-0 ml-2" x-show="selected === 'duration_asc'" aria-hidden="true"></i>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="choose('duration_desc', 'Duration: Longest')"
+                                    class="w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left cursor-pointer group active:scale-[0.99]"
+                                    :class="selected === 'duration_desc' ? 'bg-orange-50 text-lb-orange font-semibold' : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'"
+                                    role="option"
+                                    :aria-selected="(selected === 'duration_desc').toString()"
+                                >
+                                    <div class="flex items-center gap-2 truncate">
+                                        <i class="fas fa-hourglass-end text-[10px]" :class="selected === 'duration_desc' ? 'text-lb-orange' : 'text-neutral-400 group-hover:text-neutral-700'" aria-hidden="true"></i>
+                                        <span class="truncate">Duration: Longest</span>
+                                    </div>
+                                    <i class="fas fa-check text-xs text-lb-orange shrink-0 ml-2" x-show="selected === 'duration_desc'" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 
