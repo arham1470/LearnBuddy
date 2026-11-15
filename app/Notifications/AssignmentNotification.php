@@ -45,12 +45,20 @@ class AssignmentNotification extends Notification implements ShouldQueue
         $course = $this->assignment->course;
 
         if ($this->eventType === 'graded') {
-            return (new MailMessage)
+            $pointsAwarded = $this->submission?->points_awarded ?? 0;
+            $maxPoints = $this->assignment->max_points ?? 100;
+
+            $mail = (new MailMessage)
                 ->subject("Assignment Graded: {$this->assignment->title} · LearnBuddy")
                 ->greeting("Hello, {$notifiable->name}!")
-                ->line("Your submission for **{$this->assignment->title}** in **{$course->title}** has been reviewed.")
-                ->line("Grade: **{$this->submission?->grade} / {$this->assignment->max_score}**")
-                ->action('View Feedback & Score', route('courses.assignments.show', ['course' => $course->slug, 'assignment' => $this->assignment->slug]));
+                ->line("Your submission for **{$this->assignment->title}** in **{$course->title}** has been reviewed by your lecturer.")
+                ->line("Score: **{$pointsAwarded} / {$maxPoints} points**");
+
+            if (!empty($this->submission?->feedback)) {
+                $mail->line("Lecturer Feedback: \"{$this->submission->feedback}\"");
+            }
+
+            return $mail->action('View Feedback & Score', route('courses.assignments.show', ['course' => $course->slug, 'assignment' => $this->assignment->slug]));
         }
 
         $dueFormatted = $this->assignment->due_date
@@ -70,11 +78,14 @@ class AssignmentNotification extends Notification implements ShouldQueue
         $course = $this->assignment->course;
         $isGraded = ($this->eventType === 'graded');
 
+        $pointsAwarded = $this->submission?->points_awarded ?? 0;
+        $maxPoints = $this->assignment->max_points ?? 100;
+
         return [
             'type' => 'assignment_'.$this->eventType,
             'title' => $isGraded ? 'Assignment Graded' : 'New Assignment Published',
             'body' => $isGraded
-                ? "Your score for '{$this->assignment->title}' is ready: {$this->submission?->grade} / {$this->assignment->max_score}."
+                ? "Your score for '{$this->assignment->title}' is ready: {$pointsAwarded} / {$maxPoints}."
                 : "'{$this->assignment->title}' has been added to {$course->title}.",
             'icon' => $isGraded ? 'fas fa-clipboard-check' : 'fas fa-tasks',
             'action_url' => route('courses.assignments.show', ['course' => $course->slug, 'assignment' => $this->assignment->slug]),
