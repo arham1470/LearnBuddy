@@ -96,42 +96,79 @@
                     </div>
 
                     <!-- Right Quick Actions -->
-                    <div class="flex flex-wrap lg:flex-col items-end gap-2 shrink-0">
+                    <div class="flex flex-wrap lg:flex-col items-stretch gap-2 shrink-0 w-full lg:w-56">
                         @can('update', $course)
                             <a
                                 href="{{ route('management.courses.edit', $course) }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition"
+                                class="flex-1 lg:flex-initial w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl border border-neutral-200/90 bg-white hover:bg-orange-50 hover:border-orange-200 text-xs font-semibold text-neutral-800 hover:text-lb-orange transition-all shadow-2xs group"
                             >
-                                <i class="fas fa-edit text-xs" aria-hidden="true"></i>
-                                <span>Edit Details</span>
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span class="w-6 h-6 rounded-lg bg-neutral-100 group-hover:bg-orange-100 flex items-center justify-center text-neutral-500 group-hover:text-lb-orange shrink-0 transition-colors">
+                                        <i class="fas fa-pen-to-square text-[11px]" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="truncate">Edit Details</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-[10px] text-neutral-300 group-hover:text-lb-orange group-hover:translate-x-0.5 transition-all"></i>
                             </a>
+
                             <a
                                 href="{{ route('management.courses.assignments.index', $course) }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition"
+                                class="flex-1 lg:flex-initial w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl border border-neutral-200/90 bg-white hover:bg-orange-50 hover:border-orange-200 text-xs font-semibold text-neutral-800 hover:text-lb-orange transition-all shadow-2xs group"
                             >
-                                <i class="fas fa-file-alt text-xs text-lb-orange" aria-hidden="true"></i>
-                                <span>Assignments ({{ $course->assignments()->count() }})</span>
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span class="w-6 h-6 rounded-lg bg-orange-100 text-lb-orange flex items-center justify-center shrink-0">
+                                        <i class="fas fa-file-lines text-[11px]" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="truncate">Assignments</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-lb-orange shrink-0">
+                                    {{ $course->assignments()->count() }}
+                                </span>
                             </a>
+
                             <a
                                 href="{{ route('management.courses.quizzes.index', $course) }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition"
+                                class="flex-1 lg:flex-initial w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl border border-neutral-200/90 bg-white hover:bg-purple-50 hover:border-purple-200 text-xs font-semibold text-neutral-800 hover:text-purple-700 transition-all shadow-2xs group"
                             >
-                                <i class="fas fa-question-circle text-xs text-purple-600" aria-hidden="true"></i>
-                                <span>Quizzes ({{ $course->quizzes()->count() }})</span>
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span class="w-6 h-6 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                                        <i class="fas fa-circle-question text-[11px]" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="truncate">Quizzes</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 shrink-0">
+                                    {{ $course->quizzes()->count() }}
+                                </span>
                             </a>
+
                             <a
                                 href="{{ route('management.courses.batches.index', $course) }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition"
+                                class="flex-1 lg:flex-initial w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl border border-neutral-200/90 bg-white hover:bg-amber-50 hover:border-amber-200 text-xs font-semibold text-neutral-800 hover:text-amber-700 transition-all shadow-2xs group"
                             >
-                                <i class="fas fa-calendar-alt text-xs text-amber-600" aria-hidden="true"></i>
-                                <span>Batches ({{ $course->batches()->count() }})</span>
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span class="w-6 h-6 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                        <i class="fas fa-calendar-days text-[11px]" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="truncate">Batches</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 shrink-0">
+                                    {{ $course->batches()->count() }}
+                                </span>
                             </a>
+
                             <a
                                 href="{{ route('management.courses.live-classes.index', $course) }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition"
+                                class="flex-1 lg:flex-initial w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl border border-neutral-200/90 bg-white hover:bg-blue-50 hover:border-blue-200 text-xs font-semibold text-neutral-800 hover:text-blue-700 transition-all shadow-2xs group"
                             >
-                                <i class="fas fa-video text-xs text-blue-600" aria-hidden="true"></i>
-                                <span>Live Classes ({{ $course->liveClasses()->count() }})</span>
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span class="w-6 h-6 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                        <i class="fas fa-video text-[11px]" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="truncate">Live Classes</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 shrink-0">
+                                    {{ $course->liveClasses()->count() }}
+                                </span>
                             </a>
                         @endcan
                     </div>
