@@ -123,7 +123,13 @@
                                        class="px-3 py-1.5 rounded-lg border border-[#E5E5E5] hover:border-orange-300 hover:text-[#FF5F00] text-xs font-bold transition-colors">
                                         Edit
                                     </a>
-                                    <form method="POST" action="{{ route('admin.locations.destroy', $loc) }}" onsubmit="return confirm('Are you sure you want to delete this campus location?');" class="inline-block">
+                                    <form method="POST" action="{{ route('admin.locations.destroy', $loc) }}"
+                                          data-confirm="Are you sure you want to delete this campus location? Any physical batches scheduled at this venue will lose their campus assignment."
+                                          data-confirm-title="Delete Campus Location"
+                                          data-confirm-item="{{ $loc->name }} ({{ $loc->city }})"
+                                          data-confirm-btn="Delete Campus"
+                                          data-confirm-variant="danger"
+                                          class="inline-block">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

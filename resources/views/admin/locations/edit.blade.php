@@ -132,15 +132,34 @@
 
             <!-- Form Actions -->
             <div class="pt-6 border-t border-[#E5E5E5] flex items-center justify-between">
-                <a href="{{ route('admin.locations.index') }}"
-                   class="px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6B6B6B] hover:text-[#0A0A0A] hover:bg-[#F7F7F5] transition-colors">
-                    Cancel
-                </a>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('admin.locations.index') }}"
+                       class="px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6B6B6B] hover:text-[#0A0A0A] hover:bg-[#F7F7F5] transition-colors">
+                        Cancel
+                    </a>
+                    <button type="button"
+                            onclick="confirmDialog({
+                                title: 'Delete Campus Location',
+                                itemName: '{{ addslashes($location->name) }} ({{ addslashes($location->city) }})',
+                                message: 'Are you sure you want to permanently delete this campus location? Any physical batches scheduled at this venue will lose their campus assignment.',
+                                confirmText: 'Delete Campus',
+                                confirmVariant: 'danger',
+                                targetForm: 'delete-location-form'
+                            })"
+                            class="px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-bold transition-colors cursor-pointer">
+                        Delete Campus
+                    </button>
+                </div>
                 <button type="submit"
                         class="px-6 py-2.5 rounded-xl bg-[#FF5F00] hover:bg-[#e65500] text-white text-sm font-bold shadow-md shadow-orange-500/25 transition-all">
                     Update Campus
                 </button>
             </div>
+        </form>
+
+        <form id="delete-location-form" method="POST" action="{{ route('admin.locations.destroy', $location) }}" class="hidden">
+            @csrf
+            @method('DELETE')
         </form>
     </div>
 

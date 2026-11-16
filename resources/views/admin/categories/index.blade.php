@@ -120,7 +120,13 @@
                                        class="px-3 py-1.5 rounded-lg border border-[#E5E5E5] hover:border-orange-300 hover:text-[#FF5F00] text-xs font-bold transition-colors">
                                         Edit
                                     </a>
-                                    <form method="POST" action="{{ route('admin.categories.destroy', $cat) }}" onsubmit="return confirm('Are you sure you want to delete this category?');" class="inline-block">
+                                    <form method="POST" action="{{ route('admin.categories.destroy', $cat) }}"
+                                          data-confirm="Are you sure you want to delete this course category? Associated courses will become uncategorized until reassigned."
+                                          data-confirm-title="Delete Category"
+                                          data-confirm-item="{{ $cat->name }}"
+                                          data-confirm-btn="Delete Category"
+                                          data-confirm-variant="danger"
+                                          class="inline-block">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

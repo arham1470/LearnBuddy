@@ -134,14 +134,26 @@
                             </td>
                             <td class="py-3.5 px-5 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <form method="POST" action="{{ route('admin.approvals.approve', $user) }}" class="inline-block">
+                                    <form method="POST" action="{{ route('admin.approvals.approve', $user) }}"
+                                          data-confirm="Are you sure you want to approve this student registration? An official welcome confirmation will be dispatched to the student."
+                                          data-confirm-title="Approve Account Access"
+                                          data-confirm-item="{{ $user->name }} ({{ $user->email }})"
+                                          data-confirm-btn="Approve Access"
+                                          data-confirm-variant="success"
+                                          class="inline-block">
                                         @csrf
                                         <button type="submit"
                                                 class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer">
                                             Approve Access
                                         </button>
                                     </form>
-                                    <form method="POST" action="{{ route('admin.approvals.reject', $user) }}" onsubmit="return confirm('Are you sure you want to reject and remove this student registration?');" class="inline-block">
+                                    <form method="POST" action="{{ route('admin.approvals.reject', $user) }}"
+                                          data-confirm="Are you sure you want to reject and remove this student registration? The account and unverified profile data will be permanently cleared."
+                                          data-confirm-title="Reject Student Registration"
+                                          data-confirm-item="{{ $user->name }} ({{ $user->email }})"
+                                          data-confirm-btn="Reject &amp; Remove"
+                                          data-confirm-variant="danger"
+                                          class="inline-block">
                                         @csrf
                                         <button type="submit"
                                                 class="px-3 py-1.5 rounded-lg border border-transparent hover:border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-colors cursor-pointer">

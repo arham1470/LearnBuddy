@@ -749,5 +749,10 @@
         </div>
     </div>
 
+    <!-- ============================================================
+         CUSTOM CONFIRMATION DIALOG (Universal LearnBuddy modal)
+         ============================================================ -->
+    <x-confirm-dialog />
+
 </body>
 </html>

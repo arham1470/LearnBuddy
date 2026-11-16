@@ -304,16 +304,35 @@
 
         <!-- Form Actions -->
         <div class="pt-2 flex items-center justify-between">
-            <a href="{{ route('admin.courses.index') }}"
-               class="px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6B6B6B] hover:text-[#0A0A0A] hover:bg-white transition-colors">
-                Cancel
-            </a>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('admin.courses.index') }}"
+                   class="px-5 py-2.5 rounded-xl border border-[#E5E5E5] text-sm font-semibold text-[#6B6B6B] hover:text-[#0A0A0A] hover:bg-white transition-colors">
+                    Cancel
+                </a>
+                <button type="button"
+                        onclick="confirmDialog({
+                            title: 'Delete Course',
+                            itemName: '{{ addslashes($course->title) }}',
+                            message: 'Are you sure you want to delete this course? All associated curriculum modules, lessons, and delivery options will be archived.',
+                            confirmText: 'Delete Course',
+                            confirmVariant: 'danger',
+                            targetForm: 'delete-course-form'
+                        })"
+                        class="px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-sm font-bold transition-colors cursor-pointer">
+                    Delete Course
+                </button>
+            </div>
             <button type="submit"
                     class="px-7 py-3 rounded-xl bg-[#FF5F00] hover:bg-[#e65500] text-white text-sm font-bold shadow-md shadow-orange-500/25 transition-all">
                 Update Course
             </button>
         </div>
 
+    </form>
+
+    <form id="delete-course-form" method="POST" action="{{ route('admin.courses.destroy', $course) }}" class="hidden">
+        @csrf
+        @method('DELETE')
     </form>
 
 </div>
