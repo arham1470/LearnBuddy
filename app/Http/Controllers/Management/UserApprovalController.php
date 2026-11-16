@@ -17,8 +17,11 @@ class UserApprovalController extends Controller
     /**
      * Display a listing of pending user accounts awaiting admin approval.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.approvals.index');
+        }
         $search = $request->input('search');
 
         $query = User::query()

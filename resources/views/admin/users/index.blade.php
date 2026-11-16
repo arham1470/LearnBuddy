@@ -11,7 +11,7 @@
             <p class="text-[0.875rem] text-[#6B6B6B] mt-1">Manage platform student accounts, instructor credentials, and access roles.</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('management.users.approvals') }}"
+            <a href="{{ route('admin.approvals.index') }}"
                class="px-4 py-2.5 rounded-xl bg-[#FF5F00] hover:bg-[#e65500] text-white text-sm font-bold shadow-md shadow-orange-500/25 transition-all">
                 Pending Approvals
             </a>
@@ -67,7 +67,9 @@
                     @empty
                     <tr>
                         <td colspan="5" class="py-12 text-center text-[#6B6B6B]">
-                            <div class="text-3xl mb-2">👤</div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#FFF0E6] text-[#FF5F00] flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            </div>
                             <div class="font-bold text-[#0A0A0A]">No users found</div>
                         </td>
                     </tr>

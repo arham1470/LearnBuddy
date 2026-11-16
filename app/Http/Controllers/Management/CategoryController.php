@@ -12,8 +12,12 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    public function index(): View
+    public function index(\Illuminate\Http\Request $request): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.categories.index');
+        }
+
         Gate::authorize('viewAny', Category::class);
 
         $categories = Category::withCount('courses')->orderBy('sort_order')->orderBy('name')->paginate(15);
@@ -21,8 +25,12 @@ class CategoryController extends Controller
         return view('management.categories.index', compact('categories'));
     }
 
-    public function create(): View
+    public function create(\Illuminate\Http\Request $request): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.categories.create');
+        }
+
         Gate::authorize('create', Category::class);
 
         return view('management.categories.create');
@@ -43,8 +51,12 @@ class CategoryController extends Controller
             ->with('status', 'Category created successfully!');
     }
 
-    public function edit(Category $category): View
+    public function edit(\Illuminate\Http\Request $request, Category $category): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.categories.edit', $category);
+        }
+
         Gate::authorize('update', $category);
 
         return view('management.categories.edit', compact('category'));

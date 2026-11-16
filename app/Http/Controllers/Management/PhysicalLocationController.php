@@ -15,8 +15,12 @@ class PhysicalLocationController extends Controller
     /**
      * Display a listing of physical campus locations across Sri Lanka.
      */
-    public function index(): View
+    public function index(\Illuminate\Http\Request $request): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.locations.index');
+        }
+
         Gate::authorize('viewAny', PhysicalLocation::class);
 
         $locations = PhysicalLocation::withCount('batches')
@@ -30,8 +34,12 @@ class PhysicalLocationController extends Controller
     /**
      * Show form to create a new physical location.
      */
-    public function create(): View
+    public function create(\Illuminate\Http\Request $request): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.locations.create');
+        }
+
         Gate::authorize('create', PhysicalLocation::class);
 
         $provinces = PhysicalLocation::PROVINCES;
@@ -59,8 +67,12 @@ class PhysicalLocationController extends Controller
     /**
      * Show form to edit an existing physical location.
      */
-    public function edit(PhysicalLocation $location): View
+    public function edit(\Illuminate\Http\Request $request, PhysicalLocation $location): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.locations.edit', $location);
+        }
+
         Gate::authorize('update', $location);
 
         $provinces = PhysicalLocation::PROVINCES;

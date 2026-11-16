@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminApprovalController;
 use App\Http\Controllers\Admin\AdminAssignmentController;
 use App\Http\Controllers\Admin\AdminBatchController;
+use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminCourseController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
+use App\Http\Controllers\Admin\AdminLocationController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\AdminSettingController;
@@ -307,9 +310,16 @@ Route::middleware('auth')->group(function () {
 
         // Academic & Courses
         Route::get('/courses', [AdminCourseController::class, 'index'])->name('courses.index');
+        Route::get('/courses/create', [AdminCourseController::class, 'create'])->name('courses.create');
+        Route::post('/courses', [AdminCourseController::class, 'store'])->name('courses.store');
+        Route::get('/courses/{course}/edit', [AdminCourseController::class, 'edit'])->name('courses.edit');
+        Route::put('/courses/{course}', [AdminCourseController::class, 'update'])->name('courses.update');
+        Route::delete('/courses/{course}', [AdminCourseController::class, 'destroy'])->name('courses.destroy');
+        Route::resource('categories', AdminCategoryController::class)->except(['show']);
 
         // Campus & Batches
         Route::get('/batches', [AdminBatchController::class, 'index'])->name('batches.index');
+        Route::resource('locations', AdminLocationController::class)->except(['show']);
 
         // Student Learning & Progress
         Route::get('/enrollments', [AdminEnrollmentController::class, 'index'])->name('enrollments.index');
@@ -323,6 +333,9 @@ Route::middleware('auth')->group(function () {
 
         // User & Security
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::get('/approvals', [AdminApprovalController::class, 'index'])->name('approvals.index');
+        Route::post('/approvals/{user}/approve', [AdminApprovalController::class, 'approve'])->name('approvals.approve');
+        Route::post('/approvals/{user}/reject', [AdminApprovalController::class, 'reject'])->name('approvals.reject');
 
         // Analytics & System
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');

@@ -11,7 +11,7 @@
             <p class="text-[0.875rem] text-[#6B6B6B] mt-1">Manage physical classrooms, physical locations, and session schedules.</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('management.locations.index') }}"
+            <a href="{{ route('admin.locations.index') }}"
                class="px-4 py-2.5 rounded-xl border border-[#E5E5E5] bg-white hover:bg-[#F7F7F5] text-sm font-semibold text-[#0A0A0A] transition-colors">
                 Manage Campuses
             </a>
@@ -55,7 +55,9 @@
                     @empty
                     <tr>
                         <td colspan="5" class="py-12 text-center text-[#6B6B6B]">
-                            <div class="text-3xl mb-2">🏫</div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#FFF0E6] text-[#FF5F00] flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            </div>
                             <div class="font-bold text-[#0A0A0A]">No batches scheduled</div>
                             <div class="text-xs text-[#6B6B6B] mt-1">Configure physical locations and batches to start admitting physical students.</div>
                         </td>

@@ -12,11 +12,11 @@
             <p class="text-[0.875rem] text-[#6B6B6B] mt-1">Manage course curriculums, pricing, instructors, and publishing status.</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('management.categories.index') }}"
+            <a href="{{ route('admin.categories.index') }}"
                class="px-4 py-2.5 rounded-xl border border-[#E5E5E5] bg-white hover:bg-[#F7F7F5] text-sm font-semibold text-[#0A0A0A] transition-colors">
                 Categories
             </a>
-            <a href="{{ route('management.courses.create') }}"
+            <a href="{{ route('admin.courses.create') }}"
                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FF5F00] hover:bg-[#e65500] text-white text-sm font-bold shadow-md shadow-orange-500/25 transition-all">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                 <span>New Course</span>
@@ -68,7 +68,7 @@
                         <td class="py-3.5 px-5">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-xl bg-orange-100 border border-orange-200 flex items-center justify-center text-[#FF5F00] font-bold shrink-0">
-                                    📚
+                                    <svg class="w-5 h-5 text-[#FF5F00]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                                 </div>
                                 <div class="min-w-0">
                                     <div class="font-bold text-[#0A0A0A] text-sm truncate max-w-xs">{{ $course->title }}</div>
@@ -95,7 +95,7 @@
                         </td>
                         <td class="py-3.5 px-5 text-right">
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('management.courses.edit', $course) }}"
+                                <a href="{{ route('admin.courses.edit', $course) }}"
                                    class="px-3 py-1.5 rounded-lg border border-[#E5E5E5] hover:border-orange-300 hover:text-[#FF5F00] text-xs font-bold transition-colors">
                                     Edit
                                 </a>
@@ -109,7 +109,9 @@
                     @empty
                     <tr>
                         <td colspan="5" class="py-12 text-center text-[#6B6B6B]">
-                            <div class="text-3xl mb-2">📚</div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#FFF0E6] text-[#FF5F00] flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            </div>
                             <div class="font-bold text-[#0A0A0A]">No courses found</div>
                             <div class="text-xs text-[#6B6B6B] mt-1">Get started by creating your first course.</div>
                         </td>

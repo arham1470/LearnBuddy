@@ -69,8 +69,12 @@ class CourseController extends Controller
     /**
      * Show the form for creating a new course.
      */
-    public function create(): View
+    public function create(Request $request): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.courses.create');
+        }
+
         Gate::authorize('create', Course::class);
 
         $categories = Category::where('is_active', true)->orderBy('name')->get();
@@ -156,8 +160,12 @@ class CourseController extends Controller
     /**
      * Show the form for editing the specified course.
      */
-    public function edit(Course $course): View
+    public function edit(Request $request, Course $course): View|RedirectResponse
     {
+        if ($request->user()?->isAdmin()) {
+            return redirect()->route('admin.courses.edit', $course);
+        }
+
         Gate::authorize('update', $course);
 
         $categories = Category::where('is_active', true)->orderBy('name')->get();

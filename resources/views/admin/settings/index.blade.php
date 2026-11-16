@@ -17,8 +17,8 @@
         <div class="lb-card p-5">
             <div class="text-[0.8125rem] font-semibold text-[#6B6B6B]">Platform Version</div>
             <div class="text-xl font-extrabold text-[#0A0A0A] mt-1">LearnBuddy v2.0 Enterprise</div>
-            <div class="text-xs text-emerald-600 font-semibold mt-2 flex items-center gap-1">
-                <span>●</span> System Up to Date
+            <div class="text-xs text-emerald-600 font-semibold mt-2 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span> System Up to Date
             </div>
         </div>
         <div class="lb-card p-5">
@@ -29,8 +29,8 @@
         <div class="lb-card p-5">
             <div class="text-[0.8125rem] font-semibold text-[#6B6B6B]">Video Streaming Provider</div>
             <div class="text-xl font-extrabold text-[#0A0A0A] mt-1">Mux Video &amp; HLS</div>
-            <div class="text-xs text-emerald-600 font-semibold mt-2 flex items-center gap-1">
-                <span>●</span> Webhooks Connected
+            <div class="text-xs text-emerald-600 font-semibold mt-2 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span> Webhooks Connected
             </div>
         </div>
     </div>

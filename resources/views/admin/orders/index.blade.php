@@ -55,7 +55,9 @@
                     @empty
                     <tr>
                         <td colspan="6" class="py-12 text-center text-[#6B6B6B]">
-                            <div class="text-3xl mb-2">💳</div>
+                            <div class="w-12 h-12 rounded-2xl bg-[#FFF0E6] text-[#FF5F00] flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            </div>
                             <div class="font-bold text-[#0A0A0A]">No financial transactions found</div>
                         </td>
                     </tr>

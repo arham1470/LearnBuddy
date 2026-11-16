@@ -140,7 +140,7 @@
     searchModal: false,
     userDropdown: false,
     dateDropdown: false,
-    activeGroup: null,
+    activeGroup: '{{ request()->routeIs('admin.courses.*', 'admin.categories.*') ? 'academic' : (request()->routeIs('admin.batches.*', 'admin.locations.*') ? 'campus' : (request()->routeIs('admin.enrollments.*') ? 'students' : (request()->routeIs('admin.assignments.*', 'admin.quizzes.*') ? 'grading' : (request()->routeIs('admin.orders.*') ? 'finance' : (request()->routeIs('admin.users.*', 'admin.approvals.*') ? 'security' : (request()->routeIs('admin.settings.*') ? 'system' : '')))))) }}',
     toggleGroup(name) {
         this.activeGroup = this.activeGroup === name ? null : name;
     }
@@ -168,25 +168,25 @@
             <div class="flex flex-col flex-1 min-h-0 overflow-hidden">
 
                 <!-- Logo & Brand Header -->
-                <div :class="sidebarOpen ? 'px-5 justify-between' : 'px-0 justify-center'" class="h-[68px] min-h-[68px] flex items-center border-b border-white/5 shrink-0 transition-all">
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 group">
-                        <!-- Custom Graduation Cap Brand Icon -->
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FF5F00] to-[#FF8A3D] flex items-center justify-center shadow-lg shadow-orange-500/30 shrink-0 group-hover:scale-105 transition-transform">
-                            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M11.7 2.805a.75.75 0 0 1 .6 0A60.65 60.65 0 0 1 22.83 8.72a.75.75 0 0 1-.231 1.337 49.948 49.948 0 0 0-9.902 3.912l-.003.002c-.114.06-.24.09-.367.09a.747.747 0 0 1-.367-.09l-.003-.001a49.95 49.95 0 0 0-9.902-3.913.75.75 0 0 1-.23-1.337A60.65 60.65 0 0 1 11.7 2.805Z" />
-                                <path d="M13.06 15.473a48.455 48.455 0 0 1 7.666-3.282c.134 1.414.22 2.843.255 4.284a.75.75 0 0 1-.456.711l-7.25 3.107a.75.75 0 0 1-.59 0l-7.25-3.107a.75.75 0 0 1-.456-.711c.035-1.441.121-2.87.255-4.284a48.455 48.455 0 0 1 7.666 3.282.75.75 0 0 0 .59 0l.085-.036.085.036Z" />
-                            </svg>
-                        </div>
-                        <div x-show="sidebarOpen" x-cloak class="flex flex-col">
-                            <span class="text-white font-extrabold text-[1.125rem] tracking-tight leading-none flex items-center">
-                                Learn<span class="text-[#FF5F00]">Buddy</span>
-                            </span>
-                            <span class="text-white/40 text-[0.6875rem] font-semibold uppercase tracking-wider mt-1">Admin Portal</span>
+                <div :class="sidebarOpen ? 'px-4 justify-center relative' : 'px-0 justify-center'" class="h-[68px] min-h-[68px] flex items-center border-b border-white/5 shrink-0 transition-all">
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-center group">
+                        <!-- Full Dark Mode Logo when expanded (Centered & Scaled Up) -->
+                        <img x-show="sidebarOpen" x-cloak
+                             src="{{ asset('images/logo-dark.png') }}"
+                             alt="LearnBuddy"
+                             class="h-11 w-auto max-w-[210px] object-contain group-hover:opacity-90 group-hover:scale-[1.02] transition-all">
+
+                        <!-- Compact Icon Mark when collapsed -->
+                        <div x-show="!sidebarOpen" x-cloak class="w-10 h-10 overflow-hidden flex items-center justify-center shrink-0">
+                            <img src="{{ asset('images/logo-dark.png') }}"
+                                 alt="LearnBuddy"
+                                 class="h-10 max-w-none object-left object-cover group-hover:scale-105 transition-transform"
+                                 style="width: auto; height: 40px; object-position: left center;">
                         </div>
                     </a>
 
                     <!-- Close button on mobile -->
-                    <button @click="mobileOpen = false" x-show="sidebarOpen" class="lg:hidden text-white/60 hover:text-white p-1 rounded-lg">
+                    <button @click="mobileOpen = false" x-show="sidebarOpen" class="absolute right-4 lg:hidden text-white/60 hover:text-white p-1 rounded-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
@@ -220,9 +220,9 @@
                             </svg>
                         </button>
                         <div x-show="sidebarOpen && activeGroup === 'academic'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.courses.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">All Courses</a>
-                            <a href="{{ route('management.categories.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Course Categories</a>
-                            <a href="{{ route('management.courses.create') }}" class="block px-3 py-1.5 text-[0.8125rem] text-[#FF5F00] hover:text-[#FF8A3D] font-medium transition-colors">+ Add New Course</a>
+                            <a href="{{ route('admin.courses.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.courses.index') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">All Courses</a>
+                            <a href="{{ route('admin.categories.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.categories.*') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Course Categories</a>
+                            <a href="{{ route('admin.courses.create') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.courses.create') ? 'text-[#FF5F00] bg-orange-500/10 font-bold' : 'text-[#FF5F00] hover:text-[#FF8A3D] font-medium' }}">+ Add New Course</a>
                         </div>
                     </div>
 
@@ -242,8 +242,8 @@
                             </svg>
                         </button>
                         <div x-show="sidebarOpen && activeGroup === 'campus'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.batches.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Batches &amp; Schedules</a>
-                            <a href="{{ route('management.locations.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Physical Campuses</a>
+                            <a href="{{ route('admin.batches.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.batches.*') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Batches &amp; Schedules</a>
+                            <a href="{{ route('admin.locations.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.locations.*') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Physical Campuses</a>
                         </div>
                     </div>
 
@@ -324,8 +324,8 @@
                             </svg>
                         </button>
                         <div x-show="sidebarOpen && activeGroup === 'security'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.users.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Users Directory</a>
-                            <a href="{{ route('management.users.approvals') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Pending Approvals</a>
+                            <a href="{{ route('admin.users.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.users.index') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Users Directory</a>
+                            <a href="{{ route('admin.approvals.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.approvals.*') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Pending Approvals</a>
                         </div>
                     </div>
 
@@ -369,10 +369,10 @@
                         <h4 class="text-white font-bold text-[0.8125rem] leading-tight mb-1">Create &amp; Manage<br>Your Courses</h4>
                         <p class="text-white/50 text-[0.6875rem] leading-snug mb-2.5">Build, schedule and track learning in one place.</p>
 
-                        <a href="{{ route('management.courses.create') }}"
-                           class="w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-[#FF5F00] hover:bg-[#e65500] text-white font-bold text-[0.78rem] shadow-lg shadow-orange-500/30 transition-all hover:scale-[1.02]">
+                        <a href="{{ route('admin.courses.create') }}"
+                           class="w-fit mx-auto inline-flex items-center justify-center gap-1.5 py-1.5 px-3.5 rounded-xl bg-[#FF5F00] hover:bg-[#e65500] text-white font-bold text-[0.78rem] shadow-lg shadow-orange-500/30 transition-all hover:scale-[1.02]">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                            <span>+ New Course</span>
+                            <span>New Course</span>
                         </a>
                     </div>
                 </div>
@@ -518,23 +518,29 @@
             <div class="border-t border-[#E5E5E5] px-4 py-3 bg-[#F7F7F5]">
                 <div class="text-[0.72rem] font-bold uppercase tracking-wider text-[#6B6B6B] mb-2">Platform Quick Jumps</div>
                 <div class="grid grid-cols-2 gap-2 text-sm">
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
-                        <span>📊</span><span>Dashboard</span>
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
+                        <svg class="w-4 h-4 text-[#FF5F00] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        <span>Dashboard</span>
                     </a>
-                    <a href="{{ route('admin.courses.index') }}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
-                        <span>📚</span><span>All Courses</span>
+                    <a href="{{ route('admin.courses.index') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
+                        <svg class="w-4 h-4 text-[#FF5F00] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        <span>All Courses</span>
                     </a>
-                    <a href="{{ route('management.courses.create') }}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
-                        <span>✨</span><span>New Course</span>
+                    <a href="{{ route('admin.courses.create') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
+                        <svg class="w-4 h-4 text-[#FF5F00] shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                        <span>New Course</span>
                     </a>
-                    <a href="{{ route('admin.enrollments.index') }}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
-                        <span>🎓</span><span>Enrollments</span>
+                    <a href="{{ route('admin.enrollments.index') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
+                        <svg class="w-4 h-4 text-[#FF5F00] shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M11.7 2.805a.75.75 0 0 1 .6 0A60.65 60.65 0 0 1 22.83 8.72a.75.75 0 0 1-.231 1.337 49.948 49.948 0 0 0-9.902 3.912l-.003.002c-.114.06-.24.09-.367.09a.747.747 0 0 1-.367-.09l-.003-.001a49.95 49.95 0 0 0-9.902-3.913.75.75 0 0 1-.23-1.337A60.65 60.65 0 0 1 11.7 2.805Z"/><path d="M13.06 15.473a48.455 48.455 0 0 1 7.666-3.282c.134 1.414.22 2.843.255 4.284a.75.75 0 0 1-.456.711l-7.25 3.107a.75.75 0 0 1-.59 0l-7.25-3.107a.75.75 0 0 1-.456-.711c.035-1.441.121-2.87.255-4.284a48.455 48.455 0 0 1 7.666 3.282.75.75 0 0 0 .59 0l.085-.036.085.036Z"/></svg>
+                        <span>Enrollments</span>
                     </a>
-                    <a href="{{ route('admin.batches.index') }}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
-                        <span>🏫</span><span>Batches &amp; Schedules</span>
+                    <a href="{{ route('admin.batches.index') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
+                        <svg class="w-4 h-4 text-[#FF5F00] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <span>Batches &amp; Schedules</span>
                     </a>
-                    <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
-                        <span>💳</span><span>Orders &amp; Revenue</span>
+                    <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white hover:text-[#FF5F00] transition-colors text-[#0A0A0A]">
+                        <svg class="w-4 h-4 text-[#FF5F00] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        <span>Orders &amp; Revenue</span>
                     </a>
                 </div>
             </div>

@@ -12,7 +12,9 @@
         <div>
             <div class="text-[0.9375rem] font-medium text-[#6B6B6B] flex items-center gap-1.5">
                 <span>Good Morning, Super Admin</span>
-                <span class="inline-block animate-wave origin-bottom-right">👋</span>
+                <svg class="w-4 h-4 text-[#FF5F00] inline-block animate-wave origin-bottom-right" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/>
+                </svg>
             </div>
             <h1 class="text-3xl font-extrabold text-[#0A0A0A] tracking-tight mt-1">Dashboard</h1>
             <p class="text-[0.875rem] text-[#6B6B6B] mt-0.5">Here's what's happening with your learning platform today.</p>
@@ -96,7 +98,7 @@
                 </div>
                 <div class="mt-4 flex items-center gap-1.5 text-[0.78rem] text-[#6B6B6B]">
                     <span>Enrolled Sri Lankan students</span>
-                    <span class="text-xs">👥</span>
+                    <svg class="w-3.5 h-3.5 text-[#6B6B6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 </div>
             </div>
 
@@ -115,7 +117,7 @@
                 </div>
                 <div class="mt-4 flex items-center gap-1.5 text-[0.78rem] text-[#6B6B6B]">
                     <span>Total course seats</span>
-                    <span class="text-xs">🪑</span>
+                    <svg class="w-3.5 h-3.5 text-[#6B6B6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                 </div>
             </div>
 
@@ -134,7 +136,7 @@
                 </div>
                 <div class="mt-4 flex items-center gap-1.5 text-[0.78rem] text-[#6B6B6B]">
                     <span>All settled payments</span>
-                    <span class="text-xs">💳</span>
+                    <svg class="w-3.5 h-3.5 text-[#6B6B6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                 </div>
             </div>
 
@@ -219,73 +221,56 @@
     <!-- ============================================================
          3. MIDDLE SECTION: RECENT ENROLLMENTS & TREND CHART
          ============================================================ -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
 
-        <!-- Left Column: Recent Course Enrollments (Width ~62% -> 7 or 8 cols) -->
-        <div class="lg:col-span-7 xl:col-span-7 lb-card overflow-hidden">
+        <!-- Left Column: Recent Course Enrollments (Matching Height with Graph, 5 Rows Balanced) -->
+        <div class="lg:col-span-5 xl:col-span-5 lb-card overflow-hidden flex flex-col justify-between h-full">
             <!-- Card Header -->
-            <div class="p-5 sm:px-6 sm:py-5 border-b border-[#E5E5E5] flex items-center justify-between">
+            <div class="p-4 sm:px-5 sm:py-4 border-b border-[#E5E5E5] flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="text-[#FF5F00]">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                         </svg>
                     </div>
-                    <h3 class="text-[1.0625rem] font-bold text-[#0A0A0A]">Recent Course Enrollments</h3>
+                    <h3 class="text-[1rem] font-bold text-[#0A0A0A]">Recent Enrollments</h3>
                 </div>
                 <a href="{{ route('admin.enrollments.index') }}"
-                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E5E5E5] hover:border-orange-300 bg-[#F7F7F5] hover:bg-[#FFF0E6] text-[0.78rem] font-bold text-[#6B6B6B] hover:text-[#FF5F00] transition-colors">
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[#E5E5E5] hover:border-orange-300 bg-[#F7F7F5] hover:bg-[#FFF0E6] text-[0.75rem] font-bold text-[#6B6B6B] hover:text-[#FF5F00] transition-colors">
                     <span>View All</span>
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 </a>
             </div>
 
-            <!-- Table Container -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm whitespace-nowrap">
+            <!-- Table Container (Both Columns Fully Visible, Balanced Height Across 5 Rows) -->
+            <div class="w-full flex-1 flex flex-col overflow-x-hidden">
+                <table class="w-full h-full text-left text-sm">
                     <thead>
                         <tr class="bg-[#F7F7F5] border-b border-[#E5E5E5] text-[0.6875rem] font-bold uppercase tracking-wider text-[#6B6B6B]">
-                            <th scope="col" class="py-3 px-5">Student</th>
-                            <th scope="col" class="py-3 px-4">Course</th>
-                            <th scope="col" class="py-3 px-3">Mode</th>
-                            <th scope="col" class="py-3 px-3">Status</th>
-                            <th scope="col" class="py-3 px-5 text-right">Enrolled On</th>
+                            <th scope="col" class="py-2.5 pl-4 sm:pl-5 pr-2">Student</th>
+                            <th scope="col" class="py-2.5 pl-2 pr-5 sm:pr-6 text-right whitespace-nowrap w-[130px] shrink-0">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#E5E5E5]">
-                        @forelse($recentEnrollments as $item)
+                        @forelse(collect($recentEnrollments)->take(5) as $item)
                         <tr class="hover:bg-[#FFFDFB] transition-colors">
-                            <!-- Student Avatar & Name -->
-                            <td class="py-3.5 px-5">
-                                <div class="flex items-center gap-3">
+                            <!-- Column 1: Student Avatar & Info (Takes remaining width and truncates cleanly) -->
+                            <td class="py-3.5 pl-4 sm:pl-5 pr-2 min-w-0 max-w-0 w-full align-middle">
+                                <div class="flex items-center gap-3 min-w-0">
                                     <div class="w-8 h-8 rounded-full bg-[#FFF0E6] border border-[#FF5F00]/25 text-[#FF5F00] font-bold text-[0.72rem] flex items-center justify-center shrink-0">
                                         {{ $item['initials'] }}
                                     </div>
-                                    <div class="min-w-0">
+                                    <div class="min-w-0 flex-1 overflow-hidden">
                                         <div class="font-bold text-[#0A0A0A] text-[0.84rem] truncate">{{ $item['student_name'] }}</div>
-                                        @if(!empty($item['student_email']))
-                                            <div class="text-[0.6875rem] text-[#6B6B6B] truncate">{{ $item['student_email'] }}</div>
-                                        @endif
+                                        <div class="text-[0.6875rem] text-[#6B6B6B] truncate max-w-full" title="{{ $item['course_title'] }}">
+                                            {{ $item['course_title'] }}
+                                        </div>
                                     </div>
                                 </div>
                             </td>
 
-                            <!-- Course Title (truncated with title tooltip) -->
-                            <td class="py-3.5 px-4 max-w-[200px]" title="{{ $item['course_title'] }}">
-                                <div class="text-[0.84rem] text-[#0A0A0A] font-medium truncate">
-                                    {{ $item['course_title'] }}
-                                </div>
-                            </td>
-
-                            <!-- Mode Badge -->
-                            <td class="py-3.5 px-3">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-[#EBF5FF] text-[#2B6CB0] border border-blue-200/60">
-                                    {{ $item['delivery_mode'] }}
-                                </span>
-                            </td>
-
-                            <!-- Status Badge -->
-                            <td class="py-3.5 px-3">
+                            <!-- Column 2: Status Badge (Dedicated width, shrink-0, never clips or hides text) -->
+                            <td class="py-3.5 pl-2 pr-5 sm:pr-6 text-right whitespace-nowrap w-[130px] shrink-0 align-middle">
                                 @if($item['status_type'] === 'success')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-[#DEF7EC] text-[#03543F] border border-emerald-200/60">
                                         {{ $item['status'] }}
@@ -300,15 +285,10 @@
                                     </span>
                                 @endif
                             </td>
-
-                            <!-- Enrolled Date -->
-                            <td class="py-3.5 px-5 text-right text-[0.78rem] text-[#6B6B6B] font-medium">
-                                {{ $item['enrolled_at'] }}
-                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="py-8 text-center text-[#6B6B6B]">No course enrollments found.</td>
+                            <td colspan="2" class="py-8 text-center text-[#6B6B6B]">No course enrollments found.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -316,9 +296,9 @@
             </div>
         </div>
 
-        <!-- Right Column: Course Enrollments Overview Chart (Width ~38% -> 5 cols) -->
-        <div class="lg:col-span-5 xl:col-span-5 lb-card p-5 sm:p-6 flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-4">
+        <!-- Right Column: Course Enrollments Overview Chart (Matching Height) -->
+        <div class="lg:col-span-7 xl:col-span-7 lb-card p-5 sm:p-6 flex flex-col justify-between h-full">
+            <div class="flex items-center justify-between mb-2 shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="text-[#FF5F00]">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,14 +307,17 @@
                     </div>
                     <h3 class="text-[1.0625rem] font-bold text-[#0A0A0A]">Course Enrollments Overview</h3>
                 </div>
+                <span class="text-xs font-semibold text-[#6B6B6B] bg-[#F7F7F5] px-3 py-1 rounded-full border border-[#E5E5E5]">
+                    Last 7 Days
+                </span>
             </div>
 
-            <!-- Chart Container -->
-            <div class="relative w-full h-[270px] pt-2">
+            <!-- Big Chart Container -->
+            <div class="relative w-full flex-1 min-h-[300px] pt-2">
                 <canvas id="enrollmentTrendChart" class="w-full h-full"></canvas>
 
                 <!-- Floating Tooltip Pill matching reference screenshot (Nov 16: 5 Enrollments) -->
-                <div class="absolute top-10 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#FF5F00] text-white text-[0.75rem] font-bold shadow-lg shadow-orange-500/35 pointer-events-none animate-bounce-slow">
+                <div class="absolute top-6 right-6 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#FF5F00] text-white text-[0.75rem] font-bold shadow-lg shadow-orange-500/35 pointer-events-none animate-bounce-slow">
                     <span>5 Enrollments</span>
                 </div>
             </div>
@@ -415,7 +398,7 @@
 
         // Create gradient fill matching reference UI
         const chartCtx = ctx.getContext('2d');
-        const gradient = chartCtx.createLinearGradient(0, 0, 0, 260);
+        const gradient = chartCtx.createLinearGradient(0, 0, 0, 320);
         gradient.addColorStop(0, 'rgba(255, 95, 0, 0.28)');
         gradient.addColorStop(0.65, 'rgba(255, 95, 0, 0.08)');
         gradient.addColorStop(1, 'rgba(255, 95, 0, 0.00)');
