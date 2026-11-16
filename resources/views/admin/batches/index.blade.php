@@ -38,13 +38,13 @@
                             {{ $batch->batch_name }} ({{ $batch->batch_code }})
                         </td>
                         <td class="py-3.5 px-4 text-[#6B6B6B] max-w-xs truncate">
-                            {{ $batch->course->title ?? 'N/A' }}
+                            {{ $batch->course->title ?? $batch->deliveryOption?->course?->title ?? 'N/A' }}
                         </td>
                         <td class="py-3.5 px-4 text-[#0A0A0A]">
-                            {{ $batch->physicalLocation->name ?? 'Online / Remote' }}
+                            {{ $batch->physicalLocation->name ?? $batch->location?->name ?? 'Online / Remote' }}
                         </td>
                         <td class="py-3.5 px-4 text-xs font-semibold text-[#6B6B6B]">
-                            {{ $batch->enrollments->count() }} / {{ $batch->capacity ?? 'Unlimited' }} seats
+                            {{ $batch->enrolled_seats ?? $batch->enrollments->count() }} / {{ $batch->max_seats ?? 'Unlimited' }} seats
                         </td>
                         <td class="py-3.5 px-4">
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#DEF7EC] text-[#03543F]">

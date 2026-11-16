@@ -12,7 +12,7 @@ class AdminBatchController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = CourseBatch::with(['course', 'physicalLocation', 'enrollments'])->latest();
+        $query = CourseBatch::with(['course', 'deliveryOption.course', 'physicalLocation', 'enrollments'])->latest();
 
         if ($request->filled('search')) {
             $search = $request->input('search');

@@ -191,162 +191,364 @@
                     </button>
                 </div>
 
-                <!-- Navigation Links List (Fixed, Non-scrollable) -->
-                <nav class="flex-1 px-3 py-3 space-y-1 overflow-hidden select-none">
+                <!-- Navigation Links List (Fixed, Non-scrollable, Modern LearnBuddy Brand UI) -->
+                @php
+                    $isDashboardActive = request()->routeIs('admin.dashboard');
+                    $isAcademicActive = request()->routeIs('admin.courses.*', 'admin.categories.*');
+                    $isCampusActive = request()->routeIs('admin.batches.*', 'admin.locations.*');
+                    $isStudentsActive = request()->routeIs('admin.enrollments.*');
+                    $isGradingActive = request()->routeIs('admin.assignments.*', 'admin.quizzes.*');
+                    $isFinanceActive = request()->routeIs('admin.orders.*');
+                    $isSecurityActive = request()->routeIs('admin.users.*', 'admin.approvals.*');
+                    $isSystemActive = request()->routeIs('admin.settings.*');
 
-                    <!-- 1. Dashboard (Active Solid Orange Pill) -->
+                    // Real-time pending approvals count for badge indicator
+                    try {
+                        $pendingApprovalsCount = \App\Models\User::where('is_approved', false)->whereNotNull('email_verified_at')->count();
+                    } catch (\Throwable $e) {
+                        $pendingApprovalsCount = 0;
+                    }
+                @endphp
+
+                <nav class="flex-1 px-3 py-2 space-y-1 overflow-hidden select-none">
+
+                    <!-- Section: OVERVIEW -->
+                    <div x-show="sidebarOpen" x-cloak class="px-2.5 pt-1 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-white/30 select-none">
+                        Overview
+                    </div>
+
+                    <!-- 1. Dashboard -->
                     <a href="{{ route('admin.dashboard') }}"
-                       :class="sidebarOpen ? 'justify-start px-3.5' : 'justify-center px-0'"
-                       class="flex items-center gap-3.5 py-2.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.dashboard') ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/25 font-semibold' : 'text-white/70 hover:text-white hover:bg-white/5 font-medium' }}">
-                        <svg class="w-5 h-5 shrink-0 transition-colors {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-white/60 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                        <span x-show="sidebarOpen" x-cloak class="text-[0.875rem] whitespace-nowrap">Dashboard</span>
+                       :class="sidebarOpen ? 'justify-start px-2.5' : 'justify-center px-0'"
+                       class="relative flex items-center gap-3 py-1.5 rounded-xl transition-all duration-200 group {{ $isDashboardActive ? 'bg-white/[0.08] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                        @if($isDashboardActive)
+                            <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                        @endif
+                        <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isDashboardActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/30 border border-orange-400/40' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                        </div>
+                        <span x-show="sidebarOpen" x-cloak class="text-[0.84rem] whitespace-nowrap">Dashboard</span>
                     </a>
 
+                    <!-- Section: ACADEMICS -->
+                    <div x-show="sidebarOpen" x-cloak class="px-2.5 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-white/30 select-none border-t border-white/[0.04] mt-1.5">
+                        Academics
+                    </div>
+                    <div x-show="!sidebarOpen" x-cloak class="w-8 mx-auto border-t border-white/[0.06] my-1.5"></div>
+
                     <!-- 2. Academic & Courses -->
-                    <div class="pt-1">
+                    <div>
                         <button @click="if (!sidebarOpen) { sidebarOpen = true }; toggleGroup('academic')" type="button"
-                                :class="sidebarOpen ? 'justify-between px-3.5' : 'justify-center px-0'"
-                                class="w-full flex items-center py-2.5 rounded-xl text-white/75 hover:text-white hover:bg-white/5 transition-all text-left group">
-                            <div class="flex items-center gap-3.5">
-                                <svg class="w-5 h-5 text-white/60 group-hover:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                </svg>
-                                <span x-show="sidebarOpen" x-cloak class="text-[0.875rem] font-medium whitespace-nowrap">Academic &amp; Courses</span>
+                                :class="sidebarOpen ? 'justify-between px-2.5' : 'justify-center px-0'"
+                                class="relative w-full flex items-center py-1.5 rounded-xl transition-all text-left group {{ $isAcademicActive ? 'bg-white/[0.07] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                            @if($isAcademicActive)
+                                <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                            @endif
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isAcademicActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/25 border border-orange-400/30' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                </div>
+                                <span x-show="sidebarOpen" x-cloak class="text-[0.84rem] whitespace-nowrap">Academic &amp; Courses</span>
                             </div>
-                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'academic'}" class="w-4 h-4 text-white/40 group-hover:text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'academic'}" class="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && activeGroup === 'academic'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.courses.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.courses.index') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">All Courses</a>
-                            <a href="{{ route('admin.categories.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.categories.*') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Course Categories</a>
-                            <a href="{{ route('admin.courses.create') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.courses.create') ? 'text-[#FF5F00] bg-orange-500/10 font-bold' : 'text-[#FF5F00] hover:text-[#FF8A3D] font-medium' }}">+ Add New Course</a>
+                        <div x-show="sidebarOpen && activeGroup === 'academic'" x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="relative pl-6 pr-1 py-1 space-y-1">
+                            <div class="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-white/15 via-white/10 to-transparent"></div>
+                            <a href="{{ route('admin.courses.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.courses.index') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.courses.index') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>All Courses</span>
+                                </div>
+                            </a>
+                            <a href="{{ route('admin.categories.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.categories.*') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.categories.*') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Course Categories</span>
+                                </div>
+                            </a>
+                            <a href="{{ route('admin.courses.create') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.courses.create') ? 'bg-[#FF5F00] text-white font-bold shadow-sm shadow-orange-500/30' : 'text-[#FF8A3D] hover:text-white hover:bg-orange-500/10 font-semibold' }}">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                                    <span>New Course</span>
+                                </div>
+                                <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md bg-orange-500/20 text-[#FF8A3D] border border-orange-500/30">Create</span>
+                            </a>
                         </div>
                     </div>
 
                     <!-- 3. Campus & Batches -->
                     <div>
                         <button @click="if (!sidebarOpen) { sidebarOpen = true }; toggleGroup('campus')" type="button"
-                                :class="sidebarOpen ? 'justify-between px-3.5' : 'justify-center px-0'"
-                                class="w-full flex items-center py-2.5 rounded-xl text-white/75 hover:text-white hover:bg-white/5 transition-all text-left group">
-                            <div class="flex items-center gap-3.5">
-                                <svg class="w-5 h-5 text-white/60 group-hover:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                </svg>
-                                <span x-show="sidebarOpen" x-cloak class="text-[0.875rem] font-medium whitespace-nowrap">Campus &amp; Batches</span>
+                                :class="sidebarOpen ? 'justify-between px-2.5' : 'justify-center px-0'"
+                                class="relative w-full flex items-center py-1.5 rounded-xl transition-all text-left group {{ $isCampusActive ? 'bg-white/[0.07] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                            @if($isCampusActive)
+                                <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                            @endif
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isCampusActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/25 border border-orange-400/30' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                    </svg>
+                                </div>
+                                <span x-show="sidebarOpen" x-cloak class="text-[0.84rem] whitespace-nowrap">Campus &amp; Batches</span>
                             </div>
-                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'campus'}" class="w-4 h-4 text-white/40 group-hover:text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'campus'}" class="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && activeGroup === 'campus'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.batches.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.batches.*') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Batches &amp; Schedules</a>
-                            <a href="{{ route('admin.locations.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.locations.*') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Physical Campuses</a>
+                        <div x-show="sidebarOpen && activeGroup === 'campus'" x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="relative pl-6 pr-1 py-1 space-y-1">
+                            <div class="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-white/15 via-white/10 to-transparent"></div>
+                            <a href="{{ route('admin.batches.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.batches.*') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.batches.*') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Batches &amp; Schedules</span>
+                                </div>
+                            </a>
+                            <a href="{{ route('admin.locations.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.locations.*') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.locations.*') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Physical Campuses</span>
+                                </div>
+                            </a>
                         </div>
                     </div>
 
                     <!-- 4. Student Learning & Progress -->
                     <div>
                         <button @click="if (!sidebarOpen) { sidebarOpen = true }; toggleGroup('students')" type="button"
-                                :class="sidebarOpen ? 'justify-between px-3.5' : 'justify-center px-0'"
-                                class="w-full flex items-center py-2.5 rounded-xl text-white/75 hover:text-white hover:bg-white/5 transition-all text-left group">
-                            <div class="flex items-center gap-3.5">
-                                <svg class="w-5 h-5 text-white/60 group-hover:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <span x-show="sidebarOpen" x-cloak class="text-[0.875rem] font-medium whitespace-nowrap">Student Learning &amp; Progress</span>
+                                :class="sidebarOpen ? 'justify-between px-2.5' : 'justify-center px-0'"
+                                class="relative w-full flex items-center py-1.5 rounded-xl transition-all text-left group {{ $isStudentsActive ? 'bg-white/[0.07] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                            @if($isStudentsActive)
+                                <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                            @endif
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isStudentsActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/25 border border-orange-400/30' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <span x-show="sidebarOpen" x-cloak class="text-[0.84rem] whitespace-nowrap">Student Learning</span>
                             </div>
-                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'students'}" class="w-4 h-4 text-white/40 group-hover:text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'students'}" class="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && activeGroup === 'students'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.enrollments.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">All Enrollments</a>
+                        <div x-show="sidebarOpen && activeGroup === 'students'" x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="relative pl-6 pr-1 py-1 space-y-1">
+                            <div class="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-white/15 via-white/10 to-transparent"></div>
+                            <a href="{{ route('admin.enrollments.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.enrollments.index') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.enrollments.index') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>All Enrollments</span>
+                                </div>
+                            </a>
                         </div>
                     </div>
+
+                    <!-- Section: OPERATIONS -->
+                    <div x-show="sidebarOpen" x-cloak class="px-2.5 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-white/30 select-none border-t border-white/[0.04] mt-1.5">
+                        Operations
+                    </div>
+                    <div x-show="!sidebarOpen" x-cloak class="w-8 mx-auto border-t border-white/[0.06] my-1.5"></div>
 
                     <!-- 5. Assessments & Grading -->
                     <div>
                         <button @click="if (!sidebarOpen) { sidebarOpen = true }; toggleGroup('grading')" type="button"
-                                :class="sidebarOpen ? 'justify-between px-3.5' : 'justify-center px-0'"
-                                class="w-full flex items-center py-2.5 rounded-xl text-white/75 hover:text-white hover:bg-white/5 transition-all text-left group">
-                            <div class="flex items-center gap-3.5">
-                                <svg class="w-5 h-5 text-white/60 group-hover:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                                </svg>
-                                <span x-show="sidebarOpen" x-cloak class="text-[0.875rem] font-medium whitespace-nowrap">Assessments &amp; Grading</span>
+                                :class="sidebarOpen ? 'justify-between px-2.5' : 'justify-center px-0'"
+                                class="relative w-full flex items-center py-1.5 rounded-xl transition-all text-left group {{ $isGradingActive ? 'bg-white/[0.07] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                            @if($isGradingActive)
+                                <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                            @endif
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isGradingActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/25 border border-orange-400/30' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <span x-show="sidebarOpen" x-cloak class="text-[0.84rem] whitespace-nowrap">Assessments &amp; Grading</span>
                             </div>
-                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'grading'}" class="w-4 h-4 text-white/40 group-hover:text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'grading'}" class="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && activeGroup === 'grading'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.assignments.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Course Assignments</a>
-                            <a href="{{ route('admin.quizzes.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Course Quizzes</a>
+                        <div x-show="sidebarOpen && activeGroup === 'grading'" x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="relative pl-6 pr-1 py-1 space-y-1">
+                            <div class="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-white/15 via-white/10 to-transparent"></div>
+                            <a href="{{ route('admin.assignments.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.assignments.index') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.assignments.index') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Course Assignments</span>
+                                </div>
+                            </a>
+                            <a href="{{ route('admin.quizzes.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.quizzes.index') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.quizzes.index') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Course Quizzes</span>
+                                </div>
+                            </a>
                         </div>
                     </div>
 
                     <!-- 6. Financial & Orders -->
                     <div>
                         <button @click="if (!sidebarOpen) { sidebarOpen = true }; toggleGroup('finance')" type="button"
-                                :class="sidebarOpen ? 'justify-between px-3.5' : 'justify-center px-0'"
-                                class="w-full flex items-center py-2.5 rounded-xl text-white/75 hover:text-white hover:bg-white/5 transition-all text-left group">
-                            <div class="flex items-center gap-3.5">
-                                <svg class="w-5 h-5 text-white/60 group-hover:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                </svg>
-                                <span x-show="sidebarOpen" x-cloak class="text-[0.875rem] font-medium whitespace-nowrap">Financial &amp; Orders</span>
+                                :class="sidebarOpen ? 'justify-between px-2.5' : 'justify-center px-0'"
+                                class="relative w-full flex items-center py-1.5 rounded-xl transition-all text-left group {{ $isFinanceActive ? 'bg-white/[0.07] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                            @if($isFinanceActive)
+                                <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                            @endif
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isFinanceActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/25 border border-orange-400/30' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                    </svg>
+                                </div>
+                                <span x-show="sidebarOpen" x-cloak class="text-[0.84rem] whitespace-nowrap">Financial &amp; Orders</span>
                             </div>
-                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'finance'}" class="w-4 h-4 text-white/40 group-hover:text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'finance'}" class="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && activeGroup === 'finance'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.orders.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Orders &amp; Payments</a>
+                        <div x-show="sidebarOpen && activeGroup === 'finance'" x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="relative pl-6 pr-1 py-1 space-y-1">
+                            <div class="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-white/15 via-white/10 to-transparent"></div>
+                            <a href="{{ route('admin.orders.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.orders.index') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.orders.index') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Orders &amp; Payments</span>
+                                </div>
+                            </a>
                         </div>
                     </div>
 
                     <!-- 7. User & Security -->
                     <div>
                         <button @click="if (!sidebarOpen) { sidebarOpen = true }; toggleGroup('security')" type="button"
-                                :class="sidebarOpen ? 'justify-between px-3.5' : 'justify-center px-0'"
-                                class="w-full flex items-center py-2.5 rounded-xl text-white/75 hover:text-white hover:bg-white/5 transition-all text-left group">
-                            <div class="flex items-center gap-3.5">
-                                <svg class="w-5 h-5 text-white/60 group-hover:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                                </svg>
-                                <span x-show="sidebarOpen" x-cloak class="text-[0.875rem] font-medium whitespace-nowrap">User &amp; Security</span>
+                                :class="sidebarOpen ? 'justify-between px-2.5' : 'justify-center px-0'"
+                                class="relative w-full flex items-center py-1.5 rounded-xl transition-all text-left group {{ $isSecurityActive ? 'bg-white/[0.07] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                            @if($isSecurityActive)
+                                <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                            @endif
+                            <div class="flex items-center gap-3">
+                                <div class="relative w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isSecurityActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/25 border border-orange-400/30' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                    </svg>
+                                    @if($pendingApprovalsCount > 0)
+                                        <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#FF5F00] ring-2 ring-[#1A1A1A]"></span>
+                                    @endif
+                                </div>
+                                <span x-show="sidebarOpen" x-cloak class="text-[0.84rem] whitespace-nowrap">User &amp; Security</span>
                             </div>
-                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'security'}" class="w-4 h-4 text-white/40 group-hover:text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
+                            <div x-show="sidebarOpen" x-cloak class="flex items-center gap-1.5">
+                                @if($pendingApprovalsCount > 0 && ! $isSecurityActive)
+                                    <span class="w-2 h-2 rounded-full bg-[#FF5F00]"></span>
+                                @endif
+                                <svg :class="{'rotate-90 text-white': activeGroup === 'security'}" class="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
                         </button>
-                        <div x-show="sidebarOpen && activeGroup === 'security'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.users.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.users.index') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Users Directory</a>
-                            <a href="{{ route('admin.approvals.index') }}" class="block px-3 py-1.5 text-[0.8125rem] rounded-lg transition-colors {{ request()->routeIs('admin.approvals.*') ? 'text-white bg-white/10 font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5' }}">Pending Approvals</a>
+                        <div x-show="sidebarOpen && activeGroup === 'security'" x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="relative pl-6 pr-1 py-1 space-y-1">
+                            <div class="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-white/15 via-white/10 to-transparent"></div>
+                            <a href="{{ route('admin.users.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.users.index') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.users.index') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Users Directory</span>
+                                </div>
+                            </a>
+                            <a href="{{ route('admin.approvals.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.approvals.*') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.approvals.*') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Pending Approvals</span>
+                                </div>
+                                @if($pendingApprovalsCount > 0)
+                                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-[#FF5F00] text-white shadow-xs">
+                                        {{ $pendingApprovalsCount }}
+                                    </span>
+                                @endif
+                            </a>
                         </div>
                     </div>
+
+                    <!-- Section: SYSTEM -->
+                    <div x-show="sidebarOpen" x-cloak class="px-2.5 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-white/30 select-none border-t border-white/[0.04] mt-1.5">
+                        System
+                    </div>
+                    <div x-show="!sidebarOpen" x-cloak class="w-8 mx-auto border-t border-white/[0.06] my-1.5"></div>
 
                     <!-- 8. Analytics & System -->
                     <div>
                         <button @click="if (!sidebarOpen) { sidebarOpen = true }; toggleGroup('system')" type="button"
-                                :class="sidebarOpen ? 'justify-between px-3.5' : 'justify-center px-0'"
-                                class="w-full flex items-center py-2.5 rounded-xl text-white/75 hover:text-white hover:bg-white/5 transition-all text-left group">
-                            <div class="flex items-center gap-3.5">
-                                <svg class="w-5 h-5 text-white/60 group-hover:text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                <span x-show="sidebarOpen" x-cloak class="text-[0.875rem] font-medium whitespace-nowrap">Analytics &amp; System</span>
+                                :class="sidebarOpen ? 'justify-between px-2.5' : 'justify-center px-0'"
+                                class="relative w-full flex items-center py-1.5 rounded-xl transition-all text-left group {{ $isSystemActive ? 'bg-white/[0.07] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                            @if($isSystemActive)
+                                <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                            @endif
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isSystemActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/25 border border-orange-400/30' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <span x-show="sidebarOpen" x-cloak class="text-[0.84rem] whitespace-nowrap">Platform Settings</span>
                             </div>
-                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'system'}" class="w-4 h-4 text-white/40 group-hover:text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg x-show="sidebarOpen" x-cloak :class="{'rotate-90 text-white': activeGroup === 'system'}" class="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </button>
-                        <div x-show="sidebarOpen && activeGroup === 'system'" x-cloak class="pl-11 pr-2 py-1 space-y-1">
-                            <a href="{{ route('admin.settings.index') }}" class="block px-3 py-1.5 text-[0.8125rem] text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Platform Settings</a>
+                        <div x-show="sidebarOpen && activeGroup === 'system'" x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="relative pl-6 pr-1 py-1 space-y-1">
+                            <div class="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-white/15 via-white/10 to-transparent"></div>
+                            <a href="{{ route('admin.settings.index') }}"
+                               class="relative flex items-center justify-between px-3 py-1.5 rounded-xl text-[0.8125rem] transition-all group/sub {{ request()->routeIs('admin.settings.index') ? 'bg-[#FF5F00]/15 text-white font-bold border border-[#FF5F00]/30 shadow-xs' : 'text-white/65 hover:text-white hover:bg-white/[0.04] font-medium' }}">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all {{ request()->routeIs('admin.settings.index') ? 'bg-[#FF5F00] shadow-xs shadow-orange-500 scale-125' : 'bg-white/25 group-hover/sub:bg-white/60' }}"></span>
+                                    <span>Settings Overview</span>
+                                </div>
+                            </a>
                         </div>
                     </div>
 

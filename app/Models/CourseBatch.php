@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class CourseBatch extends Model
 {
@@ -57,6 +58,11 @@ class CourseBatch extends Model
         return $this->belongsTo(PhysicalLocation::class, 'location_id');
     }
 
+    public function physicalLocation(): BelongsTo
+    {
+        return $this->location();
+    }
+
     public function schedules(): HasMany
     {
         return $this->hasMany(BatchSchedule::class, 'batch_id');
@@ -82,9 +88,16 @@ class CourseBatch extends Model
         return $this->hasMany(BatchScheduleChange::class, 'batch_id')->latest();
     }
 
-    public function course(): ?Course
+    public function course(): HasOneThrough
     {
-        return $this->deliveryOption?->course;
+        return $this->hasOneThrough(
+            Course::class,
+            CourseDeliveryOption::class,
+            'id',
+            'id',
+            'course_delivery_option_id',
+            'course_id'
+        );
     }
 
     public function availableSeats(): int
