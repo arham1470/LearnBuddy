@@ -12,13 +12,13 @@ class AssignmentPolicy
     /**
      * Determine whether the user can view assignments of the course.
      */
-    public function viewAny(User $user, Course $course): bool
+    public function viewAny(User $user, ?Course $course = null): bool
     {
-        if ($user->isAdmin() || $course->hasInstructor($user)) {
+        if ($user->isAdmin() || $user->isInstructor()) {
             return true;
         }
 
-        return $course->activeEnrollments()->where('user_id', $user->id)->exists();
+        return $course ? $course->activeEnrollments()->where('user_id', $user->id)->exists() : false;
     }
 
     /**
@@ -28,7 +28,7 @@ class AssignmentPolicy
     {
         $course = $assignment->course;
 
-        if ($user->isAdmin() || $course->hasInstructor($user)) {
+        if ($user->isAdmin() || ($course && $course->hasInstructor($user))) {
             return true;
         }
 
@@ -36,19 +36,23 @@ class AssignmentPolicy
             return false;
         }
 
-        return $course->activeEnrollments()->where('user_id', $user->id)->exists();
+        return $course ? $course->activeEnrollments()->where('user_id', $user->id)->exists() : false;
     }
 
     /**
      * Determine whether the user can create assignments for the course.
      */
-    public function create(User $user, Course $course): bool
+    public function create(User $user, ?Course $course = null): bool
     {
         if ($user->isAdmin()) {
             return true;
         }
 
-        return $user->isInstructor() && $course->hasInstructor($user) && $course->canInstructorManageContent($user);
+        if ($user->isInstructor()) {
+            return $course ? ($course->hasInstructor($user) && $course->canInstructorManageContent($user)) : true;
+        }
+
+        return false;
     }
 
     /**

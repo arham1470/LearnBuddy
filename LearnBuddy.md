@@ -847,7 +847,7 @@ prevention.
 
 ------------------------------------------------------------------------
 
-# PROMPT 16 --- CERTIFICATES AND REVIEWS
+# PROMPT 16 --- CERTIFICATES AND REVIEWS (DONE)
 
 ``` text
 Implement only certificate eligibility/issuance and course reviews/ratings.
@@ -876,7 +876,7 @@ ownership.
 
 ------------------------------------------------------------------------
 
-# PROMPT 17 --- FILAMENT ADMINISTRATION
+# PROMPT 17 --- FILAMENT ADMINISTRATION (DONE)
 
 ``` text
 Implement the LearnBuddy administration panel using Filament, customised to the existing brand and responsive design.

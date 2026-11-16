@@ -8,6 +8,14 @@ use App\Models\User;
 class CertificatePolicy
 {
     /**
+     * Determine whether the user can view any certificates.
+     */
+    public function viewAny(User $user): bool
+    {
+        return $user->isAdmin() || $user->isInstructor();
+    }
+
+    /**
      * Determine whether the user can view the certificate document.
      */
     public function view(User $user, Certificate $certificate): bool
@@ -21,6 +29,14 @@ class CertificatePolicy
      * Determine whether the user can revoke the certificate.
      */
     public function revoke(User $user, Certificate $certificate): bool
+    {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can delete the certificate.
+     */
+    public function delete(User $user, Certificate $certificate): bool
     {
         return $user->isAdmin();
     }

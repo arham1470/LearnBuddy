@@ -553,19 +553,24 @@
                         @auth
                             @if ($existingReview)
                                 <!-- User Already Left a Review: Display with Edit/Delete Controls -->
-                                <div x-data="{ editing: false }" class="p-5 rounded-2xl border-2 border-orange-200 bg-orange-50/30 space-y-3">
+                                <div x-data="{ editing: false }" class="rounded-3xl border border-orange-200/80 bg-gradient-to-br from-white via-orange-50/20 to-amber-50/20 p-5 sm:p-7 shadow-lb-sm space-y-4">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-lb-orange uppercase tracking-wider flex items-center gap-1.5">
-                                            <i class="fas fa-user-check"></i>
-                                            <span>Your Course Review</span>
-                                        </span>
+                                        <div class="flex items-center gap-2.5">
+                                            <span class="w-8 h-8 rounded-xl bg-orange-100/90 text-lb-orange flex items-center justify-center text-xs shadow-xs">
+                                                <i class="fas fa-user-check"></i>
+                                            </span>
+                                            <span class="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+                                                Your Verified Course Review
+                                            </span>
+                                        </div>
                                         <div class="flex items-center gap-2" x-show="!editing">
                                             <button
                                                 type="button"
                                                 @click="editing = true"
-                                                class="px-2.5 py-1 text-xs font-semibold text-neutral-700 hover:text-lb-orange bg-white border border-neutral-200 rounded-lg transition"
+                                                class="px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:text-lb-orange bg-white border border-neutral-200/80 rounded-xl transition shadow-xs cursor-pointer flex items-center gap-1.5"
                                             >
-                                                <i class="fas fa-edit mr-1"></i> Edit
+                                                <i class="fas fa-edit text-[10px]"></i>
+                                                <span>Edit</span>
                                             </button>
                                             <button
                                                 type="button"
@@ -578,28 +583,29 @@
                                                     confirmText: 'Remove Review',
                                                     confirmVariant: 'danger'
                                                 })"
-                                                class="px-2.5 py-1 text-xs font-semibold text-red-600 hover:text-red-700 bg-white border border-neutral-200 rounded-lg transition cursor-pointer"
+                                                class="px-3 py-1.5 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-white border border-neutral-200/80 rounded-xl transition shadow-xs cursor-pointer flex items-center gap-1.5"
                                             >
-                                                <i class="fas fa-trash-alt mr-1"></i> Delete
+                                                <i class="fas fa-trash-alt text-[10px]"></i>
+                                                <span>Delete</span>
                                             </button>
                                         </div>
                                     </div>
 
                                     <!-- Read-only view -->
-                                    <div x-show="!editing" class="space-y-2">
-                                        <div class="flex items-center gap-2">
+                                    <div x-show="!editing" class="space-y-2 bg-white/80 p-4 rounded-2xl border border-neutral-200/60 shadow-xs">
+                                        <div class="flex items-center gap-2.5">
                                             <div class="flex text-amber-400 text-xs">
                                                 @for ($i = 1; $i <= 5; $i++)
-                                                    <i class="fas fa-star {{ $i <= $existingReview->rating ? 'text-amber-400' : 'text-neutral-300' }}"></i>
+                                                    <i class="fas fa-star {{ $i <= $existingReview->rating ? 'text-amber-400' : 'text-neutral-200' }}"></i>
                                                 @endfor
                                             </div>
-                                            <span class="text-xs font-bold text-neutral-800">{{ $existingReview->rating }} / 5</span>
-                                            <span class="text-[10px] text-neutral-400">&bull; {{ $existingReview->created_at->diffForHumans() }}</span>
+                                            <span class="text-xs font-bold text-neutral-900">{{ $existingReview->rating }} / 5 Stars</span>
+                                            <span class="text-[11px] text-neutral-400">&bull; {{ $existingReview->created_at->diffForHumans() }}</span>
                                         </div>
                                         @if ($existingReview->title)
-                                            <h4 class="text-xs font-bold text-neutral-900">{{ $existingReview->title }}</h4>
+                                            <h4 class="text-sm font-bold text-neutral-900">{{ $existingReview->title }}</h4>
                                         @endif
-                                        <p class="text-xs text-neutral-700 leading-relaxed">{{ $existingReview->comment }}</p>
+                                        <p class="text-xs sm:text-sm text-neutral-700 leading-relaxed">{{ $existingReview->comment }}</p>
                                     </div>
 
                                     <!-- Edit Form -->
@@ -608,14 +614,14 @@
                                         x-cloak
                                         action="{{ route('courses.reviews.update', [$course, $existingReview]) }}"
                                         method="POST"
-                                        class="space-y-3 pt-2"
+                                        class="space-y-4 pt-3 border-t border-orange-100"
                                     >
                                         @csrf
                                         @method('PUT')
 
-                                        <div class="space-y-1">
-                                            <label class="text-xs font-bold text-neutral-700 block">Rating</label>
-                                            <select name="rating" required class="w-full sm:w-48 text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200">
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">Rating</label>
+                                            <select name="rating" required class="w-full sm:w-56 text-xs rounded-xl border border-neutral-200/90 bg-white px-3 py-2 text-neutral-800 focus:border-lb-orange focus:ring-2 focus:ring-orange-200">
                                                 @for ($r = 5; $r >= 1; $r--)
                                                     <option value="{{ $r }}" {{ $existingReview->rating === $r ? 'selected' : '' }}>
                                                         {{ $r }} {{ Str::plural('Star', $r) }}
@@ -624,40 +630,40 @@
                                             </select>
                                         </div>
 
-                                        <div class="space-y-1">
-                                            <label class="text-xs font-bold text-neutral-700 block">Title (Optional)</label>
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">Headline (Optional)</label>
                                             <input
                                                 type="text"
                                                 name="title"
                                                 value="{{ old('title', $existingReview->title) }}"
                                                 maxlength="100"
-                                                class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200"
+                                                class="w-full text-xs rounded-xl border border-neutral-200/90 bg-white px-3.5 py-2.5 text-neutral-800 focus:border-lb-orange focus:ring-2 focus:ring-orange-200"
                                             >
                                         </div>
 
-                                        <div class="space-y-1">
-                                            <label class="text-xs font-bold text-neutral-700 block">Review Feedback</label>
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">Detailed Review</label>
                                             <textarea
                                                 name="comment"
                                                 rows="3"
                                                 required
                                                 minlength="10"
                                                 maxlength="2000"
-                                                class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200"
+                                                class="w-full text-xs rounded-xl border border-neutral-200/90 bg-white px-3.5 py-2.5 text-neutral-800 focus:border-lb-orange focus:ring-2 focus:ring-orange-200"
                                             >{{ old('comment', $existingReview->comment) }}</textarea>
                                         </div>
 
-                                        <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-2 pt-1">
                                             <button
                                                 type="submit"
-                                                class="px-4 py-2 bg-lb-orange hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+                                                class="px-5 py-2.5 bg-lb-orange hover:bg-lb-orange-hover text-white rounded-full text-xs font-bold transition shadow-xs cursor-pointer"
                                             >
                                                 Update Review
                                             </button>
                                             <button
                                                 type="button"
                                                 @click="editing = false"
-                                                class="px-3 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl text-xs font-semibold transition"
+                                                class="px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-full text-xs font-semibold transition cursor-pointer"
                                             >
                                                 Cancel
                                             </button>
@@ -667,81 +673,152 @@
 
                             @elseif ($isEnrolled)
                                 <!-- Enrolled Student Without Existing Review: Submission Form -->
-                                <div x-data="{ rating: 5 }" class="p-5 sm:p-6 rounded-2xl border border-neutral-200 bg-neutral-50/70 space-y-4">
-                                    <div class="flex items-center justify-between">
-                                        <div class="space-y-0.5">
-                                            <h3 class="text-sm font-bold text-neutral-900 flex items-center gap-2">
-                                                <i class="fas fa-pen text-lb-orange"></i>
-                                                <span>Write a Verified Course Review</span>
-                                            </h3>
-                                            <p class="text-xs text-neutral-500">As an enrolled student, your authentic feedback helps other Sri Lankan learners.</p>
+                                <div
+                                    x-data="{
+                                        rating: 5,
+                                        hoverRating: null,
+                                        comment: @js(old('comment', '')),
+                                        ratingLabels: {
+                                            1: 'Needs Improvement',
+                                            2: 'Fair / Below Expectations',
+                                            3: 'Good & Practical',
+                                            4: 'Very Good & Recommended',
+                                            5: 'Outstanding Experience!'
+                                        },
+                                        currentLabel() {
+                                            const r = this.hoverRating || this.rating;
+                                            return this.ratingLabels[r] || '';
+                                        }
+                                    }"
+                                    class="relative rounded-3xl border border-orange-200/80 bg-gradient-to-br from-white via-orange-50/25 to-amber-50/30 p-6 sm:p-8 shadow-lb-sm overflow-hidden space-y-6"
+                                >
+                                    <!-- Subtle Brand Decorative Icon Background -->
+                                    <div class="absolute -right-5 -bottom-6 text-amber-500/5 text-9xl pointer-events-none select-none">
+                                        <i class="fas fa-feather-alt"></i>
+                                    </div>
+
+                                    <!-- Header Row -->
+                                    <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-orange-100/80 pb-5">
+                                        <div class="flex items-start sm:items-center gap-3">
+                                            <div class="w-11 h-11 rounded-2xl bg-orange-100/80 text-lb-orange flex items-center justify-center text-lg shrink-0 shadow-xs">
+                                                <i class="fas fa-pen-nib"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-base font-bold text-neutral-900 tracking-tight">
+                                                    Write a Verified Course Review
+                                                </h3>
+                                                <p class="text-xs text-neutral-500 mt-0.5">
+                                                    Share your experience to help fellow Sri Lankan learners choose the right course.
+                                                </p>
+                                            </div>
                                         </div>
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                                            Enrolled Student
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[11px] font-bold self-start sm:self-auto shrink-0 shadow-xs">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                            Verified Enrolled Student
                                         </span>
                                     </div>
 
-                                    <form action="{{ route('courses.reviews.store', $course) }}" method="POST" class="space-y-4">
+                                    <form action="{{ route('courses.reviews.store', $course) }}" method="POST" class="relative z-10 space-y-5">
                                         @csrf
 
-                                        <!-- Interactive Star Rating -->
-                                        <div class="space-y-1">
-                                            <label class="text-xs font-bold text-neutral-700 block">Your Rating <span class="text-red-500">*</span></label>
-                                            <div class="flex items-center gap-2">
+                                        <!-- Interactive Star Rating with Dynamic Feedback -->
+                                        <div class="space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <label class="text-xs font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-1.5">
+                                                    <span>Overall Rating</span>
+                                                    <span class="text-rose-500">*</span>
+                                                </label>
+                                                <span
+                                                    class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/60 transition-all duration-150"
+                                                    x-text="currentLabel()"
+                                                ></span>
+                                            </div>
+
+                                            <div class="inline-flex items-center gap-3 p-2.5 rounded-2xl bg-white/90 border border-neutral-200/80 shadow-xs">
                                                 <input type="hidden" name="rating" :value="rating">
-                                                <div class="flex items-center gap-1 text-xl cursor-pointer">
+                                                <div class="flex items-center gap-1 text-2xl" @mouseleave="hoverRating = null">
                                                     <template x-for="star in 5" :key="star">
                                                         <button
                                                             type="button"
                                                             @click="rating = star"
-                                                            class="text-neutral-300 hover:text-amber-400 focus:outline-none transition-colors"
-                                                            :class="{ 'text-amber-400': star <= rating, 'text-neutral-300': star > rating }"
+                                                            @mouseenter="hoverRating = star"
+                                                            class="focus:outline-none transition-all duration-150 transform hover:scale-115 active:scale-95 cursor-pointer p-0.5"
+                                                            :class="(hoverRating ? star <= hoverRating : star <= rating) ? 'text-amber-400 drop-shadow-[0_1px_4px_rgba(245,158,11,0.4)]' : 'text-neutral-200 hover:text-amber-200'"
+                                                            :aria-label="star + ' Stars'"
                                                         >
                                                             <i class="fas fa-star"></i>
                                                         </button>
                                                     </template>
                                                 </div>
-                                                <span class="text-xs font-bold text-neutral-600 ml-2" x-text="rating + ' / 5 Stars'"></span>
+                                                <div class="border-l border-neutral-200 pl-3 pr-1 text-xs font-mono font-bold text-neutral-700">
+                                                    <span x-text="(hoverRating || rating)"></span>/5
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <!-- Review Title -->
-                                        <div class="space-y-1">
-                                            <label for="review_title" class="text-xs font-bold text-neutral-700 block">Headline / Summary (Optional)</label>
-                                            <input
-                                                type="text"
-                                                id="review_title"
-                                                name="title"
-                                                value="{{ old('title') }}"
-                                                placeholder="e.g. Excellent practical insights and clear explanations"
-                                                maxlength="100"
-                                                class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200"
-                                            >
+                                        <!-- Review Title / Headline -->
+                                        <div class="space-y-1.5">
+                                            <label for="review_title" class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">
+                                                Review Headline <span class="text-neutral-400 text-[10px] font-normal lowercase">(optional)</span>
+                                            </label>
+                                            <div class="relative">
+                                                <input
+                                                    type="text"
+                                                    id="review_title"
+                                                    name="title"
+                                                    value="{{ old('title') }}"
+                                                    placeholder="e.g. In-depth explanations, practical assignments, and great mentorship!"
+                                                    maxlength="100"
+                                                    class="w-full px-4 py-3 rounded-2xl border border-neutral-200/90 bg-white text-xs sm:text-sm text-neutral-800 placeholder-neutral-400 shadow-xs focus:border-lb-orange focus:ring-2 focus:ring-orange-200/60 focus:bg-white transition-all outline-none"
+                                                >
+                                            </div>
                                         </div>
 
-                                        <!-- Review Comment -->
-                                        <div class="space-y-1">
-                                            <label for="review_comment" class="text-xs font-bold text-neutral-700 block">Detailed Review <span class="text-red-500">*</span></label>
+                                        <!-- Review Comment with Live Character Counter -->
+                                        <div class="space-y-1.5">
+                                            <div class="flex items-center justify-between">
+                                                <label for="review_comment" class="text-xs font-bold text-neutral-800 uppercase tracking-wider block">
+                                                    Detailed Feedback <span class="text-rose-500">*</span>
+                                                </label>
+                                                <span class="text-[11px] font-mono text-neutral-400" :class="comment.length >= 10 ? 'text-neutral-400' : 'text-rose-400'">
+                                                    <span x-text="comment.length"></span> / 2000
+                                                </span>
+                                            </div>
+
                                             <textarea
                                                 id="review_comment"
                                                 name="comment"
-                                                rows="3"
+                                                x-model="comment"
+                                                rows="4"
                                                 required
                                                 minlength="10"
                                                 maxlength="2000"
-                                                placeholder="Share what you liked, how the lectures and exercises helped your career or learning, and any tips for future students..."
-                                                class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-orange-200"
+                                                placeholder="What did you think of the curriculum, instructor guidance, and projects? What advice would you give to other students?"
+                                                class="w-full px-4 py-3.5 rounded-2xl border border-neutral-200/90 bg-white text-xs sm:text-sm text-neutral-800 placeholder-neutral-400 shadow-xs focus:border-lb-orange focus:ring-2 focus:ring-orange-200/60 focus:bg-white transition-all outline-none resize-y min-h-[110px]"
                                             >{{ old('comment') }}</textarea>
-                                            <p class="text-[10px] text-neutral-400">Minimum 10 characters. Safe and respectful reviews only.</p>
+
+                                            <div class="flex items-center justify-between text-[11px] text-neutral-400 pt-0.5">
+                                                <span>Minimum 10 characters required.</span>
+                                                <span class="inline-flex items-center gap-1 text-emerald-600 font-medium">
+                                                    <i class="fas fa-shield-alt text-[10px]"></i> Displayed as Verified Reviewer
+                                                </span>
+                                            </div>
                                         </div>
 
-                                        <button
-                                            type="submit"
-                                            class="px-5 py-2.5 bg-lb-orange hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm inline-flex items-center gap-2"
-                                        >
-                                            <i class="fas fa-paper-plane text-[10px]"></i>
-                                            <span>Post Verified Review</span>
-                                        </button>
+                                        <!-- Action Strip -->
+                                        <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                            <p class="text-[11px] text-neutral-500 leading-tight">
+                                                By submitting, you agree to LearnBuddy's community guidelines. Honest, constructive reviews help our entire student community.
+                                            </p>
+
+                                            <button
+                                                type="submit"
+                                                class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-lb-orange hover:bg-lb-orange-hover active:bg-orange-700 text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 shrink-0 cursor-pointer"
+                                            >
+                                                <i class="fas fa-paper-plane text-xs"></i>
+                                                <span>Publish Review</span>
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
 
