@@ -2,11 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -63,13 +63,34 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
+            ->viteTheme('resources/css/app.css')
+            ->renderHook(
+                PanelsRenderHook::HEAD_START,
+                fn () => new \Illuminate\Support\HtmlString('<script>if(localStorage.getItem("lb_admin_sidebar_init")===null){localStorage.setItem("isOpen","true");localStorage.setItem("lb_admin_sidebar_init","1");}</script>'),
+            )
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn () => view('filament.topbar.styles'),
             )
             ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.sidebar.styles'),
+            )
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.widgets.dashboard-table-styles'),
+            )
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
+                fn () => view('filament.topbar.search'),
+            )
+            ->renderHook(
                 PanelsRenderHook::USER_MENU_BEFORE,
                 fn () => view('filament.topbar.end'),
+            )
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_NAV_END,
+                fn () => view('filament.sidebar.promo'),
             )
             ->middleware([
                 EncryptCookies::class,

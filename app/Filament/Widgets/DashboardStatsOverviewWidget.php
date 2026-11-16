@@ -8,14 +8,17 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Payment;
 use App\Models\User;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Widget;
 
-class DashboardStatsOverviewWidget extends BaseWidget
+class DashboardStatsOverviewWidget extends Widget
 {
     protected static ?int $sort = 1;
 
-    protected function getStats(): array
+    protected int | string | array $columnSpan = 'full';
+
+    protected string $view = 'filament.widgets.dashboard-stats-overview';
+
+    protected function getViewData(): array
     {
         $user = auth()->user();
         $isAdmin = $user && $user->isAdmin();
@@ -51,35 +54,50 @@ class DashboardStatsOverviewWidget extends BaseWidget
             ->count();
 
         return [
-            Stat::make('Active Courses', number_format($activeCourses))
-                ->description('Published courses')
-                ->descriptionIcon('heroicon-m-academic-cap')
-                ->color('success'),
-
-            Stat::make('Total Learners', number_format($enrolledStudents))
-                ->description('Enrolled Sri Lankan students')
-                ->descriptionIcon('heroicon-m-user-group')
-                ->color('primary'),
-
-            Stat::make('Enrollments', number_format($totalEnrollments))
-                ->description('Total course seats')
-                ->descriptionIcon('heroicon-m-rectangle-stack')
-                ->color('info'),
-
-            Stat::make('Total Revenue', 'LKR '.number_format($totalRevenue, 2))
-                ->description($isAdmin ? 'All settled payments' : 'Your instructed courses')
-                ->descriptionIcon('heroicon-m-banknotes')
-                ->color('warning'),
-
-            Stat::make('Campus Attendance', $attendanceRate.'%')
-                ->description('Physical check-in rate')
-                ->descriptionIcon('heroicon-m-clipboard-document-check')
-                ->color($attendanceRate >= 75 ? 'success' : 'danger'),
-
-            Stat::make('Pending Grading', number_format($pendingGrading))
-                ->description('Submissions needing review')
-                ->descriptionIcon('heroicon-m-pencil-square')
-                ->color($pendingGrading > 0 ? 'warning' : 'gray'),
+            'stats' => [
+                [
+                    'label'       => 'Active Courses',
+                    'value'       => number_format($activeCourses),
+                    'description' => 'Published courses',
+                    'icon'        => 'academic-cap',
+                    'featured'    => true,
+                ],
+                [
+                    'label'       => 'Total Learners',
+                    'value'       => number_format($enrolledStudents),
+                    'description' => 'Enrolled Sri Lankan students',
+                    'icon'        => 'user-group',
+                    'featured'    => false,
+                ],
+                [
+                    'label'       => 'Enrollments',
+                    'value'       => number_format($totalEnrollments),
+                    'description' => 'Total course seats',
+                    'icon'        => 'rectangle-stack',
+                    'featured'    => false,
+                ],
+                [
+                    'label'       => 'Total Revenue',
+                    'value'       => 'LKR ' . number_format($totalRevenue, 2),
+                    'description' => $isAdmin ? 'All settled payments' : 'Your instructed courses',
+                    'icon'        => 'banknotes',
+                    'featured'    => false,
+                ],
+                [
+                    'label'       => 'Campus Attendance',
+                    'value'       => $attendanceRate . '%',
+                    'description' => 'Physical check-in rate',
+                    'icon'        => 'clipboard-document-check',
+                    'featured'    => false,
+                ],
+                [
+                    'label'       => 'Pending Grading',
+                    'value'       => number_format($pendingGrading),
+                    'description' => 'Submissions needing review',
+                    'icon'        => 'pencil-square',
+                    'featured'    => false,
+                ],
+            ],
         ];
     }
 }

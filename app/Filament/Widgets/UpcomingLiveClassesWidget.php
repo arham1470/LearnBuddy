@@ -10,7 +10,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class UpcomingLiveClassesWidget extends BaseWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 4;
 
     protected int | string | array $columnSpan = 'full';
 
@@ -38,11 +38,13 @@ class UpcomingLiveClassesWidget extends BaseWidget
                 TextColumn::make('title')
                     ->label('Session')
                     ->weight('bold')
-                    ->limit(35),
+                    ->limit(35)
+                    ->tooltip(fn ($record) => $record->title),
 
                 TextColumn::make('course.title')
                     ->label('Course')
-                    ->limit(30),
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->course?->title),
 
                 TextColumn::make('instructor.name')
                     ->label('Lecturer'),
@@ -60,6 +62,9 @@ class UpcomingLiveClassesWidget extends BaseWidget
                         default => 'gray',
                     }),
             ])
+            ->emptyStateHeading('No live classes')
+            ->emptyStateDescription('There are no upcoming or ongoing sessions at the moment.')
+            ->emptyStateIcon('heroicon-o-video-camera')
             ->paginated(false);
     }
 }

@@ -1,5 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAssignmentController;
+use App\Http\Controllers\Admin\AdminBatchController;
+use App\Http\Controllers\Admin\AdminCourseController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminEnrollmentController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminQuizController;
+use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -285,6 +294,38 @@ Route::middleware('auth')->group(function () {
         Route::get('users/approvals', [UserApprovalController::class, 'index'])->name('users.approvals');
         Route::post('users/{user}/approve', [UserApprovalController::class, 'approve'])->name('users.approve');
         Route::post('users/{user}/reject', [UserApprovalController::class, 'reject'])->name('users.reject');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | LearnBuddy Super Admin Dashboard & Administration
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:admin')->prefix('admin')->as('admin.')->group(function () {
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+
+        // Academic & Courses
+        Route::get('/courses', [AdminCourseController::class, 'index'])->name('courses.index');
+
+        // Campus & Batches
+        Route::get('/batches', [AdminBatchController::class, 'index'])->name('batches.index');
+
+        // Student Learning & Progress
+        Route::get('/enrollments', [AdminEnrollmentController::class, 'index'])->name('enrollments.index');
+
+        // Assessments & Grading
+        Route::get('/assignments', [AdminAssignmentController::class, 'index'])->name('assignments.index');
+        Route::get('/quizzes', [AdminQuizController::class, 'index'])->name('quizzes.index');
+
+        // Financial & Orders
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+
+        // User & Security
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+
+        // Analytics & System
+        Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     });
 });
 
