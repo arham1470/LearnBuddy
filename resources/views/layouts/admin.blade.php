@@ -614,7 +614,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                         <span class="text-[0.84rem] text-[#6B6B6B] flex-1 truncate">Search students, courses, batches...</span>
-                        <kbd class="hidden sm:inline-flex items-center px-2 py-0.5 text-[0.6875rem] font-semibold text-[#6B6B6B] bg-white border border-[#E5E5E5] rounded-md shadow-xs shrink-0">Ctrl K</kbd>
                     </div>
                 </div>
 

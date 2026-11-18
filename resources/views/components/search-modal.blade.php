@@ -13,17 +13,14 @@
     <div class="space-y-4">
         <div class="flex items-center justify-between pb-2 border-b border-neutral-100">
             <span class="text-xs font-bold text-neutral-400 uppercase tracking-wider">Search Courses</span>
-            <div class="flex items-center gap-2">
-                <span class="hidden sm:inline text-xs text-neutral-400">Press <kbd class="px-1.5 py-0.5 bg-neutral-100 rounded border text-[10px]">ESC</kbd> to close</span>
-                <button
-                    type="button"
-                    @click="$dispatch('close-modal', 'search-modal')"
-                    class="sm:hidden text-neutral-400 hover:text-neutral-700 p-1 rounded-lg transition"
-                    aria-label="Close search"
-                >
-                    <i class="fas fa-times text-sm" aria-hidden="true"></i>
-                </button>
-            </div>
+            <button
+                type="button"
+                @click="$dispatch('close-modal', 'search-modal')"
+                class="text-neutral-400 hover:text-neutral-700 p-1 rounded-lg hover:bg-neutral-100 transition"
+                aria-label="Close search"
+            >
+                <i class="fas fa-times text-sm" aria-hidden="true"></i>
+            </button>
         </div>
 
         <form action="{{ route('courses.index') }}" method="GET">

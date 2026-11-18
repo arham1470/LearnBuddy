@@ -30,10 +30,6 @@
             @blur="focused = false"
             @keydown.escape="$refs.searchInput.blur()"
         />
-
-        <div class="lb-search-kbd-wrap" @click="$refs.searchInput.focus()">
-            <kbd class="lb-search-kbd">Ctrl + K</kbd>
-        </div>
     </div>
 </div>
 
@@ -101,33 +97,6 @@
         font-weight: 400;
     }
 
-    .lb-search-kbd-wrap {
-        display: flex;
-        align-items: center;
-        margin-left: 0.5rem;
-        flex-shrink: 0;
-        cursor: pointer;
-    }
-
-    .lb-search-kbd {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        font-size: 0.625rem; /* 10px */
-        font-weight: 600;
-        color: #6B6B6B;
-        background: #FFFFFF;
-        border: 1px solid #E5E5E5;
-        border-radius: 6px;
-        padding: 0.15rem 0.375rem;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-        line-height: 1;
-        white-space: nowrap;
-    }
-
-    .lb-search-focused .lb-search-kbd {
-        border-color: rgba(255, 95, 0, 0.3);
-        color: #FF5F00;
-    }
-
     /* Small screen adjustments */
     @media (max-width: 767px) {
         .lb-topbar-search-box {
@@ -136,10 +105,6 @@
 
         .lb-topbar-search-box.lb-search-focused {
             width: 220px;
-        }
-
-        .lb-search-kbd-wrap {
-            display: none;
         }
     }
 

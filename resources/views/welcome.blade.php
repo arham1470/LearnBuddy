@@ -44,9 +44,6 @@
                                     Search Curriculum
                                 </span>
                             </div>
-                            <span class="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-400 bg-neutral-100 group-hover:bg-orange-50 group-hover:text-lb-orange group-hover:border-orange-200 px-2 py-0.5 rounded-full border border-neutral-200/70 transition shrink-0">
-                                <kbd class="font-sans text-[10px]">Ctrl</kbd><span class="text-[9px]">+</span><kbd class="font-sans text-[10px]">K</kbd>
-                            </span>
                         </button>
                     </div>
                 </div>
