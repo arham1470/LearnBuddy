@@ -38,6 +38,11 @@ class UserResource extends Resource
         return auth()->user()?->isAdmin() ?? false;
     }
 
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([

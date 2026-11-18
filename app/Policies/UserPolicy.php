@@ -24,6 +24,14 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the authenticated user can create user models.
+     */
+    public function create(User $authenticatedUser): bool
+    {
+        return $authenticatedUser->isAdmin();
+    }
+
+    /**
      * Determine whether the authenticated user can update the specific user model.
      */
     public function update(User $authenticatedUser, User $model): bool
@@ -36,6 +44,22 @@ class UserPolicy
      * An administrator cannot delete their own account.
      */
     public function delete(User $authenticatedUser, User $model): bool
+    {
+        return $authenticatedUser->isAdmin() && $authenticatedUser->id !== $model->id;
+    }
+
+    /**
+     * Determine whether the authenticated user can restore the user model.
+     */
+    public function restore(User $authenticatedUser, User $model): bool
+    {
+        return $authenticatedUser->isAdmin();
+    }
+
+    /**
+     * Determine whether the authenticated user can permanently delete the user model.
+     */
+    public function forceDelete(User $authenticatedUser, User $model): bool
     {
         return $authenticatedUser->isAdmin() && $authenticatedUser->id !== $model->id;
     }
