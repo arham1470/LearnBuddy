@@ -75,13 +75,31 @@
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row items-center gap-3">
                     @auth
-                        <a
-                            href="{{ route('student.dashboard') }}"
-                            class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full font-semibold text-white bg-lb-orange hover:bg-[#E65500] active:scale-[0.99] transition shadow-sm text-xs cursor-pointer"
-                        >
-                            <i class="fas fa-graduation-cap text-xs" aria-hidden="true"></i>
-                            <span>My Dashboard</span>
-                        </a>
+                        @if (auth()->user()->isAdmin())
+                            <a
+                                href="{{ route('admin.dashboard') }}"
+                                class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full font-semibold text-white bg-lb-orange hover:bg-[#E65500] active:scale-[0.99] transition shadow-sm text-xs cursor-pointer"
+                            >
+                                <i class="fas fa-chart-line text-xs" aria-hidden="true"></i>
+                                <span>Admin Dashboard</span>
+                            </a>
+                        @elseif (auth()->user()->isInstructor())
+                            <a
+                                href="{{ route('management.courses.index') }}"
+                                class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full font-semibold text-white bg-lb-orange hover:bg-[#E65500] active:scale-[0.99] transition shadow-sm text-xs cursor-pointer"
+                            >
+                                <i class="fas fa-chalkboard-teacher text-xs" aria-hidden="true"></i>
+                                <span>Course Management</span>
+                            </a>
+                        @else
+                            <a
+                                href="{{ route('student.dashboard') }}"
+                                class="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full font-semibold text-white bg-lb-orange hover:bg-[#E65500] active:scale-[0.99] transition shadow-sm text-xs cursor-pointer"
+                            >
+                                <i class="fas fa-graduation-cap text-xs" aria-hidden="true"></i>
+                                <span>My Dashboard</span>
+                            </a>
+                        @endif
                     @else
                         <a
                             href="{{ route('login') }}"

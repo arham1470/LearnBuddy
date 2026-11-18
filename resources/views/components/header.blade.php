@@ -99,25 +99,8 @@
                                 <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
                             </div>
                         </div>
-                    @else
-                        <!-- My Learning Icon -->
-                        <div class="relative group shrink-0">
-                            <a
-                                href="{{ route('student.dashboard') }}"
-                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 {{ request()->routeIs('student.dashboard') ? 'bg-orange-100 text-lb-orange ring-2 ring-lb-orange/30' : 'bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange' }}"
-                                aria-label="My Learning"
-                            >
-                                <i class="fas fa-graduation-cap text-sm text-lb-orange" aria-hidden="true"></i>
-                            </a>
-                            <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
-                                My Learning
-                                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
-                            </div>
-                        </div>
-                    @endif
 
-                    @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
-                        <!-- Course Management Icon -->
+                        <!-- Course Management Icon for Admin -->
                         <div class="relative group shrink-0">
                             <a
                                 href="{{ route('management.courses.index') }}"
@@ -128,6 +111,36 @@
                             </a>
                             <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
                                 Course Management
+                                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                            </div>
+                        </div>
+                    @elseif (auth()->user()->isInstructor())
+                        <!-- Course Management Icon for Instructor -->
+                        <div class="relative group shrink-0">
+                            <a
+                                href="{{ route('management.courses.index') }}"
+                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 {{ request()->is('management*') ? 'bg-orange-100 text-lb-orange ring-2 ring-lb-orange/30' : 'bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange' }}"
+                                aria-label="Course Management"
+                            >
+                                <i class="fas fa-chalkboard-teacher text-sm text-lb-orange" aria-hidden="true"></i>
+                            </a>
+                            <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                                Course Management
+                                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                            </div>
+                        </div>
+                    @else
+                        <!-- My Learning Icon for Student -->
+                        <div class="relative group shrink-0">
+                            <a
+                                href="{{ route('student.dashboard') }}"
+                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 {{ request()->routeIs('student.dashboard') ? 'bg-orange-100 text-lb-orange ring-2 ring-lb-orange/30' : 'bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange' }}"
+                                aria-label="My Learning"
+                            >
+                                <i class="fas fa-graduation-cap text-sm text-lb-orange" aria-hidden="true"></i>
+                            </a>
+                            <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                                My Learning
                                 <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
                             </div>
                         </div>
@@ -224,18 +237,7 @@
                                     <i class="fas fa-chart-line w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
                                     <span>Admin Dashboard</span>
                                 </a>
-                            @else
-                                <a
-                                    href="{{ route('student.dashboard') }}"
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
-                                    role="menuitem"
-                                >
-                                    <i class="fas fa-graduation-cap w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
-                                    <span>My Learning Dashboard</span>
-                                </a>
-                            @endif
 
-                            @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
                                 <a
                                     href="{{ route('management.courses.index') }}"
                                     class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
@@ -244,9 +246,7 @@
                                     <i class="fas fa-layer-group w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
                                     <span>Course Management</span>
                                 </a>
-                            @endif
 
-                            @if (auth()->user()->isAdmin())
                                 @php
                                     $pendingApprovalsCount = \App\Models\User::where('is_approved', false)->whereNotNull('email_verified_at')->count();
                                 @endphp
@@ -264,6 +264,24 @@
                                             {{ $pendingApprovalsCount }}
                                         </span>
                                     @endif
+                                </a>
+                            @elseif (auth()->user()->isInstructor())
+                                <a
+                                    href="{{ route('management.courses.index') }}"
+                                    class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                    role="menuitem"
+                                >
+                                    <i class="fas fa-chalkboard-teacher w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
+                                    <span>Course Management</span>
+                                </a>
+                            @else
+                                <a
+                                    href="{{ route('student.dashboard') }}"
+                                    class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                    role="menuitem"
+                                >
+                                    <i class="fas fa-graduation-cap w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
+                                    <span>My Learning Dashboard</span>
                                 </a>
                             @endif
 
@@ -563,6 +581,16 @@
                             @click="mobileNavOpen = false"
                         >
                             Admin Dashboard
+                        </x-button>
+                    @elseif (auth()->user()->isInstructor())
+                        <x-button
+                            as="a"
+                            href="{{ route('management.courses.index') }}"
+                            variant="primary"
+                            class="w-full text-center"
+                            @click="mobileNavOpen = false"
+                        >
+                            Course Management
                         </x-button>
                     @else
                         <x-button

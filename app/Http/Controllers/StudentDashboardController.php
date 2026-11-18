@@ -20,6 +20,10 @@ class StudentDashboardController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        if (auth()->user()?->isInstructor()) {
+            return redirect()->route('management.courses.index');
+        }
+
         $user = auth()->user();
 
         // 1. Active enrollments (Access granted)
