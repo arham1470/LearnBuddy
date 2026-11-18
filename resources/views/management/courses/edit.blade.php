@@ -39,6 +39,26 @@
                 </div>
             @endif
 
+            @php
+                $canEditCritical = auth()->user()->can('updateCriticalFields', $course);
+            @endphp
+
+            @if ($course->isPublished())
+                <div class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-start gap-3">
+                    <i class="fas fa-check-circle text-emerald-600 text-base mt-0.5 shrink-0"></i>
+                    <div>
+                        <p class="font-bold">This Course is Published &amp; Live</p>
+                        <p class="text-emerald-800 mt-0.5 leading-relaxed">
+                            @if ($canEditCritical)
+                                You have Administrator privileges and may edit all fields including titles and pricing.
+                            @else
+                                As an instructor, you can update lessons, video lectures, assignments, quizzes, batches, descriptions, learning outcomes, and media. Core title and base pricing tiers are locked to safeguard existing student enrollments.
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('management.courses.update', $course) }}" enctype="multipart/form-data" class="space-y-8" novalidate>
                 @csrf
                 @method('PUT')
@@ -54,30 +74,51 @@
 
                     <!-- Title -->
                     <div>
-                        <label for="title" class="block text-sm font-semibold text-neutral-800 mb-1.5">
-                            Course Title <span class="text-rose-500">*</span>
-                        </label>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="title" class="block text-sm font-semibold text-neutral-800">
+                                Course Title <span class="text-rose-500">*</span>
+                            </label>
+                            @if (! $canEditCritical)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold">
+                                    <i class="fas fa-lock text-[9px]"></i>
+                                    <span>Locked for Published Course</span>
+                                </span>
+                            @endif
+                        </div>
                         <input
                             id="title"
                             type="text"
                             name="title"
                             value="{{ old('title', $course->title) }}"
                             required
-                            class="w-full px-4 py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange @error('title') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
+                            @if (! $canEditCritical) readonly @endif
+                            class="w-full px-4 py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange @if(! $canEditCritical) bg-neutral-100 text-neutral-600 cursor-not-allowed border-neutral-200 @elseif($errors->has('title')) border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @endif"
                         >
+                        @if (! $canEditCritical)
+                            <p class="text-[11px] text-neutral-500 mt-1">Course titles are locked once published to preserve enrollment records and digital certificates. Contact an administrator for title changes.</p>
+                        @endif
                     </div>
 
                     <!-- Slug -->
                     <div>
-                        <label for="slug" class="block text-sm font-semibold text-neutral-800 mb-1.5">
-                            URL Slug
-                        </label>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="slug" class="block text-sm font-semibold text-neutral-800">
+                                URL Slug
+                            </label>
+                            @if (! $canEditCritical)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold">
+                                    <i class="fas fa-lock text-[9px]"></i>
+                                    <span>Permanent URL</span>
+                                </span>
+                            @endif
+                        </div>
                         <input
                             id="slug"
                             type="text"
                             name="slug"
                             value="{{ old('slug', $course->slug) }}"
-                            class="w-full px-4 py-3 rounded-2xl border border-neutral-200 bg-neutral-50/30 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange"
+                            @if (! $canEditCritical) readonly @endif
+                            class="w-full px-4 py-3 rounded-2xl border text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange @if(! $canEditCritical) bg-neutral-100 text-neutral-600 cursor-not-allowed border-neutral-200 @else border-neutral-200 bg-neutral-50/30 @endif"
                         >
                     </div>
 
@@ -251,14 +292,51 @@
                     hybrid: {{ in_array('hybrid', old('delivery_modes', $activeModes)) ? 'true' : 'false' }}
                 }">
                     <div class="border-b border-neutral-100 pb-4">
-                        <h2 class="text-base font-bold text-neutral-900 flex items-center gap-2">
-                            <i class="fas fa-boxes-stacked text-lb-orange" aria-hidden="true"></i>
-                            <span>3. Multi-Delivery Modes & Pricing (LKR)</span>
-                        </h2>
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-base font-bold text-neutral-900 flex items-center gap-2">
+                                <i class="fas fa-boxes-stacked text-lb-orange" aria-hidden="true"></i>
+                                <span>3. Multi-Delivery Modes &amp; Pricing (LKR)</span>
+                            </h2>
+                            @if (! $canEditCritical)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold">
+                                    <i class="fas fa-lock text-[9px]"></i>
+                                    <span>Pricing Locked</span>
+                                </span>
+                            @endif
+                        </div>
                     </div>
 
+                    @if (! $canEditCritical)
+                        <div class="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 text-xs flex items-start gap-3">
+                            <i class="fas fa-lock text-amber-600 text-base mt-0.5 shrink-0"></i>
+                            <div>
+                                <p class="font-bold">Base Pricing &amp; Delivery Modes are Locked for Published Courses</p>
+                                <p class="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                                    Base delivery modes and pricing cannot be altered directly once published to protect existing student enrollments. If you need to introduce new batch pricing or adjust tiers, please coordinate with a platform administrator.
+                                </p>
+                            </div>
+                        </div>
+
+                        {{-- Hidden inputs ensure validation passes and existing modes remain untouched --}}
+                        @foreach ($activeModes as $mode)
+                            <input type="hidden" name="delivery_modes[]" value="{{ $mode }}">
+                        @endforeach
+                        @if ($onlineOpt)
+                            <input type="hidden" name="online_price" value="{{ $onlineOpt->price }}">
+                            <input type="hidden" name="online_access_days" value="{{ $onlineOpt->access_period_days }}">
+                        @endif
+                        @if ($physicalOpt)
+                            <input type="hidden" name="physical_price" value="{{ $physicalOpt->price }}">
+                            <input type="hidden" name="physical_max_capacity" value="{{ $physicalOpt->max_capacity }}">
+                            <input type="hidden" name="physical_location_id" value="{{ $physicalOpt->batches()->first()?->location_id }}">
+                        @endif
+                        @if ($hybridOpt)
+                            <input type="hidden" name="hybrid_price" value="{{ $hybridOpt->price }}">
+                        @endif
+                    @endif
+
                     <!-- Delivery Checkboxes -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 @if(! $canEditCritical) opacity-70 pointer-events-none @endif">
                         <label class="flex items-start gap-3 p-4 rounded-2xl border border-neutral-200 cursor-pointer select-none transition" :class="online ? 'border-lb-orange bg-orange-50/40' : 'hover:bg-neutral-50'">
                             <input
                                 type="checkbox"
@@ -320,7 +398,8 @@
                                         min="0"
                                         name="online_price"
                                         value="{{ old('online_price', $onlineOpt?->price ?? '0') }}"
-                                        class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange"
+                                        @if(! $canEditCritical) readonly @endif
+                                        class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-neutral-200 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange @if(! $canEditCritical) bg-neutral-100 text-neutral-600 cursor-not-allowed @else bg-white @endif"
                                     >
                                 </div>
                             </div>
@@ -333,7 +412,8 @@
                                     min="1"
                                     name="online_access_days"
                                     value="{{ old('online_access_days', $onlineOpt?->access_period_days) }}"
-                                    class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange"
+                                    @if(! $canEditCritical) readonly @endif
+                                    class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange @if(! $canEditCritical) bg-neutral-100 text-neutral-600 cursor-not-allowed @else bg-white @endif"
                                 >
                             </div>
                         </div>
@@ -357,7 +437,8 @@
                                         min="0"
                                         name="physical_price"
                                         value="{{ old('physical_price', $physicalOpt?->price ?? '15000') }}"
-                                        class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange"
+                                        @if(! $canEditCritical) readonly @endif
+                                        class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-neutral-200 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange @if(! $canEditCritical) bg-neutral-100 text-neutral-600 cursor-not-allowed @else bg-white @endif"
                                     >
                                 </div>
                             </div>
@@ -371,7 +452,8 @@
                                     min="1"
                                     name="physical_max_capacity"
                                     value="{{ old('physical_max_capacity', $physicalOpt?->max_capacity ?? '30') }}"
-                                    class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange"
+                                    @if(! $canEditCritical) readonly @endif
+                                    class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange @if(! $canEditCritical) bg-neutral-100 text-neutral-600 cursor-not-allowed @else bg-white @endif"
                                 >
                             </div>
                         </div>
@@ -394,7 +476,8 @@
                                     min="0"
                                     name="hybrid_price"
                                     value="{{ old('hybrid_price', $hybridOpt?->price ?? '12000') }}"
-                                    class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange"
+                                    @if(! $canEditCritical) readonly @endif
+                                    class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-neutral-200 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange @if(! $canEditCritical) bg-neutral-100 text-neutral-600 cursor-not-allowed @else bg-white @endif"
                                 >
                             </div>
                         </div>

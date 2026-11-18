@@ -251,6 +251,18 @@
                             @endcan
                         @endif
 
+                        <!-- View Live Storefront -->
+                        @if ($course->isPublished())
+                            <a
+                                href="{{ route('courses.show', $course) }}"
+                                target="_blank"
+                                class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition border border-white/20 inline-flex items-center gap-1.5"
+                            >
+                                <i class="fas fa-external-link-alt text-[10px]" aria-hidden="true"></i>
+                                <span>View Live Storefront</span>
+                            </a>
+                        @endif
+
                         <!-- Archive (Published -> Archived) -->
                         @if ($course->isPublished())
                             @can('archive', $course)

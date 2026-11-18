@@ -50,11 +50,24 @@ class CoursePolicy
         }
 
         if ($user->isInstructor() && $course->hasInstructor($user) && $course->canInstructorManageContent($user)) {
-            // Instructors can freely edit draft and review courses
-            return in_array($course->status, [Course::STATUS_DRAFT, Course::STATUS_REVIEW]);
+            // Instructors can manage curriculum, lessons, and course details for draft, review, and published courses
+            return in_array($course->status, [Course::STATUS_DRAFT, Course::STATUS_REVIEW, Course::STATUS_PUBLISHED]);
         }
 
         return false;
+    }
+
+    /**
+     * Determine whether the user can change critical core fields (title, slug, pricing tiers) of a course.
+     */
+    public function updateCriticalFields(User $user, Course $course): bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        // Only allowed for draft or review courses before active enrollment commitments
+        return in_array($course->status, [Course::STATUS_DRAFT, Course::STATUS_REVIEW]);
     }
 
     /**

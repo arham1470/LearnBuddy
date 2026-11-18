@@ -200,11 +200,14 @@ class CourseController extends Controller
             $learningOutcomes = array_values(array_filter($request->input('learning_outcomes', [])));
             $prerequisites = array_values(array_filter($request->input('prerequisites', [])));
 
-            $slug = $request->slug ? Str::slug($request->slug) : $course->slug;
+            $canChangeCritical = $request->user()->can('updateCriticalFields', $course);
+
+            $title = $canChangeCritical ? $request->title : $course->title;
+            $slug = $canChangeCritical ? ($request->slug ? Str::slug($request->slug) : $course->slug) : $course->slug;
 
             $course->update([
                 'category_id' => $request->category_id,
-                'title' => $request->title,
+                'title' => $title,
                 'slug' => $slug,
                 'subtitle' => $request->subtitle,
                 'description' => $request->description,
@@ -222,8 +225,10 @@ class CourseController extends Controller
                 $this->syncInstructors($course, $request->user(), $request->input('instructor_ids', []));
             }
 
-            // Sync delivery options
-            $this->syncDeliveryOptions($course, $request);
+            // Sync delivery options (only allowed if user can change critical pricing/mode tiers)
+            if ($canChangeCritical) {
+                $this->syncDeliveryOptions($course, $request);
+            }
 
             return redirect()->route('management.courses.show', $course)
                 ->with('status', 'Course updated successfully!');
