@@ -77,19 +77,29 @@
                                 Forgot password?
                             </a>
                         </div>
-                        <div class="relative">
+                        <div class="relative" x-data="{ showPassword: false }">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                                 <i class="fas fa-lock text-sm" aria-hidden="true"></i>
                             </span>
                             <input
                                 id="password"
+                                :type="showPassword ? 'text' : 'password'"
                                 type="password"
                                 name="password"
                                 required
                                 autocomplete="current-password"
                                 placeholder="••••••••"
-                                class="w-full pl-10 pr-4 py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @error('password') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
+                                class="w-full pl-10 pr-11 py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @error('password') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
                             >
+                            <button
+                                type="button"
+                                @click="showPassword = !showPassword"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-700 focus-visible:outline-none focus-visible:text-lb-orange cursor-pointer transition select-none"
+                                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                                :title="showPassword ? 'Hide password' : 'Show password'"
+                            >
+                                <i class="fas text-sm" :class="showPassword ? 'fa-eye-slash text-neutral-600' : 'fa-eye text-neutral-400'" aria-hidden="true"></i>
+                            </button>
                         </div>
                         @error('password')
                             <p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>

@@ -64,20 +64,30 @@
                         <label for="password" class="block text-sm font-semibold text-neutral-800 mb-1.5">
                             New password <span class="text-rose-500">*</span>
                         </label>
-                        <div class="relative">
+                        <div class="relative" x-data="{ showPassword: false }">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                                 <i class="fas fa-lock text-sm" aria-hidden="true"></i>
                             </span>
                             <input
                                 id="password"
+                                :type="showPassword ? 'text' : 'password'"
                                 type="password"
                                 name="password"
                                 required
                                 autofocus
                                 autocomplete="new-password"
                                 placeholder="Minimum 8 characters"
-                                class="w-full pl-10 pr-4 py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @error('password') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
+                                class="w-full pl-10 pr-11 py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @error('password') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
                             >
+                            <button
+                                type="button"
+                                @click="showPassword = !showPassword"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-700 focus-visible:outline-none focus-visible:text-lb-orange cursor-pointer transition select-none"
+                                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                                :title="showPassword ? 'Hide password' : 'Show password'"
+                            >
+                                <i class="fas text-sm" :class="showPassword ? 'fa-eye-slash text-neutral-600' : 'fa-eye text-neutral-400'" aria-hidden="true"></i>
+                            </button>
                         </div>
                         @error('password')
                             <p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>
@@ -89,19 +99,29 @@
                         <label for="password_confirmation" class="block text-sm font-semibold text-neutral-800 mb-1.5">
                             Confirm new password <span class="text-rose-500">*</span>
                         </label>
-                        <div class="relative">
+                        <div class="relative" x-data="{ showConfirmPassword: false }">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                                 <i class="fas fa-check-double text-sm" aria-hidden="true"></i>
                             </span>
                             <input
                                 id="password_confirmation"
+                                :type="showConfirmPassword ? 'text' : 'password'"
                                 type="password"
                                 name="password_confirmation"
                                 required
                                 autocomplete="new-password"
                                 placeholder="Re-enter your new password"
-                                class="w-full pl-10 pr-4 py-3 rounded-2xl border border-neutral-200 bg-neutral-50/30 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent"
+                                class="w-full pl-10 pr-11 py-3 rounded-2xl border border-neutral-200 bg-neutral-50/30 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent"
                             >
+                            <button
+                                type="button"
+                                @click="showConfirmPassword = !showConfirmPassword"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-700 focus-visible:outline-none focus-visible:text-lb-orange cursor-pointer transition select-none"
+                                :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
+                                :title="showConfirmPassword ? 'Hide password' : 'Show password'"
+                            >
+                                <i class="fas text-sm" :class="showConfirmPassword ? 'fa-eye-slash text-neutral-600' : 'fa-eye text-neutral-400'" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
 
