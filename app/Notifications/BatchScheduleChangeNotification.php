@@ -41,7 +41,7 @@ class BatchScheduleChangeNotification extends Notification implements ShouldQueu
 
     public function toMail(object $notifiable): MailMessage
     {
-        $course = $this->batch->course();
+        $course = $this->batch->course ?? $this->batch->deliveryOption?->course;
         $isCancelled = ($this->changeType === 'cancelled');
 
         $mail = (new MailMessage)

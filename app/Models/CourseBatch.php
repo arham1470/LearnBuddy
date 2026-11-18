@@ -115,6 +115,13 @@ class CourseBatch extends Model
         return $this->status === self::STATUS_CANCELLED;
     }
 
+    public function hasInstructor(User $user): bool
+    {
+        $course = $this->course ?? $this->deliveryOption?->course;
+
+        return (bool) ($course?->hasInstructor($user));
+    }
+
     public function logScheduleChange(User $user, string $changeType, array $prev = [], array $new = [], ?string $reason = null): BatchScheduleChange
     {
         return $this->scheduleChanges()->create([

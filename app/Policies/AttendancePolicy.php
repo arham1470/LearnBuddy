@@ -22,7 +22,8 @@ class AttendancePolicy
             return true;
         }
 
-        $course = $attendance->session?->batch?->course();
+        $batch = $attendance->session?->batch;
+        $course = $batch?->course ?? $batch?->deliveryOption?->course;
 
         return $course ? $course->hasInstructor($user) : false;
     }
@@ -38,7 +39,8 @@ class AttendancePolicy
             return true;
         }
 
-        $course = $attendance->session?->batch?->course();
+        $batch = $attendance->session?->batch;
+        $course = $batch?->course ?? $batch?->deliveryOption?->course;
 
         return $course ? $course->hasInstructor($user) : false;
     }

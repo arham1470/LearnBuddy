@@ -25,7 +25,7 @@ class CourseBatchPolicy
      */
     public function view(User $user, CourseBatch $batch): bool
     {
-        $course = $batch->course();
+        $course = $batch->course ?? $batch->deliveryOption?->course;
 
         if ($user->isAdmin() || ($course && $course->hasInstructor($user))) {
             return true;
@@ -55,7 +55,7 @@ class CourseBatchPolicy
      */
     public function update(User $user, CourseBatch $batch): bool
     {
-        $course = $batch->course();
+        $course = $batch->course ?? $batch->deliveryOption?->course;
 
         if ($user->isAdmin()) {
             return true;
@@ -69,7 +69,7 @@ class CourseBatchPolicy
      */
     public function delete(User $user, CourseBatch $batch): bool
     {
-        $course = $batch->course();
+        $course = $batch->course ?? $batch->deliveryOption?->course;
 
         if ($user->isAdmin()) {
             return true;
@@ -83,7 +83,7 @@ class CourseBatchPolicy
      */
     public function recordAttendance(User $user, CourseBatch $batch): bool
     {
-        $course = $batch->course();
+        $course = $batch->course ?? $batch->deliveryOption?->course;
 
         if ($user->isAdmin()) {
             return true;
@@ -107,7 +107,7 @@ class CourseBatchPolicy
             return true;
         }
 
-        $course = $batch->course();
+        $course = $batch->course ?? $batch->deliveryOption?->course;
 
         return $user->isInstructor() && $course && $course->hasInstructor($user);
     }
