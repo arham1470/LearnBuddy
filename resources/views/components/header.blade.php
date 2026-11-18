@@ -56,6 +56,12 @@
                 FAQ
             </a>
             <a
+                href="{{ route('become-instructor') }}"
+                class="transition-colors hover:text-lb-orange whitespace-nowrap {{ request()->routeIs('become-instructor*') ? 'text-lb-orange font-semibold' : 'text-neutral-700' }}"
+            >
+                Teach on LearnBuddy
+            </a>
+            <a
                 href="{{ url('/design-system') }}"
                 class="transition-colors hover:text-lb-orange whitespace-nowrap {{ request()->is('design-system') ? 'text-lb-orange font-semibold' : 'hidden xl:inline-block text-neutral-400 hover:text-neutral-600 text-xs uppercase tracking-wider' }}"
             >
@@ -495,6 +501,17 @@
                         class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-medium text-neutral-800 hover:bg-neutral-50 transition"
                     >
                         <span>FAQ</span>
+                        <i class="fas fa-chevron-right text-xs opacity-50" aria-hidden="true"></i>
+                    </a>
+                    <a
+                        href="{{ route('become-instructor') }}"
+                        @click="mobileNavOpen = false"
+                        class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-semibold transition {{ request()->routeIs('become-instructor*') ? 'bg-orange-50 text-lb-orange' : 'text-neutral-800 hover:bg-neutral-50' }}"
+                    >
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-chalkboard-teacher text-xs text-lb-orange" aria-hidden="true"></i>
+                            <span>Teach on LearnBuddy</span>
+                        </span>
                         <i class="fas fa-chevron-right text-xs opacity-50" aria-hidden="true"></i>
                     </a>
                     <a

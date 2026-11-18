@@ -421,8 +421,8 @@
                         </p>
                     </div>
                     <div>
-                        <x-button as="a" href="{{ url('/design-system') }}" variant="dark">
-                            Instructor Guide
+                        <x-button as="a" href="{{ route('become-instructor') }}" variant="primary" icon="fas fa-arrow-right">
+                            Become an Instructor
                         </x-button>
                     </div>
                 </div>

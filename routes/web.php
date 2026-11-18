@@ -24,6 +24,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CourseAnnouncementController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstructorApplicationController;
 use App\Http\Controllers\InstructorProfileController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\LiveClassController;
@@ -61,6 +62,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [PublicCourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course:slug}', [PublicCourseController::class, 'show'])->name('courses.show');
 Route::get('/instructors/{instructor}', [InstructorProfileController::class, 'show'])->name('instructors.show');
+
+// Become an Instructor Public Page & Application
+Route::get('/become-instructor', [InstructorApplicationController::class, 'create'])->name('become-instructor');
+Route::post('/become-instructor', [InstructorApplicationController::class, 'store'])->name('become-instructor.store');
 
 // Public Certificate Verification
 Route::get('/certificates/verify/{hash}', [CertificateController::class, 'verify'])->name('certificates.verify');
