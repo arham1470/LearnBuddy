@@ -86,7 +86,7 @@
 
                     <!-- Host Primary Action Controls -->
                     <div class="flex flex-wrap items-center gap-2.5">
-                        @if (! $liveClass->isCancelled())
+                        @if (! $liveClass->isCancelled() && ! $liveClass->isCompleted())
                             <a
                                 href="{{ route('courses.live-classes.join', [$course->slug, $liveClass]) }}"
                                 target="_blank"
@@ -98,15 +98,40 @@
                         @endif
 
                         @can('update', $liveClass)
-                            <a
-                                href="{{ route('management.courses.live-classes.edit', [$course, $liveClass]) }}"
-                                class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition shadow-sm"
-                            >
-                                <i class="fas fa-edit text-xs"></i>
-                                <span>Edit</span>
-                            </a>
+                            @if ($liveClass->isLive())
+                                <form id="mgmt-end-live-form" method="POST" action="{{ route('management.courses.live-classes.end', [$course, $liveClass]) }}" class="inline">
+                                    @csrf
+                                    <button
+                                        type="button"
+                                        data-item="{{ $liveClass->title }}"
+                                        onclick="confirmDialog({
+                                            title: 'End Live Session?',
+                                            itemName: this.dataset.item,
+                                            message: 'Are you sure you want to end this live session for all participants? It will be marked as Completed.',
+                                            targetForm: document.getElementById('mgmt-end-live-form'),
+                                            confirmText: 'End Session for All',
+                                            confirmVariant: 'danger',
+                                            icon: 'fas fa-phone-slash'
+                                        })"
+                                        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm cursor-pointer"
+                                    >
+                                        <i class="fas fa-phone-slash text-xs"></i>
+                                        <span>End Live Session</span>
+                                    </button>
+                                </form>
+                            @endif
 
-                            @if (! $liveClass->isCancelled())
+                            @if (! $liveClass->isCompleted())
+                                <a
+                                    href="{{ route('management.courses.live-classes.edit', [$course, $liveClass]) }}"
+                                    class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-neutral-300 bg-white hover:bg-neutral-50 text-xs font-semibold text-neutral-700 transition shadow-sm"
+                                >
+                                    <i class="fas fa-edit text-xs"></i>
+                                    <span>Edit</span>
+                                </a>
+                            @endif
+
+                            @if (! $liveClass->isCancelled() && ! $liveClass->isCompleted())
                                 <button
                                     type="button"
                                     onclick="document.getElementById('cancel-session-dialog').classList.remove('hidden')"

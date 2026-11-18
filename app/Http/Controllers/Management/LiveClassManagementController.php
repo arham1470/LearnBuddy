@@ -158,6 +158,19 @@ class LiveClassManagementController extends Controller
     }
 
     /**
+     * End an active live session and mark as completed.
+     */
+    public function end(Course $course, LiveClass $liveClass): RedirectResponse
+    {
+        Gate::authorize('end', $liveClass);
+
+        $liveClass->endLive();
+
+        return redirect()->route('management.courses.live-classes.show', [$course, $liveClass])
+            ->with('status', 'Live class session has been completed.');
+    }
+
+    /**
      * Delete an un-commenced live class.
      */
     public function destroy(Course $course, LiveClass $liveClass): RedirectResponse

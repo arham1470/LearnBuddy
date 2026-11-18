@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\LiveClass;
 use App\Services\LiveClass\Contracts\LiveClassProviderInterface;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
@@ -75,5 +76,18 @@ class LiveClassController extends Controller
         $meetingConfig = $this->meetingProvider->getClientMeetingConfig($liveClass, $user, $isModerator);
 
         return view('live_classes.room', compact('course', 'liveClass', 'meetingConfig', 'isModerator'));
+    }
+
+    /**
+     * End an active live classroom session (Host only).
+     */
+    public function end(Course $course, LiveClass $liveClass): RedirectResponse
+    {
+        Gate::authorize('end', $liveClass);
+
+        $liveClass->endLive();
+
+        return redirect()->route('courses.live-classes.show', [$course->slug, $liveClass])
+            ->with('status', 'Live classroom session ended successfully.');
     }
 }

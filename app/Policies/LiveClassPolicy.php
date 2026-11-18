@@ -71,6 +71,14 @@ class LiveClassPolicy
     }
 
     /**
+     * Determine whether the user can end an active live class session.
+     */
+    public function end(User $user, LiveClass $liveClass): bool
+    {
+        return $this->update($user, $liveClass);
+    }
+
+    /**
      * Determine whether the user can delete the live class record.
      */
     public function delete(User $user, LiveClass $liveClass): bool

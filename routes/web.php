@@ -203,6 +203,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/courses/{course:slug}/live-classes', [LiveClassController::class, 'index'])->name('courses.live-classes.index');
     Route::get('/courses/{course:slug}/live-classes/{live_class}', [LiveClassController::class, 'show'])->name('courses.live-classes.show');
     Route::get('/courses/{course:slug}/live-classes/{live_class}/join', [LiveClassController::class, 'join'])->name('courses.live-classes.join');
+    Route::post('/courses/{course:slug}/live-classes/{live_class}/end', [LiveClassController::class, 'end'])->name('courses.live-classes.end');
 
     // Course Certificates
     Route::get('/courses/{course:slug}/certificate/eligibility', [CertificateController::class, 'eligibility'])->name('certificates.eligibility');
@@ -280,6 +281,7 @@ Route::middleware('auth')->group(function () {
         Route::get('courses/{course}/live-classes/{live_class}', [LiveClassManagementController::class, 'show'])->name('courses.live-classes.show');
         Route::get('courses/{course}/live-classes/{live_class}/edit', [LiveClassManagementController::class, 'edit'])->name('courses.live-classes.edit');
         Route::put('courses/{course}/live-classes/{live_class}', [LiveClassManagementController::class, 'update'])->name('courses.live-classes.update');
+        Route::post('courses/{course}/live-classes/{live_class}/end', [LiveClassManagementController::class, 'end'])->name('courses.live-classes.end');
         Route::post('courses/{course}/live-classes/{live_class}/cancel', [LiveClassManagementController::class, 'cancel'])->name('courses.live-classes.cancel');
         Route::post('courses/{course}/live-classes/{live_class}/reminder', [LiveClassManagementController::class, 'triggerReminder'])->name('courses.live-classes.reminder');
         Route::delete('courses/{course}/live-classes/{live_class}', [LiveClassManagementController::class, 'destroy'])->name('courses.live-classes.destroy');

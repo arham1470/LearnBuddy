@@ -24,3 +24,7 @@ Secret Key - LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBMjB
 🔴 Decline Card (4000 0000 0000 0002): Simulates a live bank decline error message on the card field.
 
 Demo OTP (123456)
+
+https://jaas.8x8.vc/
+eledgeholzinger206+290pv@outlook.com
+Eeeee@432432

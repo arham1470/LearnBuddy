@@ -86,6 +86,14 @@ class JitsiLiveClassProvider implements LiveClassProviderInterface
     public function getClientMeetingConfig(LiveClass $liveClass, User $user, bool $isModerator): array
     {
         $domain = $this->domain ?: '8x8.vc';
+        $isJaaS = ($domain === '8x8.vc' || str_contains((string) $domain, '8x8')) && ! empty($this->appId);
+
+        // Ensure 8x8 JaaS room names are properly namespaced with "<appId>/<roomName>"
+        $roomName = $liveClass->meeting_identifier;
+        if ($isJaaS && ! str_starts_with($roomName, "{$this->appId}/")) {
+            $roomName = "{$this->appId}/{$roomName}";
+        }
+
         $jwt = $this->generateJwtToken($liveClass, $user, $isModerator);
 
         // Define participant toolbar buttons strictly by role:
@@ -106,7 +114,7 @@ class JitsiLiveClassProvider implements LiveClassProviderInterface
             'is_configured' => $this->isConfigured(),
             'unconfigured_reason' => $this->getUnconfiguredReason(),
             'domain' => $domain,
-            'room_name' => $liveClass->meeting_identifier,
+            'room_name' => $roomName,
             'jwt' => $jwt,
             'user_name' => $user->name,
             'user_email' => $user->email,
@@ -141,12 +149,20 @@ class JitsiLiveClassProvider implements LiveClassProviderInterface
             $header['kid'] = $this->apiKeyId;
         }
 
+        $isJaaS = ($this->domain === '8x8.vc' || str_contains((string) $this->domain, '8x8')) && ! empty($this->appId);
+
+        // 8x8 JaaS strictly requires string "true" / "false" for moderator and feature claims
+        $moderatorValue = $isJaaS ? ($isModerator ? 'true' : 'false') : $isModerator;
+        $featureTrue = $isJaaS ? 'true' : true;
+        $featureFalse = $isJaaS ? 'false' : false;
+
         $payload = [
             'aud' => 'jitsi',
             'iss' => 'chat',
             'sub' => $this->appId ?: $this->domain,
             'room' => '*',
-            'iat' => $now,
+            'nbf' => $now - 60,
+            'iat' => $now - 60,
             'exp' => $exp,
             'context' => [
                 'user' => [
@@ -154,13 +170,13 @@ class JitsiLiveClassProvider implements LiveClassProviderInterface
                     'name' => $user->name,
                     'email' => $user->email,
                     'avatar' => null,
-                    'moderator' => $isModerator,
+                    'moderator' => $moderatorValue,
                 ],
                 'features' => [
-                    'livestreaming' => $isModerator,
-                    'recording' => $isModerator,
-                    'transcription' => $isModerator,
-                    'outbound-call' => false,
+                    'livestreaming' => $isModerator ? $featureTrue : $featureFalse,
+                    'recording' => $isModerator ? $featureTrue : $featureFalse,
+                    'transcription' => $isModerator ? $featureTrue : $featureFalse,
+                    'outbound-call' => $featureFalse,
                 ],
             ],
         ];
