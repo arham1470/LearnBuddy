@@ -18,6 +18,7 @@
 /bootstrap/cache/*
 !/bootstrap/cache/.gitkeep
 /vendor
+.env
 .env.backup
 .env.production
 .env.*.local
@@ -30,4 +31,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-.env
+
