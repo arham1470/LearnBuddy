@@ -31,4 +31,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+blackbox.md
 
