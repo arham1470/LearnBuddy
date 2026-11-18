@@ -6,41 +6,112 @@
 <div class="space-y-6">
 
     <!-- ============================================================
-         1. DASHBOARD HEADER
+         1. MODERN DASHBOARD HERO HEADER (Website Theme Aligned)
          ============================================================ -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <div class="text-[0.9375rem] font-medium text-[#6B6B6B] flex items-center gap-1.5">
-                <span>Good Morning, Super Admin</span>
-                <svg class="w-4 h-4 text-[#FF5F00] inline-block animate-wave origin-bottom-right" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/>
-                </svg>
-            </div>
-            <h1 class="text-3xl font-extrabold text-[#0A0A0A] tracking-tight mt-1">Dashboard</h1>
-            <p class="text-[0.875rem] text-[#6B6B6B] mt-0.5">Here's what's happening with your learning platform today.</p>
+    @php
+        $hour = now()->hour;
+        $greeting = $hour < 12 ? 'Good Morning' : ($hour < 17 ? 'Good Afternoon' : 'Good Evening');
+        $adminName = auth()->user()->name ?? 'Super Admin';
+        $adminFirstName = explode(' ', trim($adminName))[0];
+    @endphp
+
+    <div class="relative bg-gradient-to-br from-[#FFF5ED] via-[#FFF9F5] to-white border border-orange-200/70 rounded-3xl p-6 sm:p-8 shadow-xs overflow-hidden">
+        <!-- Ambient Decorative Glow & Watermark -->
+        <div class="absolute -top-16 -right-16 w-64 h-64 bg-orange-300/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-64 h-64 bg-teal-200/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute right-4 bottom-2 text-orange-500/[0.04] pointer-events-none hidden xl:block select-none">
+            <svg class="w-64 h-64" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.7 2.805a.75.75 0 0 1 .6 0A60.65 60.65 0 0 1 22.83 8.72a.75.75 0 0 1-.231 1.337 49.948 49.948 0 0 0-9.902 3.912l-.003.002c-.114.06-.24.09-.367.09a.747.747 0 0 1-.367-.09l-.003-.001a49.95 49.95 0 0 0-9.902-3.913.75.75 0 0 1-.23-1.337A60.65 60.65 0 0 1 11.7 2.805Z" />
+                <path d="M13.06 15.473a48.455 48.455 0 0 1 7.666-3.282c.134 1.414.22 2.843.255 4.284a.75.75 0 0 1-.456.711l-7.25 3.107a.75.75 0 0 1-.59 0l-7.25-3.107a.75.75 0 0 1-.456-.711c.035-1.441.121-2.87.255-4.284a48.455 48.455 0 0 1 7.666 3.282.75.75 0 0 0 .59 0l.085-.036.085.036Z" />
+            </svg>
         </div>
 
-        <!-- Date Selector Dropdown -->
-        <div class="relative shrink-0" @click.outside="dateDropdown = false">
-            <button @click="dateDropdown = !dateDropdown"
-                    type="button"
-                    class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white border border-[#E5E5E5] hover:border-orange-300 text-[0.84rem] font-semibold text-[#0A0A0A] shadow-xs hover:shadow-sm transition-all cursor-pointer">
-                <svg class="w-4 h-4 text-[#FF5F00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <span>Nov 16, 2026</span>
-                <svg class="w-3.5 h-3.5 text-[#6B6B6B] transition-transform" :class="{'rotate-180': dateDropdown}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-            </button>
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <!-- Left Info Block -->
+            <div class="max-w-2xl space-y-2.5">
+                <!-- Top Brand Pill -->
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-orange-200/90 shadow-2xs text-[11px] font-bold text-[#FF5F00] uppercase tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-[#FF5F00] animate-pulse"></span>
+                    <span>Admin Command Center</span>
+                    <span class="text-neutral-300">•</span>
+                    <span class="text-neutral-600 font-semibold normal-case">LearnBuddy Sri Lanka</span>
+                </div>
 
-            <!-- Dropdown options -->
-            <div x-show="dateDropdown" x-cloak x-transition
-                 class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-[#E5E5E5] py-1.5 z-40 text-sm">
-                <button type="button" @click="dateDropdown = false" class="w-full text-left px-4 py-2 text-[#FF5F00] font-bold bg-[#FFF0E6]">Today (Nov 16, 2026)</button>
-                <button type="button" @click="dateDropdown = false" class="w-full text-left px-4 py-2 text-[#0A0A0A] hover:bg-[#F7F7F5]">Yesterday</button>
-                <button type="button" @click="dateDropdown = false" class="w-full text-left px-4 py-2 text-[#0A0A0A] hover:bg-[#F7F7F5]">Last 7 Days</button>
-                <button type="button" @click="dateDropdown = false" class="w-full text-left px-4 py-2 text-[#0A0A0A] hover:bg-[#F7F7F5]">This Month</button>
+                <!-- Personalized Greeting -->
+                <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-extrabold text-[#0A0A0A] tracking-tight leading-tight">
+                    {{ $greeting }}, <span class="text-[#FF5F00]">{{ $adminFirstName }}</span> <span class="inline-block animate-wave origin-bottom-right">👋</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+                    Here's what's happening across courses, campuses, live classes, and student enrollments today.
+                </p>
+
+                <!-- Quick Status Strip -->
+                <div class="pt-1 flex flex-wrap items-center gap-2 text-xs">
+                    <!-- Date Pill -->
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-neutral-200/90 text-neutral-700 font-medium shadow-2xs">
+                        <i class="fas fa-calendar-day text-[#FF5F00] text-xs"></i>
+                        <span>{{ now()->format('l, M d, Y') }}</span>
+                    </div>
+
+                    <!-- Health Status -->
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 font-semibold shadow-2xs">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Platform Operational</span>
+                    </div>
+
+                    @if(($pendingGrading ?? 0) > 0)
+                        <a href="{{ route('management.courses.index') }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 font-bold hover:bg-amber-100 transition shadow-2xs">
+                            <i class="fas fa-exclamation-circle text-amber-600 text-xs"></i>
+                            <span>{{ $pendingGrading }} Needing Grading</span>
+                        </a>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Right Action & Filter Controls -->
+            <div class="flex flex-wrap lg:flex-col xl:flex-row items-center gap-3 shrink-0">
+                <!-- Date Filter Dropdown -->
+                <div class="relative" @click.outside="dateDropdown = false">
+                    <button @click="dateDropdown = !dateDropdown"
+                            type="button"
+                            class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white border border-[#E5E5E5] hover:border-orange-300 text-xs font-semibold text-[#0A0A0A] shadow-xs hover:shadow-sm transition-all cursor-pointer">
+                        <i class="fas fa-clock text-[#FF5F00] text-xs"></i>
+                        <span>{{ now()->format('M d, Y') }}</span>
+                        <i class="fas fa-chevron-down text-[10px] text-[#6B6B6B] transition-transform" :class="{'rotate-180': dateDropdown}"></i>
+                    </button>
+
+                    <div x-show="dateDropdown" x-cloak x-transition
+                         class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-[#E5E5E5] py-1.5 z-40 text-xs">
+                        <button type="button" @click="dateDropdown = false" class="w-full text-left px-4 py-2 text-[#FF5F00] font-bold bg-[#FFF0E6]">Today ({{ now()->format('M d') }})</button>
+                        <button type="button" @click="dateDropdown = false" class="w-full text-left px-4 py-2 text-[#0A0A0A] hover:bg-[#F7F7F5]">Yesterday</button>
+                        <button type="button" @click="dateDropdown = false" class="w-full text-left px-4 py-2 text-[#0A0A0A] hover:bg-[#F7F7F5]">Last 7 Days</button>
+                        <button type="button" @click="dateDropdown = false" class="w-full text-left px-4 py-2 text-[#0A0A0A] hover:bg-[#F7F7F5]">This Month</button>
+                    </div>
+                </div>
+
+                <!-- Approvals Button -->
+                <a href="{{ route('admin.approvals.index') }}"
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white hover:bg-neutral-50 border border-neutral-200/90 text-[#0A0A0A] text-xs font-bold shadow-2xs hover:shadow-xs transition-all">
+                    <i class="fas fa-user-check text-purple-600 text-xs"></i>
+                    <span>Approvals</span>
+                </a>
+
+                <!-- New Course CTA Button -->
+                <a href="{{ route('admin.courses.create') }}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#FF5F00] hover:bg-[#e65500] text-white text-xs font-bold shadow-md shadow-orange-500/25 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                    <i class="fas fa-plus text-xs"></i>
+                    <span>New Course</span>
+                </a>
+
+                <!-- Storefront Icon Button -->
+                <a href="{{ route('home') }}" target="_blank"
+                   class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-white hover:bg-neutral-50 border border-neutral-200/90 text-neutral-600 hover:text-neutral-900 shadow-2xs transition-all"
+                   title="View Public Storefront">
+                    <i class="fas fa-external-link-alt text-xs text-neutral-500"></i>
+                </a>
             </div>
         </div>
     </div>
