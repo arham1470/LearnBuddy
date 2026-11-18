@@ -32,6 +32,7 @@ class CourseController extends Controller
 
         $query = Course::forUser($user)
             ->with(['category', 'instructors', 'deliveryOptions'])
+            ->withCount(['sections', 'lessons', 'assignments', 'quizzes', 'batches', 'liveClasses'])
             ->latest();
 
         // Search filter

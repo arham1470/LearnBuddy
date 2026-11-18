@@ -163,7 +163,7 @@
                     </div>
                 </div>
             @else
-                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm overflow-hidden">
+                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm overflow-hidden" x-data="{ expandedCourse: null }">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
@@ -178,7 +178,9 @@
                             </thead>
                             <tbody class="divide-y divide-neutral-100">
                                 @foreach ($courses as $course)
-                                    <tr class="hover:bg-neutral-50/50 transition">
+                                    <tr class="hover:bg-neutral-50/50 transition cursor-pointer select-none"
+                                        :class="{ 'bg-orange-50/30': expandedCourse === {{ $course->id }} }"
+                                        @click="if (!$event.target.closest('a, button, input')) { expandedCourse = (expandedCourse === {{ $course->id }} ? null : {{ $course->id }}); }">
                                         <!-- Course Title & Subtitle -->
                                         <td class="py-4 px-4 sm:px-6">
                                             <div class="flex items-center gap-3">
@@ -186,7 +188,7 @@
                                                     <img
                                                         src="{{ $course->thumbnail_url }}"
                                                         alt=""
-                                                        class="w-12 h-12 rounded-xl object-cover shrink-0 border border-neutral-100"
+                                                        class="w-12 h-12 rounded-xl object-cover shrink-0 border border-neutral-100 shadow-2xs"
                                                         onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
                                                     >
                                                     <div class="w-12 h-12 rounded-xl bg-orange-100 text-lb-orange items-center justify-center shrink-0 font-bold text-sm hidden">
@@ -198,9 +200,19 @@
                                                     </div>
                                                 @endif
                                                 <div class="min-w-0">
-                                                    <a href="{{ route('management.courses.show', $course) }}" class="font-bold text-neutral-900 hover:text-lb-orange transition line-clamp-1">
-                                                        {{ $course->title }}
-                                                    </a>
+                                                    <div class="flex items-center gap-2">
+                                                        <a href="{{ route('management.courses.show', $course) }}" class="font-bold text-neutral-900 hover:text-lb-orange transition line-clamp-1">
+                                                            {{ $course->title }}
+                                                        </a>
+                                                        <button
+                                                            type="button"
+                                                            @click.stop="expandedCourse = (expandedCourse === {{ $course->id }} ? null : {{ $course->id }})"
+                                                            class="text-neutral-400 hover:text-lb-orange text-[11px] p-0.5 transition"
+                                                            title="Toggle options"
+                                                        >
+                                                            <i class="fas fa-chevron-down transition-transform duration-200" :class="{ 'rotate-180 text-lb-orange': expandedCourse === {{ $course->id }} }"></i>
+                                                        </button>
+                                                    </div>
                                                     <p class="text-xs text-neutral-500 line-clamp-1">
                                                         {{ $course->subtitle ?? 'No subtitle provided' }}
                                                     </p>
@@ -275,58 +287,25 @@
                                         <!-- Actions -->
                                         <td class="py-4 px-4 text-right pr-6 whitespace-nowrap">
                                             <div class="inline-flex items-center gap-2">
-                                                <a
-                                                    href="{{ route('management.courses.assignments.index', $course) }}"
-                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-lb-orange font-bold text-xs transition border border-orange-200/60"
-                                                    title="Manage Assignments & Submissions"
+                                                <!-- Clean Expand Options Button -->
+                                                <button
+                                                    type="button"
+                                                    @click.stop="expandedCourse = (expandedCourse === {{ $course->id }} ? null : {{ $course->id }})"
+                                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold text-xs transition cursor-pointer border shadow-2xs"
+                                                    :class="expandedCourse === {{ $course->id }} ? 'bg-[#FF5F00] text-white border-[#FF5F00] shadow-orange-500/20' : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-800 border-neutral-200'"
+                                                    title="View management modules & actions"
                                                 >
-                                                    <i class="fas fa-file-alt text-xs" aria-hidden="true"></i>
-                                                    <span>Assignments ({{ $course->assignments()->count() }})</span>
-                                                </a>
-
-                                                <a
-                                                    href="{{ route('management.courses.quizzes.index', $course) }}"
-                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs transition border border-purple-200/60"
-                                                    title="Manage Quizzes & Question Banks"
-                                                >
-                                                    <i class="fas fa-question-circle text-xs" aria-hidden="true"></i>
-                                                    <span>Quizzes ({{ $course->quizzes()->count() }})</span>
-                                                </a>
-
-                                                <a
-                                                    href="{{ route('management.courses.batches.index', $course) }}"
-                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs transition border border-amber-200/60"
-                                                    title="Manage Physical Batches & Timetables"
-                                                >
-                                                    <i class="fas fa-calendar-alt text-xs" aria-hidden="true"></i>
-                                                    <span>Batches ({{ $course->batches()->count() }})</span>
-                                                </a>
-
-                                                <a
-                                                    href="{{ route('management.courses.live-classes.index', $course) }}"
-                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold text-xs transition border border-blue-200/60"
-                                                    title="Manage Interactive Live Classes"
-                                                >
-                                                    <i class="fas fa-video text-xs" aria-hidden="true"></i>
-                                                    <span>Live ({{ $course->liveClasses()->count() }})</span>
-                                                </a>
-
-                                                <a
-                                                    href="{{ route('management.courses.show', $course) }}"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold text-xs transition"
-                                                    title="View & Manage Curriculum"
-                                                >
-                                                    <i class="fas fa-layer-group text-xs" aria-hidden="true"></i>
-                                                    <span>Curriculum</span>
-                                                </a>
+                                                    <span>Options</span>
+                                                    <i class="fas fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': expandedCourse === {{ $course->id }} }"></i>
+                                                </button>
 
                                                 @can('update', $course)
                                                     <a
                                                         href="{{ route('management.courses.edit', $course) }}"
-                                                        class="p-2 rounded-lg text-neutral-500 hover:text-lb-orange hover:bg-orange-50 transition"
+                                                        class="p-2 rounded-xl text-neutral-500 hover:text-lb-orange hover:bg-orange-50 transition border border-transparent hover:border-orange-200"
                                                         title="Edit Course Details"
                                                     >
-                                                        <i class="fas fa-edit text-sm" aria-hidden="true"></i>
+                                                        <i class="fas fa-edit text-xs" aria-hidden="true"></i>
                                                     </a>
                                                 @endcan
 
@@ -345,12 +324,137 @@
                                                             confirmText: 'Delete Course',
                                                             confirmVariant: 'danger'
                                                         })"
-                                                        class="p-2 rounded-lg text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                                                        class="p-2 rounded-xl text-neutral-400 hover:text-rose-600 hover:bg-rose-50 transition border border-transparent hover:border-rose-200 cursor-pointer"
                                                         title="{{ $course->isDraft() ? 'Delete Draft' : 'Delete Course' }}"
                                                     >
-                                                        <i class="fas fa-trash-alt text-sm" aria-hidden="true"></i>
+                                                        <i class="fas fa-trash-alt text-xs" aria-hidden="true"></i>
                                                     </button>
                                                 @endcan
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Expandable Course Options Hub Row -->
+                                    <tr x-show="expandedCourse === {{ $course->id }}" x-cloak class="bg-gradient-to-b from-[#FFFDF9] to-[#FFF9F5] border-b border-orange-100">
+                                        <td colspan="6" class="p-4 sm:p-6 whitespace-normal">
+                                            <div class="bg-white rounded-2xl border border-orange-200/80 p-5 shadow-xs space-y-4">
+                                                <!-- Panel Header: Course breadcrumb & Quick Links -->
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="w-2 h-2 rounded-full bg-lb-orange"></span>
+                                                        <span class="text-xs font-bold text-neutral-500 uppercase tracking-wider">Course Modules &amp; Tools</span>
+                                                        <span class="text-xs text-neutral-300">•</span>
+                                                        <span class="text-xs font-semibold text-neutral-700 truncate max-w-xs sm:max-w-md">{{ $course->title }}</span>
+                                                    </div>
+
+                                                    <div class="flex items-center gap-2">
+                                                        <a href="{{ route('courses.show', $course) }}" target="_blank"
+                                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold transition">
+                                                            <i class="fas fa-external-link-alt text-[10px]"></i>
+                                                            <span>Preview Storefront</span>
+                                                        </a>
+                                                        @can('update', $course)
+                                                            <a href="{{ route('management.courses.edit', $course) }}"
+                                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-lb-orange text-xs font-bold transition border border-orange-200/60">
+                                                                <i class="fas fa-sliders-h text-[10px]"></i>
+                                                                <span>Course Settings</span>
+                                                            </a>
+                                                        @endcan
+                                                    </div>
+                                                </div>
+
+                                                <!-- 5 Action Hub Cards Grid -->
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                                                    <!-- 1. Curriculum Card -->
+                                                    <a href="{{ route('management.courses.show', $course) }}"
+                                                       class="p-4 rounded-xl border border-neutral-200 bg-neutral-50/50 hover:bg-white hover:border-neutral-900 hover:shadow-xs transition group flex flex-col justify-between">
+                                                        <div class="flex items-center justify-between mb-3">
+                                                            <div class="w-9 h-9 rounded-xl bg-neutral-900 text-white flex items-center justify-center text-sm shadow-xs group-hover:scale-105 transition-transform">
+                                                                <i class="fas fa-layer-group"></i>
+                                                            </div>
+                                                            <i class="fas fa-arrow-right text-[10px] text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-0.5 transition-all"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h4 class="font-bold text-sm text-neutral-900">Curriculum</h4>
+                                                            <p class="text-[11px] text-neutral-500 mt-0.5">Lessons &amp; video lectures</p>
+                                                            <div class="mt-2 text-[11px] font-bold text-neutral-800">
+                                                                {{ $course->sections_count ?? $course->sections()->count() }} Sections · {{ $course->lessons_count ?? $course->lessons()->count() }} Lessons
+                                                            </div>
+                                                        </div>
+                                                    </a>
+
+                                                    <!-- 2. Assignments Card -->
+                                                    <a href="{{ route('management.courses.assignments.index', $course) }}"
+                                                       class="p-4 rounded-xl border border-orange-200/80 bg-orange-50/40 hover:bg-white hover:border-lb-orange hover:shadow-xs transition group flex flex-col justify-between">
+                                                        <div class="flex items-center justify-between mb-3">
+                                                            <div class="w-9 h-9 rounded-xl bg-orange-100 text-lb-orange flex items-center justify-center text-sm shadow-xs group-hover:scale-105 transition-transform">
+                                                                <i class="fas fa-file-alt"></i>
+                                                            </div>
+                                                            <i class="fas fa-arrow-right text-[10px] text-orange-400 group-hover:text-lb-orange group-hover:translate-x-0.5 transition-all"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h4 class="font-bold text-sm text-neutral-900 group-hover:text-lb-orange transition-colors">Assignments</h4>
+                                                            <p class="text-[11px] text-neutral-500 mt-0.5">Submissions &amp; grading</p>
+                                                            <div class="mt-2 text-[11px] font-bold text-lb-orange">
+                                                                {{ $course->assignments_count ?? $course->assignments()->count() }} Assignments
+                                                            </div>
+                                                        </div>
+                                                    </a>
+
+                                                    <!-- 3. Quizzes Card -->
+                                                    <a href="{{ route('management.courses.quizzes.index', $course) }}"
+                                                       class="p-4 rounded-xl border border-purple-200/80 bg-purple-50/40 hover:bg-white hover:border-purple-600 hover:shadow-xs transition group flex flex-col justify-between">
+                                                        <div class="flex items-center justify-between mb-3">
+                                                            <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-sm shadow-xs group-hover:scale-105 transition-transform">
+                                                                <i class="fas fa-question-circle"></i>
+                                                            </div>
+                                                            <i class="fas fa-arrow-right text-[10px] text-purple-400 group-hover:text-purple-700 group-hover:translate-x-0.5 transition-all"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h4 class="font-bold text-sm text-neutral-900 group-hover:text-purple-700 transition-colors">Quizzes</h4>
+                                                            <p class="text-[11px] text-neutral-500 mt-0.5">MCQs &amp; question banks</p>
+                                                            <div class="mt-2 text-[11px] font-bold text-purple-700">
+                                                                {{ $course->quizzes_count ?? $course->quizzes()->count() }} Quizzes
+                                                            </div>
+                                                        </div>
+                                                    </a>
+
+                                                    <!-- 4. Physical Batches Card -->
+                                                    <a href="{{ route('management.courses.batches.index', $course) }}"
+                                                       class="p-4 rounded-xl border border-amber-200/80 bg-amber-50/40 hover:bg-white hover:border-amber-600 hover:shadow-xs transition group flex flex-col justify-between">
+                                                        <div class="flex items-center justify-between mb-3">
+                                                            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-sm shadow-xs group-hover:scale-105 transition-transform">
+                                                                <i class="fas fa-calendar-alt"></i>
+                                                            </div>
+                                                            <i class="fas fa-arrow-right text-[10px] text-amber-400 group-hover:text-amber-800 group-hover:translate-x-0.5 transition-all"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h4 class="font-bold text-sm text-neutral-900 group-hover:text-amber-800 transition-colors">Physical Batches</h4>
+                                                            <p class="text-[11px] text-neutral-500 mt-0.5">Campuses &amp; attendance</p>
+                                                            <div class="mt-2 text-[11px] font-bold text-amber-800">
+                                                                {{ $course->batches_count ?? $course->batches()->count() }} Batches
+                                                            </div>
+                                                        </div>
+                                                    </a>
+
+                                                    <!-- 5. Live Classes Card -->
+                                                    <a href="{{ route('management.courses.live-classes.index', $course) }}"
+                                                       class="p-4 rounded-xl border border-blue-200/80 bg-blue-50/40 hover:bg-white hover:border-blue-600 hover:shadow-xs transition group flex flex-col justify-between">
+                                                        <div class="flex items-center justify-between mb-3">
+                                                            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center text-sm shadow-xs group-hover:scale-105 transition-transform">
+                                                                <i class="fas fa-video"></i>
+                                                            </div>
+                                                            <i class="fas fa-arrow-right text-[10px] text-blue-400 group-hover:text-blue-800 group-hover:translate-x-0.5 transition-all"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h4 class="font-bold text-sm text-neutral-900 group-hover:text-blue-800 transition-colors">Live Classes</h4>
+                                                            <p class="text-[11px] text-neutral-500 mt-0.5">Jitsi video classrooms</p>
+                                                            <div class="mt-2 text-[11px] font-bold text-blue-800">
+                                                                {{ $course->live_classes_count ?? $course->liveClasses()->count() }} Live Sessions
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
