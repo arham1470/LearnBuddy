@@ -47,9 +47,19 @@
         selectedRawPrice: {{ (float) ($selectedOption?->price ?? 0.0) }},
         selectedCurrency: '{{ $selectedOption?->currency ?: 'LKR' }}',
         paymentFlow: 'card', // 'card' or 'hosted'
+        batchError: '',
         
         // Card Modal Visibility
         showCardModal: false,
+
+        selectOption(id, mode, formattedPrice, rawPrice, currency) {
+            this.selectedOptionId = id;
+            this.selectedMode = mode;
+            this.selectedPrice = formattedPrice;
+            this.selectedRawPrice = rawPrice;
+            this.selectedCurrency = currency;
+            this.batchError = '';
+        },
 
         // Live Card Input State
         cardNumber: '4242 4242 4242 4242',
@@ -125,20 +135,35 @@
 
         openPaymentModal() {
             const form = this.$refs.checkoutForm;
+            this.batchError = '';
+
             const nameEl = form.querySelector('[name=billing_name]');
             const emailEl = form.querySelector('[name=billing_email]');
             const phoneEl = form.querySelector('[name=billing_phone]');
-            if (nameEl && emailEl && phoneEl) {
-                if (!nameEl.checkValidity() || !emailEl.checkValidity() || !phoneEl.checkValidity()) {
-                    form.reportValidity();
-                    return;
-                }
+            if (nameEl && !nameEl.checkValidity()) {
+                nameEl.reportValidity();
+                nameEl.focus();
+                return;
+            }
+            if (emailEl && !emailEl.checkValidity()) {
+                emailEl.reportValidity();
+                emailEl.focus();
+                return;
+            }
+            if (phoneEl && !phoneEl.checkValidity()) {
+                phoneEl.reportValidity();
+                phoneEl.focus();
+                return;
             }
 
-            const batchEl = form.querySelector('[name=course_batch_id]');
-            if (this.selectedMode === 'physical' && batchEl && !batchEl.value) {
-                batchEl.reportValidity();
-                return;
+            if (this.selectedMode === 'physical') {
+                const batchEl = form.querySelector('[name=course_batch_id]:not(:disabled)');
+                if (batchEl && !batchEl.value) {
+                    this.batchError = 'Please choose an available campus batch intake to proceed.';
+                    batchEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    batchEl.focus();
+                    return;
+                }
             }
 
             this.showCardModal = true;
@@ -244,9 +269,10 @@
 
                             <div class="space-y-3">
                                 @foreach ($course->deliveryOptions->where('is_active', true) as $opt)
-                                    <label
-                                        class="block relative p-4 rounded-2xl border-2 cursor-pointer transition"
-                                        :class="selectedOptionId === {{ $opt->id }} ? 'border-lb-orange bg-orange-50/40 ring-2 ring-lb-orange/20' : 'border-neutral-200 hover:border-neutral-300 bg-white'"
+                                    <div
+                                        class="block relative p-4 rounded-2xl border-2 cursor-pointer transition select-none"
+                                        :class="selectedOptionId == {{ $opt->id }} ? 'border-lb-orange bg-orange-50/40 ring-2 ring-lb-orange/20' : 'border-neutral-200 hover:border-neutral-300 bg-white'"
+                                        @click="selectOption({{ $opt->id }}, '{{ $opt->delivery_mode }}', '{{ $opt->formattedPrice() }}', {{ (float) $opt->price }}, '{{ $opt->currency ?: 'LKR' }}')"
                                     >
                                         <div class="flex items-start justify-between gap-3">
                                             <div class="flex items-start gap-3">
@@ -255,12 +281,8 @@
                                                     name="delivery_option_id"
                                                     value="{{ $opt->id }}"
                                                     x-model="selectedOptionId"
-                                                    @change="
-                                                        selectedMode = '{{ $opt->delivery_mode }}';
-                                                        selectedPrice = '{{ $opt->formattedPrice() }}';
-                                                        selectedRawPrice = {{ (float) $opt->price }};
-                                                        selectedCurrency = '{{ $opt->currency ?: 'LKR' }}';
-                                                    "
+                                                    :checked="selectedOptionId == {{ $opt->id }}"
+                                                    @change="selectOption({{ $opt->id }}, '{{ $opt->delivery_mode }}', '{{ $opt->formattedPrice() }}', {{ (float) $opt->price }}, '{{ $opt->currency ?: 'LKR' }}')"
                                                     class="mt-1 text-lb-orange focus:ring-lb-orange"
                                                     {{ ($selectedOption?->id === $opt->id) ? 'checked' : '' }}
                                                 >
@@ -295,39 +317,56 @@
                                         </div>
 
                                         <!-- Physical Campus Batches Dropdown -->
-                                        @if ($opt->delivery_mode === 'physical' && $opt->batches->count() > 0)
+                                        @if ($opt->delivery_mode === 'physical')
                                             <div
-                                                x-show="selectedOptionId === {{ $opt->id }}"
+                                                x-show="selectedOptionId == {{ $opt->id }}"
                                                 x-cloak
-                                                class="mt-4 pt-3 border-t border-orange-100"
+                                                @click.stop
+                                                class="mt-4 pt-3 border-t border-orange-100 cursor-default"
                                             >
-                                                <label class="block text-xs font-bold text-neutral-800 mb-1.5">
-                                                    Select Campus Batch & Location <span class="text-rose-500">*</span>
-                                                </label>
-                                                <select
-                                                    name="course_batch_id"
-                                                    class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-lb-orange bg-white py-2 px-3"
-                                                >
-                                                    <option value="">-- Choose an available batch intake --</option>
-                                                    @foreach ($opt->batches as $batch)
-                                                        @php
-                                                            $seatsLeft = $batch->availableSeats();
-                                                            $isFull = $batch->isFull() || $batch->status !== 'open_for_enrollment';
-                                                        @endphp
-                                                        <option
-                                                            value="{{ $batch->id }}"
-                                                            {{ $isFull ? 'disabled' : '' }}
-                                                            {{ old('course_batch_id') == $batch->id ? 'selected' : '' }}
-                                                        >
-                                                            {{ $batch->batch_code }} &bull; {{ $batch->location?->city_town ?? 'Sri Lanka Campus' }}
-                                                            ({{ $seatsLeft }} seats remaining)
-                                                            {{ $isFull ? '[FULL]' : '' }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                                @if ($opt->batches->count() > 0)
+                                                    @php
+                                                        $firstOpenBatch = $opt->batches->firstWhere('status', 'open_for_enrollment') ?? $opt->batches->first();
+                                                        $defaultBatchId = old('course_batch_id', $firstOpenBatch?->id);
+                                                    @endphp
+                                                    <label for="course_batch_id_{{ $opt->id }}" class="block text-xs font-bold text-neutral-800 mb-1.5">
+                                                        Select Campus Batch & Location <span class="text-rose-500">*</span>
+                                                    </label>
+                                                    <select
+                                                        id="course_batch_id_{{ $opt->id }}"
+                                                        name="course_batch_id"
+                                                        :disabled="selectedOptionId != {{ $opt->id }}"
+                                                        @change="batchError = ''"
+                                                        class="w-full text-xs rounded-xl border-neutral-300 focus:border-lb-orange focus:ring-lb-orange bg-white py-2 px-3 transition"
+                                                        :class="batchError ? 'border-rose-500 ring-2 ring-rose-200' : ''"
+                                                    >
+                                                        <option value="">-- Choose an available batch intake --</option>
+                                                        @foreach ($opt->batches as $batch)
+                                                            @php
+                                                                $seatsLeft = $batch->availableSeats();
+                                                                $isFull = $batch->isFull() || $batch->status !== 'open_for_enrollment';
+                                                            @endphp
+                                                            <option
+                                                                value="{{ $batch->id }}"
+                                                                {{ $isFull ? 'disabled' : '' }}
+                                                                {{ (string)$defaultBatchId === (string)$batch->id ? 'selected' : '' }}
+                                                            >
+                                                                {{ $batch->batch_code }} &bull; {{ $batch->location?->city ?? 'Sri Lanka Campus' }}
+                                                                ({{ $seatsLeft }} seats remaining)
+                                                                {{ $isFull ? '[FULL]' : '' }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <p x-show="batchError" x-text="batchError" class="text-xs text-rose-600 font-semibold mt-1.5 flex items-center gap-1"></p>
+                                                @else
+                                                    <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
+                                                        <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                                                        <span>No intake batches are currently open for this physical location. Please contact campus administration.</span>
+                                                    </div>
+                                                @endif
                                             </div>
                                         @endif
-                                    </label>
+                                    </div>
                                 @endforeach
                             </div>
                         </div>
