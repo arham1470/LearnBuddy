@@ -360,21 +360,26 @@ class CourseController extends Controller
         // 1. Online Self-Paced Option
         if (in_array('online', $selectedModes)) {
             $onlinePrice = (float) $request->input('online_price', 0);
-            $course->deliveryOptions()->updateOrCreate(
-                ['delivery_mode' => 'online', 'title' => 'Online Self-Paced Learning'],
-                [
-                    'description' => 'Lifetime access to on-demand recorded lessons and resources.',
-                    'price' => $onlinePrice,
-                    'currency' => 'LKR',
-                    'is_free' => $onlinePrice === 0.0,
-                    'is_active' => true,
-                    'access_period_days' => $request->input('online_access_days'),
-                    'includes_recorded_lessons' => true,
-                    'includes_physical_sessions' => false,
-                    'includes_live_classes' => false,
-                    'includes_certificate' => true,
-                ]
-            );
+            $existingOnline = $course->deliveryOptions()->where('delivery_mode', 'online')->first();
+            $onlineData = [
+                'title' => $existingOnline?->title ?? 'Online Self-Paced Learning',
+                'description' => $existingOnline?->description ?? 'Lifetime access to on-demand recorded lessons and resources.',
+                'price' => $onlinePrice,
+                'currency' => 'LKR',
+                'is_free' => $onlinePrice === 0.0,
+                'is_active' => true,
+                'access_period_days' => $request->input('online_access_days'),
+                'includes_recorded_lessons' => true,
+                'includes_physical_sessions' => false,
+                'includes_live_classes' => false,
+                'includes_certificate' => true,
+            ];
+
+            if ($existingOnline) {
+                $existingOnline->update($onlineData);
+            } else {
+                $course->deliveryOptions()->create(array_merge(['delivery_mode' => 'online'], $onlineData));
+            }
         } else {
             $course->deliveryOptions()->where('delivery_mode', 'online')->delete();
         }
@@ -382,21 +387,27 @@ class CourseController extends Controller
         // 2. Physical Classroom Option
         if (in_array('physical', $selectedModes)) {
             $physicalPrice = (float) $request->input('physical_price', 0);
-            $physicalOption = $course->deliveryOptions()->updateOrCreate(
-                ['delivery_mode' => 'physical', 'title' => 'In-Person Physical Classroom'],
-                [
-                    'description' => 'Hands-on interactive classroom lectures, lab sessions, and local batch peers.',
-                    'price' => $physicalPrice,
-                    'currency' => 'LKR',
-                    'is_free' => $physicalPrice === 0.0,
-                    'is_active' => true,
-                    'max_capacity' => $request->input('physical_max_capacity', 30),
-                    'includes_recorded_lessons' => true,
-                    'includes_physical_sessions' => true,
-                    'includes_live_classes' => false,
-                    'includes_certificate' => true,
-                ]
-            );
+            $existingPhysical = $course->deliveryOptions()->where('delivery_mode', 'physical')->first();
+            $physicalData = [
+                'title' => $existingPhysical?->title ?? 'In-Person Physical Classroom',
+                'description' => $existingPhysical?->description ?? 'Hands-on interactive classroom lectures, lab sessions, and local batch peers.',
+                'price' => $physicalPrice,
+                'currency' => 'LKR',
+                'is_free' => $physicalPrice === 0.0,
+                'is_active' => true,
+                'max_capacity' => $request->input('physical_max_capacity', 30),
+                'includes_recorded_lessons' => true,
+                'includes_physical_sessions' => true,
+                'includes_live_classes' => false,
+                'includes_certificate' => true,
+            ];
+
+            if ($existingPhysical) {
+                $existingPhysical->update($physicalData);
+                $physicalOption = $existingPhysical;
+            } else {
+                $physicalOption = $course->deliveryOptions()->create(array_merge(['delivery_mode' => 'physical'], $physicalData));
+            }
 
             // Create initial batch intake if location specified and no batches exist yet
             if ($request->filled('physical_location_id') && $physicalOption->batches()->doesntExist()) {
@@ -419,20 +430,25 @@ class CourseController extends Controller
         // 3. Hybrid Delivery Option
         if (in_array('hybrid', $selectedModes)) {
             $hybridPrice = (float) $request->input('hybrid_price', 0);
-            $course->deliveryOptions()->updateOrCreate(
-                ['delivery_mode' => 'hybrid', 'title' => 'Hybrid Cohort (Online + Physical Sessions)'],
-                [
-                    'description' => 'Combination of online materials, live webinars, and weekend classroom labs.',
-                    'price' => $hybridPrice,
-                    'currency' => 'LKR',
-                    'is_free' => $hybridPrice === 0.0,
-                    'is_active' => true,
-                    'includes_recorded_lessons' => true,
-                    'includes_physical_sessions' => true,
-                    'includes_live_classes' => true,
-                    'includes_certificate' => true,
-                ]
-            );
+            $existingHybrid = $course->deliveryOptions()->where('delivery_mode', 'hybrid')->first();
+            $hybridData = [
+                'title' => $existingHybrid?->title ?? 'Hybrid Cohort (Online + Physical Sessions)',
+                'description' => $existingHybrid?->description ?? 'Combination of online materials, live webinars, and weekend classroom labs.',
+                'price' => $hybridPrice,
+                'currency' => 'LKR',
+                'is_free' => $hybridPrice === 0.0,
+                'is_active' => true,
+                'includes_recorded_lessons' => true,
+                'includes_physical_sessions' => true,
+                'includes_live_classes' => true,
+                'includes_certificate' => true,
+            ];
+
+            if ($existingHybrid) {
+                $existingHybrid->update($hybridData);
+            } else {
+                $course->deliveryOptions()->create(array_merge(['delivery_mode' => 'hybrid'], $hybridData));
+            }
         } else {
             $course->deliveryOptions()->where('delivery_mode', 'hybrid')->delete();
         }
