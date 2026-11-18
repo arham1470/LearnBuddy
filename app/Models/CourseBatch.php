@@ -80,7 +80,8 @@ class CourseBatch extends Model
 
     public function activeEnrollments(): HasMany
     {
-        return $this->hasMany(Enrollment::class, 'course_batch_id')->where('status', Enrollment::STATUS_ACTIVE);
+        return $this->hasMany(Enrollment::class, 'course_batch_id')
+            ->whereIn('status', [Enrollment::STATUS_ACTIVE, Enrollment::STATUS_COMPLETED]);
     }
 
     public function scheduleChanges(): HasMany

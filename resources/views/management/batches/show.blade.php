@@ -614,7 +614,7 @@
                                             {{ $enr->enrolled_at ? $enr->enrolled_at->format('M d, Y') : 'Active' }}
                                         </td>
                                         <td class="p-3.5 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold {{ $enr->status === 'completed' ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200' }}">
                                                 {{ ucfirst($enr->status) }}
                                             </span>
                                         </td>

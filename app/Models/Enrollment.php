@@ -107,7 +107,7 @@ class Enrollment extends Model
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE);
+        return $query->whereIn('status', [self::STATUS_ACTIVE, self::STATUS_COMPLETED]);
     }
 
     public function scopePendingPayment(Builder $query): Builder
@@ -122,7 +122,12 @@ class Enrollment extends Model
 
     public function isActive(): bool
     {
-        return $this->status === self::STATUS_ACTIVE;
+        return in_array($this->status, [self::STATUS_ACTIVE, self::STATUS_COMPLETED], true);
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === self::STATUS_COMPLETED;
     }
 
     public function isPendingPayment(): bool

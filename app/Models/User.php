@@ -144,7 +144,7 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser, Has
      */
     public function activeEnrollments(): HasMany
     {
-        return $this->enrollments()->where('status', Enrollment::STATUS_ACTIVE);
+        return $this->enrollments()->whereIn('status', [Enrollment::STATUS_ACTIVE, Enrollment::STATUS_COMPLETED]);
     }
 
     public function attendances(): HasMany
