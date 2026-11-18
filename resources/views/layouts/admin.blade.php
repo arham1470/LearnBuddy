@@ -177,12 +177,10 @@
                              class="h-11 w-auto max-w-[210px] object-contain group-hover:opacity-90 group-hover:scale-[1.02] transition-all">
 
                         <!-- Compact Icon Mark when collapsed -->
-                        <div x-show="!sidebarOpen" x-cloak class="w-10 h-10 overflow-hidden flex items-center justify-center shrink-0">
-                            <img src="{{ asset('images/logo-dark.png') }}"
-                                 alt="LearnBuddy"
-                                 class="h-10 max-w-none object-left object-cover group-hover:scale-105 transition-transform"
-                                 style="width: auto; height: 40px; object-position: left center;">
-                        </div>
+                        <img x-show="!sidebarOpen" x-cloak
+                             src="{{ asset('images/only-logo.png') }}"
+                             alt="LearnBuddy"
+                             class="h-10 w-10 object-contain group-hover:scale-105 transition-transform shrink-0">
                     </a>
 
                     <!-- Close button on mobile -->
