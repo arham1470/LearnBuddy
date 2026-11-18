@@ -38,8 +38,12 @@
                 </div>
 
                 <!-- Personalized Greeting -->
-                <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-extrabold text-[#0A0A0A] tracking-tight leading-tight">
-                    {{ $greeting }}, <span class="text-[#FF5F00]">{{ $adminFirstName }}</span> <span class="inline-block animate-wave origin-bottom-right">👋</span>
+                <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-extrabold text-[#0A0A0A] tracking-tight leading-tight flex flex-wrap items-center gap-2.5">
+                    <span>{{ $greeting }}, <span class="text-[#FF5F00]">{{ $adminFirstName }}</span></span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-100 text-[#FF5F00] text-xs font-bold border border-orange-200/80 shadow-2xs">
+                        <i class="fas fa-shield-alt text-[10px]"></i>
+                        <span>Admin</span>
+                    </span>
                 </h1>
 
                 <!-- Subtitle -->
