@@ -84,20 +84,37 @@
             <!-- Authentication Actions (Desktop) -->
             @auth
                 <div class="hidden sm:flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0">
-                    <!-- My Learning Icon -->
-                    <div class="relative group shrink-0">
-                        <a
-                            href="{{ route('student.dashboard') }}"
-                            class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 {{ request()->routeIs('student.dashboard') ? 'bg-orange-100 text-lb-orange ring-2 ring-lb-orange/30' : 'bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange' }}"
-                            aria-label="My Learning"
-                        >
-                            <i class="fas fa-graduation-cap text-sm text-lb-orange" aria-hidden="true"></i>
-                        </a>
-                        <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
-                            My Learning
-                            <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                    @if (auth()->user()->isAdmin())
+                        <!-- Admin Dashboard Icon -->
+                        <div class="relative group shrink-0">
+                            <a
+                                href="{{ route('admin.dashboard') }}"
+                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 {{ request()->routeIs('admin.*') || request()->is('admin*') ? 'bg-orange-100 text-lb-orange ring-2 ring-lb-orange/30' : 'bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange' }}"
+                                aria-label="Admin Dashboard"
+                            >
+                                <i class="fas fa-chart-line text-sm text-lb-orange" aria-hidden="true"></i>
+                            </a>
+                            <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                                Admin Dashboard
+                                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <!-- My Learning Icon -->
+                        <div class="relative group shrink-0">
+                            <a
+                                href="{{ route('student.dashboard') }}"
+                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 {{ request()->routeIs('student.dashboard') ? 'bg-orange-100 text-lb-orange ring-2 ring-lb-orange/30' : 'bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange' }}"
+                                aria-label="My Learning"
+                            >
+                                <i class="fas fa-graduation-cap text-sm text-lb-orange" aria-hidden="true"></i>
+                            </a>
+                            <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
+                                My Learning
+                                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                            </div>
+                        </div>
+                    @endif
 
                     @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
                         <!-- Course Management Icon -->
@@ -198,14 +215,25 @@
                             </div>
 
                             <!-- Menu Items -->
-                            <a
-                                href="{{ route('student.dashboard') }}"
-                                class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
-                                role="menuitem"
-                            >
-                                <i class="fas fa-graduation-cap w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
-                                <span>My Learning Dashboard</span>
-                            </a>
+                            @if (auth()->user()->isAdmin())
+                                <a
+                                    href="{{ route('admin.dashboard') }}"
+                                    class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                    role="menuitem"
+                                >
+                                    <i class="fas fa-chart-line w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
+                                    <span>Admin Dashboard</span>
+                                </a>
+                            @else
+                                <a
+                                    href="{{ route('student.dashboard') }}"
+                                    class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-neutral-700 hover:text-lb-orange hover:bg-orange-50 transition"
+                                    role="menuitem"
+                                >
+                                    <i class="fas fa-graduation-cap w-4 text-center text-lb-orange text-xs" aria-hidden="true"></i>
+                                    <span>My Learning Dashboard</span>
+                                </a>
+                            @endif
 
                             @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
                                 <a
@@ -461,6 +489,20 @@
                     </a>
 
                     @auth
+                        @if (auth()->user()->isAdmin())
+                            <a
+                                href="{{ route('admin.dashboard') }}"
+                                @click="mobileNavOpen = false"
+                                class="flex items-center justify-between min-h-[44px] px-3 py-2.5 rounded-xl text-base font-medium transition {{ request()->routeIs('admin.*') || request()->is('admin*') ? 'bg-orange-50 text-lb-orange font-bold' : 'text-neutral-800 hover:bg-neutral-50' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-chart-line text-lb-orange" aria-hidden="true"></i>
+                                    <span>Admin Dashboard</span>
+                                </span>
+                                <i class="fas fa-chevron-right text-xs opacity-50" aria-hidden="true"></i>
+                            </a>
+                        @endif
+
                         @if (auth()->user()->isAdmin() || auth()->user()->isInstructor())
                             <a
                                 href="{{ route('management.courses.index') }}"
@@ -512,15 +554,27 @@
                         </div>
                     </div>
 
-                    <x-button
-                        as="a"
-                        href="{{ route('student.dashboard') }}"
-                        variant="primary"
-                        class="w-full text-center"
-                        @click="mobileNavOpen = false"
-                    >
-                        My Learning Dashboard
-                    </x-button>
+                    @if (auth()->user()->isAdmin())
+                        <x-button
+                            as="a"
+                            href="{{ route('admin.dashboard') }}"
+                            variant="primary"
+                            class="w-full text-center"
+                            @click="mobileNavOpen = false"
+                        >
+                            Admin Dashboard
+                        </x-button>
+                    @else
+                        <x-button
+                            as="a"
+                            href="{{ route('student.dashboard') }}"
+                            variant="primary"
+                            class="w-full text-center"
+                            @click="mobileNavOpen = false"
+                        >
+                            My Learning Dashboard
+                        </x-button>
+                    @endif
 
                     <x-button
                         as="a"

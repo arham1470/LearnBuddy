@@ -7,14 +7,19 @@ use App\Models\Enrollment;
 use App\Models\LiveClass;
 use App\Models\QuizAttempt;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class StudentDashboardController extends Controller
 {
     /**
      * Display the authenticated student's dashboard.
      */
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
+        if (auth()->user()?->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
         $user = auth()->user();
 
         // 1. Active enrollments (Access granted)
