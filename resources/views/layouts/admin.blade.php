@@ -107,7 +107,7 @@
             background: #FF5F00;
         }
 
-        /* Sidebar: strictly fixed and non-scrollable */
+        /* Sidebar: strictly fixed container */
         #admin-sidebar {
             position: fixed !important;
             top: 0 !important;
@@ -120,16 +120,30 @@
             z-index: 40 !important;
         }
 
-        aside,
-        aside * {
-            scrollbar-width: none !important;
-            -ms-overflow-style: none !important;
+        /* LearnBuddy Brand Custom Scrollbar for Admin Sidebar Navigation */
+        .admin-sidebar-nav {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            scrollbar-width: thin !important;
+            scrollbar-color: rgba(255, 95, 0, 0.35) transparent !important;
         }
-        aside::-webkit-scrollbar,
-        aside *::-webkit-scrollbar {
-            display: none !important;
-            width: 0 !important;
-            height: 0 !important;
+
+        .admin-sidebar-nav::-webkit-scrollbar {
+            width: 5px !important;
+        }
+
+        .admin-sidebar-nav::-webkit-scrollbar-track {
+            background: transparent !important;
+        }
+
+        .admin-sidebar-nav::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 95, 0, 0.35) !important;
+            border-radius: 9999px !important;
+            transition: background-color 0.2s ease !important;
+        }
+
+        .admin-sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background-color: #FF5F00 !important;
         }
     </style>
 </head>
@@ -208,7 +222,7 @@
                     }
                 @endphp
 
-                <nav class="flex-1 px-3 py-2 space-y-1 overflow-hidden select-none">
+                <nav class="flex-1 px-3 py-2 space-y-1 overflow-y-auto overflow-x-hidden select-none admin-sidebar-nav">
 
                     <!-- Section: OVERVIEW -->
                     <div x-show="sidebarOpen" x-cloak class="px-2.5 pt-1 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-white/30 select-none">
