@@ -152,24 +152,123 @@
                         </div>
                     @endif
 
-                    <!-- In-App Notification Bell Icon -->
-                    <div class="relative group shrink-0">
-                        <a
-                            href="{{ route('notifications.index') }}"
-                            class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange transition shrink-0"
+                    <!-- In-App Notification Bell & Dropdown Menu -->
+                    <div
+                        x-data="{ notificationOpen: false }"
+                        @click.outside="notificationOpen = false"
+                        @keydown.escape.window="notificationOpen = false"
+                        class="relative shrink-0"
+                    >
+                        @php
+                            $headerUser = auth()->user();
+                            $headerNotifications = $headerUser ? $headerUser->notifications()->latest()->take(3)->get() : collect();
+                            $unreadHeaderCount = $headerUser ? $headerUser->unreadNotifications()->count() : 0;
+                        @endphp
+                        <button
+                            type="button"
+                            @click="notificationOpen = !notificationOpen"
+                            class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-neutral-100 hover:bg-orange-50 text-neutral-700 hover:text-lb-orange transition shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange"
+                            :class="{ 'bg-orange-50 text-lb-orange ring-2 ring-orange-200': notificationOpen }"
                             aria-label="Notifications"
+                            :aria-expanded="notificationOpen.toString()"
                         >
                             <i class="fas fa-bell text-sm" aria-hidden="true"></i>
-                            @php $unreadHeaderCount = auth()->user()->unreadNotifications()->count(); @endphp
                             @if ($unreadHeaderCount > 0)
                                 <span class="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-lb-orange text-[9px] font-black text-white shadow-xs">
                                     {{ $unreadHeaderCount > 9 ? '9+' : $unreadHeaderCount }}
                                 </span>
                             @endif
-                        </a>
-                        <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 z-50">
-                            Notifications @if ($unreadHeaderCount > 0) ({{ $unreadHeaderCount }}) @endif
-                            <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
+                        </button>
+
+                        <!-- Notification Dropdown Panel -->
+                        <div
+                            x-show="notificationOpen"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-neutral-200/80 py-0 z-50 overflow-hidden"
+                            role="menu"
+                        >
+                            <!-- Header -->
+                            <div class="px-4 py-3 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/70">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-neutral-900">Notifications</span>
+                                    @if ($unreadHeaderCount > 0)
+                                        <span class="px-2 py-0.5 rounded-full bg-orange-100 text-lb-orange text-[10px] font-extrabold">
+                                            {{ $unreadHeaderCount }} unread
+                                        </span>
+                                    @endif
+                                </div>
+                                <span class="text-[10px] text-neutral-400 font-medium">Recent 3</span>
+                            </div>
+
+                            <!-- Notifications List -->
+                            @if ($headerNotifications->isEmpty())
+                                <div class="p-6 text-center space-y-2">
+                                    <div class="w-10 h-10 rounded-full bg-neutral-100 text-neutral-400 flex items-center justify-center mx-auto text-sm">
+                                        <i class="fas fa-bell-slash"></i>
+                                    </div>
+                                    <p class="text-xs font-semibold text-neutral-800">No notifications</p>
+                                    <p class="text-[11px] text-neutral-400">You have no recent notifications.</p>
+                                </div>
+                            @else
+                                <div class="divide-y divide-neutral-100 max-h-[340px] overflow-y-auto">
+                                    @foreach ($headerNotifications as $notification)
+                                        @php
+                                            $data = $notification->data;
+                                            $isUnread = is_null($notification->read_at);
+                                            $icon = $data['icon'] ?? 'fas fa-bell';
+                                            $title = $data['title'] ?? 'Notification';
+                                            $body = $data['body'] ?? '';
+                                            $targetUrl = route('notifications.go', $notification->id);
+                                            $timeAgo = $notification->created_at->diffForHumans();
+                                        @endphp
+                                        <a
+                                            href="{{ $targetUrl }}"
+                                            class="flex items-start gap-3 p-3.5 transition {{ $isUnread ? 'bg-orange-50/40 hover:bg-orange-50/70' : 'hover:bg-neutral-50' }} text-left block group"
+                                            role="menuitem"
+                                        >
+                                            <div class="relative shrink-0 mt-0.5">
+                                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs {{ $isUnread ? 'bg-orange-100 text-lb-orange' : 'bg-neutral-100 text-neutral-500' }}">
+                                                    <i class="{{ $icon }}"></i>
+                                                </div>
+                                                @if ($isUnread)
+                                                    <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-lb-orange ring-2 ring-white"></span>
+                                                @endif
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between gap-1.5 mb-0.5">
+                                                    <p class="text-xs font-bold text-neutral-900 group-hover:text-lb-orange transition truncate {{ $isUnread ? 'font-black' : '' }}">
+                                                        {{ $title }}
+                                                    </p>
+                                                    <span class="text-[10px] text-neutral-400 shrink-0 font-medium whitespace-nowrap">
+                                                        {{ $timeAgo }}
+                                                    </span>
+                                                </div>
+                                                <p class="text-[11px] text-neutral-600 line-clamp-2 leading-relaxed">
+                                                    {{ $body }}
+                                                </p>
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <!-- Footer -->
+                            <div class="p-2 border-t border-neutral-100 bg-neutral-50/70">
+                                <a
+                                    href="{{ route('notifications.index') }}"
+                                    class="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white hover:bg-orange-50 border border-neutral-200 hover:border-orange-200 text-xs font-bold text-neutral-700 hover:text-lb-orange transition shadow-2xs group"
+                                    role="menuitem"
+                                >
+                                    <span>View all notifications</span>
+                                    <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
 

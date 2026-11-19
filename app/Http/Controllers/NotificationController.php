@@ -50,6 +50,29 @@ class NotificationController extends Controller
     }
 
     /**
+     * Mark a specific notification as read and redirect to its action URL (or notifications index).
+     */
+    public function readAndRedirect(Request $request, string $id): RedirectResponse
+    {
+        $user = auth()->user();
+        $notification = $user->notifications()->where('id', $id)->first();
+
+        if ($notification) {
+            $notification->markAsRead();
+            $actionUrl = $notification->data['action_url'] ?? null;
+
+            if ($actionUrl) {
+                // Ensure the redirect is internal to prevent open redirect vulnerabilities
+                if (str_starts_with($actionUrl, '/') || str_starts_with($actionUrl, config('app.url')) || str_starts_with($actionUrl, url('/'))) {
+                    return redirect($actionUrl);
+                }
+            }
+        }
+
+        return redirect()->route('notifications.index');
+    }
+
+    /**
      * Mark all unread notifications as read for the authenticated user.
      */
     public function markAllAsRead(Request $request): RedirectResponse|JsonResponse

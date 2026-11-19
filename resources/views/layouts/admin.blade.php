@@ -153,12 +153,13 @@
     mobileOpen: false,
     searchModal: false,
     userDropdown: false,
+    notificationDropdown: false,
     dateDropdown: false,
     activeGroup: '{{ request()->routeIs('admin.courses.*', 'admin.categories.*') ? 'academic' : (request()->routeIs('admin.batches.*', 'admin.locations.*') ? 'campus' : (request()->routeIs('admin.enrollments.*') ? 'students' : (request()->routeIs('admin.assignments.*', 'admin.quizzes.*') ? 'grading' : (request()->routeIs('admin.orders.*') ? 'finance' : (request()->routeIs('admin.users.*', 'admin.approvals.*') ? 'security' : (request()->routeIs('admin.settings.*') ? 'system' : '')))))) }}',
     toggleGroup(name) {
         this.activeGroup = this.activeGroup === name ? null : name;
     }
-}" @keydown.window.ctrl.k.prevent="searchModal = true" @keydown.window.cmd.k.prevent="searchModal = true" @keydown.window.escape="searchModal = false; userDropdown = false; dateDropdown = false; mobileOpen = false;">
+}" @keydown.window.ctrl.k.prevent="searchModal = true" @keydown.window.cmd.k.prevent="searchModal = true" @keydown.window.escape="searchModal = false; userDropdown = false; notificationDropdown = false; dateDropdown = false; mobileOpen = false;">
 
     <!-- Mobile Drawer Overlay -->
     <div x-show="mobileOpen" x-cloak x-transition.opacity.300ms class="fixed inset-0 z-40 bg-black/60 lg:hidden" @click="mobileOpen = false"></div>
@@ -634,14 +635,122 @@
                 <!-- Right: Notification, Storefront Link, Role Pill & User Avatar -->
                 <div class="flex items-center gap-2.5 sm:gap-4 ml-4 shrink-0">
 
-                    <!-- Notification Bell with Active Indicator -->
-                    <a href="{{ route('notifications.index') }}" class="w-10 h-10 rounded-xl bg-[#F7F7F5] hover:bg-[#FFF0E6] border border-[#E5E5E5] hover:border-orange-300 flex items-center justify-center text-[#6B6B6B] hover:text-[#FF5F00] transition-all relative">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
-                        <!-- Orange Notification Dot -->
-                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FF5F00] ring-2 ring-white"></span>
-                    </a>
+                    <!-- Notification Bell with Dropdown Menu -->
+                    <div class="relative" @click.outside="notificationDropdown = false">
+                        <button
+                            type="button"
+                            @click="notificationDropdown = !notificationDropdown; userDropdown = false"
+                            class="w-10 h-10 rounded-xl bg-[#F7F7F5] hover:bg-[#FFF0E6] border border-[#E5E5E5] hover:border-orange-300 flex items-center justify-center text-[#6B6B6B] hover:text-[#FF5F00] transition-all relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5F00]"
+                            :class="{ 'bg-[#FFF0E6] border-orange-300 text-[#FF5F00]': notificationDropdown }"
+                            aria-label="Notifications"
+                            :aria-expanded="notificationDropdown.toString()"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            @php
+                                $adminUser = auth()->user();
+                                $adminNotifications = $adminUser ? $adminUser->notifications()->latest()->take(3)->get() : collect();
+                                $adminUnreadCount = $adminUser ? $adminUser->unreadNotifications()->count() : 0;
+                            @endphp
+                            @if ($adminUnreadCount > 0)
+                                <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FF5F00] ring-2 ring-white"></span>
+                            @endif
+                        </button>
+
+                        <!-- Notifications Dropdown Menu -->
+                        <div
+                            x-show="notificationDropdown"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-[#E5E5E5] py-0 z-50 overflow-hidden"
+                            role="menu"
+                        >
+                            <!-- Header -->
+                            <div class="px-4 py-3 border-b border-[#E5E5E5] flex items-center justify-between bg-[#F7F7F5]/80">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-[#0A0A0A]">Notifications</span>
+                                    @if ($adminUnreadCount > 0)
+                                        <span class="px-2 py-0.5 rounded-full bg-[#FFF0E6] text-[#FF5F00] text-[10px] font-black">
+                                            {{ $adminUnreadCount }} unread
+                                        </span>
+                                    @endif
+                                </div>
+                                <span class="text-[10px] text-[#6B6B6B] font-medium">Recent 3</span>
+                            </div>
+
+                            <!-- Notifications List -->
+                            @if ($adminNotifications->isEmpty())
+                                <div class="p-6 text-center space-y-2">
+                                    <div class="w-10 h-10 rounded-full bg-[#F7F7F5] text-[#6B6B6B] flex items-center justify-center mx-auto text-sm">
+                                        <i class="fas fa-bell-slash"></i>
+                                    </div>
+                                    <p class="text-xs font-semibold text-[#0A0A0A]">No notifications</p>
+                                    <p class="text-[11px] text-[#6B6B6B]">You have no recent notifications.</p>
+                                </div>
+                            @else
+                                <div class="divide-y divide-[#E5E5E5]/60 max-h-[340px] overflow-y-auto">
+                                    @foreach ($adminNotifications as $notification)
+                                        @php
+                                            $data = $notification->data;
+                                            $isUnread = is_null($notification->read_at);
+                                            $icon = $data['icon'] ?? 'fas fa-bell';
+                                            $title = $data['title'] ?? 'Notification';
+                                            $body = $data['body'] ?? '';
+                                            $targetUrl = route('notifications.go', $notification->id);
+                                            $timeAgo = $notification->created_at->diffForHumans();
+                                        @endphp
+                                        <a
+                                            href="{{ $targetUrl }}"
+                                            class="flex items-start gap-3 p-3.5 transition {{ $isUnread ? 'bg-[#FFF0E6]/30 hover:bg-[#FFF0E6]/60' : 'hover:bg-[#F7F7F5]' }} text-left block group"
+                                            role="menuitem"
+                                        >
+                                            <div class="relative shrink-0 mt-0.5">
+                                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs {{ $isUnread ? 'bg-[#FFF0E6] text-[#FF5F00]' : 'bg-[#F7F7F5] text-[#6B6B6B]' }}">
+                                                    <i class="{{ $icon }}"></i>
+                                                </div>
+                                                @if ($isUnread)
+                                                    <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#FF5F00] ring-2 ring-white"></span>
+                                                @endif
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between gap-1.5 mb-0.5">
+                                                    <p class="text-xs font-bold text-[#0A0A0A] group-hover:text-[#FF5F00] transition truncate {{ $isUnread ? 'font-black' : '' }}">
+                                                        {{ $title }}
+                                                    </p>
+                                                    <span class="text-[10px] text-[#6B6B6B] shrink-0 font-medium whitespace-nowrap">
+                                                        {{ $timeAgo }}
+                                                    </span>
+                                                </div>
+                                                <p class="text-[11px] text-[#6B6B6B] line-clamp-2 leading-relaxed">
+                                                    {{ $body }}
+                                                </p>
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <!-- Footer -->
+                            <div class="p-2 border-t border-[#E5E5E5] bg-[#F7F7F5]/80">
+                                <a
+                                    href="{{ route('notifications.index') }}"
+                                    class="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white hover:bg-[#FFF0E6] border border-[#E5E5E5] hover:border-orange-300 text-xs font-bold text-[#0A0A0A] hover:text-[#FF5F00] transition shadow-xs group"
+                                    role="menuitem"
+                                >
+                                    <span>View all notifications</span>
+                                    <svg class="w-3.5 h-3.5 text-[#6B6B6B] group-hover:text-[#FF5F00] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- View Storefront Button -->
                     <a href="{{ route('home') }}" target="_blank"
@@ -660,7 +769,7 @@
 
                     <!-- User Avatar & Dropdown -->
                     <div class="relative" @click.outside="userDropdown = false">
-                        <button @click="userDropdown = !userDropdown"
+                        <button @click="userDropdown = !userDropdown; notificationDropdown = false"
                                 class="w-10 h-10 rounded-full bg-[#1A1A1A] hover:ring-2 hover:ring-[#FF5F00] text-white font-bold text-[0.875rem] flex items-center justify-center transition-all shadow-md cursor-pointer select-none">
                             {{ auth()->check() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'SA' }}
                         </button>

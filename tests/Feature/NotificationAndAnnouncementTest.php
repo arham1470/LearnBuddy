@@ -179,6 +179,73 @@ class NotificationAndAnnouncementTest extends TestCase
     }
 
     /**
+     * Test notification dropdown shows latest 3 notifications and view all link.
+     */
+    public function test_notification_dropdown_shows_last_3_notifications_and_view_all(): void
+    {
+        // Dispatch notifications to student A
+        for ($i = 1; $i <= 4; $i++) {
+            $this->studentA->notify(new EnrollmentConfirmationNotification($this->enrollmentA));
+        }
+
+        $this->assertEquals(4, $this->studentA->notifications()->count());
+
+        // Header view rendered
+        $response = $this->actingAs($this->studentA)->get(route('home'));
+        $response->assertStatus(200);
+        $response->assertSee('View all notifications');
+        $response->assertSee(route('notifications.index'));
+
+        // Admin layout rendered
+        $admin = User::factory()->admin()->create();
+        for ($i = 1; $i <= 3; $i++) {
+            $admin->notify(new EnrollmentConfirmationNotification($this->enrollmentA));
+        }
+        $adminResponse = $this->actingAs($admin)->get(route('admin.dashboard'));
+        $adminResponse->assertStatus(200);
+        $adminResponse->assertSee('View all notifications');
+        $adminResponse->assertSee(route('notifications.index'));
+    }
+
+    /**
+     * Test clicking notification in dropdown redirects to destination and marks as read.
+     */
+    public function test_notification_click_redirects_to_destination_and_marks_as_read(): void
+    {
+        $this->studentA->notify(new EnrollmentConfirmationNotification($this->enrollmentA));
+        $notification = $this->studentA->unreadNotifications()->first();
+        $this->assertNotNull($notification);
+        $this->assertNull($notification->read_at);
+
+        $actionUrl = $notification->data['action_url'];
+        $this->assertNotEmpty($actionUrl);
+
+        // Click the notification via readAndRedirect
+        $response = $this->actingAs($this->studentA)->get(route('notifications.go', $notification->id));
+        $response->assertRedirect($actionUrl);
+
+        $notification->refresh();
+        $this->assertNotNull($notification->read_at);
+    }
+
+    /**
+     * Test user cannot read and redirect another user's notification (IDOR safe).
+     */
+    public function test_user_cannot_read_and_redirect_another_users_notification(): void
+    {
+        $this->studentA->notify(new EnrollmentConfirmationNotification($this->enrollmentA));
+        $notificationA = $this->studentA->unreadNotifications()->first();
+
+        // Student B tries to click Student A's notification
+        $response = $this->actingAs($this->studentB)->get(route('notifications.go', $notificationA->id));
+        $response->assertRedirect(route('notifications.index'));
+
+        // Student A's notification remains unread
+        $notificationA->refresh();
+        $this->assertNull($notificationA->read_at);
+    }
+
+    /**
      * Test duplicate prevention: dispatching with same deduplication key sends once and skips subsequent duplicate.
      */
     public function test_duplicate_prevention_prevents_duplicate_reminders_and_events(): void
