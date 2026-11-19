@@ -375,13 +375,19 @@ class AuthTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->post('/login', [
+        $response = $this->from(route('login'))->post('/login', [
             'email' => 'pending@learnbuddy.lk',
             'password' => 'ValidPass123!',
         ]);
 
         $this->assertGuest();
         $response->assertSessionHasErrors(['email']);
+        $response->assertSessionHas('account_pending_approval', true);
+
+        $followResponse = $this->followRedirects($response);
+        $followResponse->assertSee('Account Pending Approval');
+        $followResponse->assertSee('Redirecting to homepage in');
+        $followResponse->assertDontSee('Authentication failed');
     }
 
     public function test_administrator_can_view_pending_approvals_and_approve_user(): void
@@ -393,7 +399,7 @@ class AuthTest extends TestCase
         ]);
 
         // Admin views approvals list
-        $viewResponse = $this->actingAs($admin)->get(route('management.users.approvals'));
+        $viewResponse = $this->actingAs($admin)->get(route('admin.approvals.index'));
         $viewResponse->assertStatus(200);
         $viewResponse->assertSee($pendingUser->name);
         $viewResponse->assertSee($pendingUser->email);

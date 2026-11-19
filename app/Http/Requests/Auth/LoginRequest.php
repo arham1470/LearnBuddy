@@ -89,6 +89,7 @@ class LoginRequest extends FormRequest
             Auth::logout();
             $this->session()->invalidate();
             $this->session()->regenerateToken();
+            $this->session()->flash('account_pending_approval', true);
 
             throw ValidationException::withMessages([
                 'email' => __('Your account has been verified, but is awaiting administrator approval. You will receive an email once approved.'),

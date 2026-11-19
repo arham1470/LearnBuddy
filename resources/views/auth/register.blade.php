@@ -14,20 +14,40 @@
             </div>
 
             <!-- Card Container -->
-            <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 sm:p-8">
+            @php
+                $initialErrors = [];
+                foreach ($errors->getMessages() as $key => $msgs) {
+                    $initialErrors[$key] = $msgs[0] ?? '';
+                }
+            @endphp
+            <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-sm p-6 sm:p-8" x-data="registerForm()">
                 <!-- Validation Errors Alert -->
-                @if ($errors->any())
-                    <div class="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3" role="alert">
-                        <i class="fas fa-exclamation-circle text-rose-500 mt-0.5 shrink-0" aria-hidden="true"></i>
-                        <div>
-                            <p class="font-semibold">Please fix the following issues:</p>
-                            <ul class="mt-1 list-disc list-inside space-y-1 text-xs">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                <div x-show="hasErrors()" x-cloak class="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3 transition-all duration-300" role="alert">
+                    <i class="fas fa-exclamation-circle text-rose-500 mt-0.5 shrink-0" aria-hidden="true"></i>
+                    <div>
+                        <p class="font-semibold">Please fix the following issues:</p>
+                        <ul class="mt-1 list-disc list-inside space-y-1 text-xs">
+                            <template x-for="(err, idx) in activeErrors()" :key="idx">
+                                <li x-text="err"></li>
+                            </template>
+                        </ul>
                     </div>
+                </div>
+
+                @if ($errors->any())
+                    <noscript>
+                        <div class="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3" role="alert">
+                            <i class="fas fa-exclamation-circle text-rose-500 mt-0.5 shrink-0" aria-hidden="true"></i>
+                            <div>
+                                <p class="font-semibold">Please fix the following issues:</p>
+                                <ul class="mt-1 list-disc list-inside space-y-1 text-xs">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </noscript>
                 @endif
 
                 <form method="POST" action="{{ route('register') }}" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4" novalidate>
@@ -46,17 +66,18 @@
                                 id="name"
                                 type="text"
                                 name="name"
+                                x-model="name"
+                                @input="validateName()"
                                 value="{{ old('name') }}"
                                 required
                                 autofocus
                                 autocomplete="name"
                                 placeholder="Kasun Perera"
-                                class="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @error('name') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
+                                class="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent"
+                                :class="errors.name ? 'border-rose-400 bg-rose-50/20' : 'border-neutral-200 bg-neutral-50/30'"
                             >
                         </div>
-                        @error('name')
-                            <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                        @enderror
+                        <p x-show="errors.name" x-cloak class="mt-1 text-xs text-rose-600 font-medium" x-text="errors.name"></p>
                     </div>
 
                     <!-- Email Field -->
@@ -72,16 +93,17 @@
                                 id="email"
                                 type="email"
                                 name="email"
+                                x-model="email"
+                                @input="validateEmail()"
                                 value="{{ old('email') }}"
                                 required
                                 autocomplete="email"
                                 placeholder="kasun@example.com"
-                                class="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @error('email') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
+                                class="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent"
+                                :class="errors.email ? 'border-rose-400 bg-rose-50/20' : 'border-neutral-200 bg-neutral-50/30'"
                             >
                         </div>
-                        @error('email')
-                            <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                        @enderror
+                        <p x-show="errors.email" x-cloak class="mt-1 text-xs text-rose-600 font-medium" x-text="errors.email"></p>
                     </div>
 
                     <!-- Sri Lankan Phone Number Field (Optional) -->
@@ -97,15 +119,16 @@
                                 id="phone"
                                 type="tel"
                                 name="phone"
+                                x-model="phone"
+                                @input="validatePhone()"
                                 value="{{ old('phone') }}"
                                 autocomplete="tel"
                                 placeholder="077 123 4567 or +94 77 123 4567"
-                                class="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @error('phone') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
+                                class="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent"
+                                :class="errors.phone ? 'border-rose-400 bg-rose-50/20' : 'border-neutral-200 bg-neutral-50/30'"
                             >
                         </div>
-                        @error('phone')
-                            <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                        @enderror
+                        <p x-show="errors.phone" x-cloak class="mt-1 text-xs text-rose-600 font-medium" x-text="errors.phone"></p>
                     </div>
 
                     <!-- Desktop Helper / Info Badge -->
@@ -121,7 +144,7 @@
                         <label for="password" class="block text-xs sm:text-sm font-semibold text-neutral-800 mb-1">
                             Password <span class="text-rose-500">*</span>
                         </label>
-                        <div class="relative" x-data="{ showPassword: false }">
+                        <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                                 <i class="fas fa-lock text-sm" aria-hidden="true"></i>
                             </span>
@@ -130,10 +153,13 @@
                                 :type="showPassword ? 'text' : 'password'"
                                 type="password"
                                 name="password"
+                                x-model="password"
+                                @input="validatePassword()"
                                 required
                                 autocomplete="new-password"
                                 placeholder="Minimum 8 characters"
-                                class="w-full pl-10 pr-11 py-2.5 sm:py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @error('password') border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @enderror"
+                                class="w-full pl-10 pr-11 py-2.5 sm:py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent"
+                                :class="errors.password ? 'border-rose-400 bg-rose-50/20' : 'border-neutral-200 bg-neutral-50/30'"
                             >
                             <button
                                 type="button"
@@ -145,9 +171,7 @@
                                 <i class="fas text-sm" :class="showPassword ? 'fa-eye-slash text-neutral-600' : 'fa-eye text-neutral-400'" aria-hidden="true"></i>
                             </button>
                         </div>
-                        @error('password')
-                            <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                        @enderror
+                        <p x-show="errors.password" x-cloak class="mt-1 text-xs text-rose-600 font-medium" x-text="errors.password"></p>
                     </div>
 
                     <!-- Confirm Password Field -->
@@ -155,7 +179,7 @@
                         <label for="password_confirmation" class="block text-xs sm:text-sm font-semibold text-neutral-800 mb-1">
                             Confirm password <span class="text-rose-500">*</span>
                         </label>
-                        <div class="relative" x-data="{ showConfirmPassword: false }">
+                        <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                                 <i class="fas fa-check-double text-sm" aria-hidden="true"></i>
                             </span>
@@ -164,6 +188,8 @@
                                 :type="showConfirmPassword ? 'text' : 'password'"
                                 type="password"
                                 name="password_confirmation"
+                                x-model="password_confirmation"
+                                @input="validateConfirmPassword()"
                                 required
                                 autocomplete="new-password"
                                 placeholder="Re-enter your password"
@@ -191,6 +217,8 @@
                                     name="terms"
                                     id="terms"
                                     value="1"
+                                    x-model="terms"
+                                    @change="validateTerms()"
                                     required
                                     {{ old('terms') ? 'checked' : '' }}
                                     class="w-4 h-4 mt-0.5 rounded border-neutral-300 text-lb-orange focus:ring-lb-orange cursor-pointer"
@@ -199,9 +227,7 @@
                                     I agree to the <a href="#" class="font-semibold text-lb-orange hover:underline">Terms</a> and <a href="#" class="font-semibold text-lb-orange hover:underline">Privacy Policy</a> of LearnBuddy Sri Lanka.
                                 </span>
                             </label>
-                            @error('terms')
-                                <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                            @enderror
+                            <p x-show="errors.terms" x-cloak class="mt-1 text-xs text-rose-600 font-medium" x-text="errors.terms"></p>
                         </div>
 
                         <!-- Submit Button -->
@@ -226,6 +252,95 @@
                     <span class="hidden sm:inline-block">Empowering learners across Sri Lanka</span>
                 </div>
             </div>
+
+            <script>
+                function registerForm() {
+                    return {
+                        name: @json(old('name', '')),
+                        email: @json(old('email', '')),
+                        phone: @json(old('phone', '')),
+                        password: '',
+                        password_confirmation: '',
+                        terms: {{ old('terms') ? 'true' : 'false' }},
+                        showPassword: false,
+                        showConfirmPassword: false,
+                        errors: Object.assign({
+                            name: '',
+                            email: '',
+                            phone: '',
+                            password: '',
+                            terms: ''
+                        }, @json($initialErrors)),
+
+                        hasErrors() {
+                            return Object.values(this.errors).some(err => typeof err === 'string' && err.trim().length > 0);
+                        },
+                        activeErrors() {
+                            return Object.values(this.errors).filter(err => typeof err === 'string' && err.trim().length > 0);
+                        },
+                        validateName() {
+                            const val = this.name.trim();
+                            if (this.errors.name && val.length > 0) {
+                                this.errors.name = '';
+                            }
+                        },
+                        validateEmail() {
+                            const val = this.email.trim();
+                            if (this.errors.email) {
+                                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                if (this.errors.email.toLowerCase().includes('taken')) {
+                                    if (val !== @json(old('email', ''))) {
+                                        this.errors.email = '';
+                                    }
+                                } else if (this.errors.email.toLowerCase().includes('required')) {
+                                    if (val.length > 0) {
+                                        this.errors.email = '';
+                                    }
+                                } else if (emailRegex.test(val)) {
+                                    this.errors.email = '';
+                                }
+                            }
+                        },
+                        validatePhone() {
+                            if (this.errors.phone) {
+                                const val = this.phone.trim();
+                                const cleaned = val.replace(/[\s\-\(\)\.]/g, '');
+                                if (!val || /^(?:\+94|0)?([1-9][0-9]{8})$/.test(cleaned)) {
+                                    this.errors.phone = '';
+                                }
+                            }
+                        },
+                        validatePassword() {
+                            if (this.errors.password) {
+                                const isRequired = this.errors.password.toLowerCase().includes('required');
+                                const isConfirm = this.errors.password.toLowerCase().includes('confirmation') || this.errors.password.toLowerCase().includes('match');
+                                if (isRequired && this.password.length > 0) {
+                                    this.errors.password = '';
+                                } else if (isConfirm) {
+                                    if (this.password.length >= 8 && this.password === this.password_confirmation) {
+                                        this.errors.password = '';
+                                    }
+                                } else if (this.password.length >= 8) {
+                                    this.errors.password = '';
+                                }
+                            }
+                        },
+                        validateConfirmPassword() {
+                            if (this.errors.password) {
+                                const isConfirm = this.errors.password.toLowerCase().includes('confirmation') || this.errors.password.toLowerCase().includes('match');
+                                if (isConfirm && this.password && this.password === this.password_confirmation) {
+                                    this.errors.password = '';
+                                }
+                            }
+                        },
+                        validateTerms() {
+                            if (this.terms) {
+                                this.errors.terms = '';
+                            }
+                        }
+                    };
+                }
+            </script>
         </div>
     </section>
 </x-layouts.public>
