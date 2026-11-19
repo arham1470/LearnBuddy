@@ -45,6 +45,9 @@
     <!-- Modern Shared Confirmation & Delete Dialog -->
     <x-confirm-dialog />
 
+    <!-- Global Support Modal -->
+    <x-support-modal />
+
     @stack('scripts')
 </body>
 </html>

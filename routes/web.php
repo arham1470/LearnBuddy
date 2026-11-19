@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminLocationController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\AdminSupportController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -46,6 +47,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StudentBatchController;
 use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\VideoPlaybackController;
 use App\Http\Controllers\Webhook\MuxWebhookController;
@@ -82,6 +84,11 @@ Route::get('/storage/{path}', function (string $path) {
 
     return response()->file($fullPath);
 })->where('path', '.*')->name('storage.local');
+
+// Support & Contact Desk (Public & Authenticated)
+Route::get('/support', [SupportController::class, 'create'])->name('support.create');
+Route::post('/support', [SupportController::class, 'store'])->name('support.store')->middleware('throttle:10,1');
+Route::get('/contact', [SupportController::class, 'create'])->name('contact');
 
 // Health Check Endpoint
 Route::get('/up/database', function () {
@@ -349,6 +356,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/approvals', [AdminApprovalController::class, 'index'])->name('approvals.index');
         Route::post('/approvals/{user}/approve', [AdminApprovalController::class, 'approve'])->name('approvals.approve');
         Route::post('/approvals/{user}/reject', [AdminApprovalController::class, 'reject'])->name('approvals.reject');
+
+        // Support Desk
+        Route::get('/support', [AdminSupportController::class, 'index'])->name('support.index');
+        Route::post('/support/{supportMessage}/reply', [AdminSupportController::class, 'reply'])->name('support.reply');
+        Route::post('/support/{supportMessage}/toggle-status', [AdminSupportController::class, 'toggleStatus'])->name('support.toggle-status');
+        Route::delete('/support/{supportMessage}', [AdminSupportController::class, 'destroy'])->name('support.destroy');
 
         // Analytics & System
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');

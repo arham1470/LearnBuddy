@@ -64,6 +64,7 @@
                     <li><a href="{{ url('/#courses') }}" class="hover:text-lb-orange transition-colors">All Courses</a></li>
                     <li><a href="{{ url('/#about') }}" class="hover:text-lb-orange transition-colors">About Us</a></li>
                     <li><a href="{{ url('/#faq') }}" class="hover:text-lb-orange transition-colors">FAQ</a></li>
+                    <li><a href="{{ route('support.create') }}" class="text-[#FF5F00] font-semibold hover:underline">Contact Support</a></li>
                     <li><a href="{{ route('become-instructor') }}" class="text-[#FF5F00] font-semibold hover:underline">Teach on LearnBuddy</a></li>
                     <li><a href="{{ url('/design-system') }}" class="hover:text-lb-orange transition-colors">Design System</a></li>
                 </ul>

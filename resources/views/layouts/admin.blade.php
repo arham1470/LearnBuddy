@@ -213,13 +213,20 @@
                     $isGradingActive = request()->routeIs('admin.assignments.*', 'admin.quizzes.*');
                     $isFinanceActive = request()->routeIs('admin.orders.*');
                     $isSecurityActive = request()->routeIs('admin.users.*', 'admin.approvals.*');
+                    $isSupportActive = request()->routeIs('admin.support.*');
                     $isSystemActive = request()->routeIs('admin.settings.*');
 
-                    // Real-time pending approvals count for badge indicator
+                    // Real-time pending approvals and support count for badge indicator
                     try {
                         $pendingApprovalsCount = \App\Models\User::where('is_approved', false)->whereNotNull('email_verified_at')->count();
                     } catch (\Throwable $e) {
                         $pendingApprovalsCount = 0;
+                    }
+
+                    try {
+                        $pendingSupportCount = \App\Models\SupportMessage::where('status', 'pending')->count();
+                    } catch (\Throwable $e) {
+                        $pendingSupportCount = 0;
                     }
                 @endphp
 
@@ -521,6 +528,31 @@
                             </a>
                         </div>
                     </div>
+
+                    <!-- 8. Support Desk (Inquiries & Gmail Reply) -->
+                    <a href="{{ route('admin.support.index') }}"
+                       :class="sidebarOpen ? 'justify-start px-2.5' : 'justify-center px-0'"
+                       class="relative flex items-center gap-3 py-1.5 rounded-xl transition-all duration-200 group {{ $isSupportActive ? 'bg-white/[0.08] text-white font-semibold border border-white/10 shadow-xs' : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium' }}">
+                        @if($isSupportActive)
+                            <span class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#FF5F00]"></span>
+                        @endif
+                        <div class="relative w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 {{ $isSupportActive ? 'bg-[#FF5F00] text-white shadow-md shadow-orange-500/30 border border-orange-400/40' : 'bg-white/[0.04] text-white/60 group-hover:bg-white/[0.08] group-hover:text-white group-hover:scale-105 border border-white/[0.04]' }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                            @if($pendingSupportCount > 0)
+                                <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#FF5F00] ring-2 ring-[#1A1A1A]"></span>
+                            @endif
+                        </div>
+                        <div x-show="sidebarOpen" x-cloak class="flex-1 flex items-center justify-between min-w-0">
+                            <span class="text-[0.84rem] whitespace-nowrap">Support</span>
+                            @if($pendingSupportCount > 0)
+                                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-[#FF5F00] text-white shadow-xs">
+                                    {{ $pendingSupportCount }}
+                                </span>
+                            @endif
+                        </div>
+                    </a>
 
                     <!-- Section: SYSTEM -->
                     <div x-show="sidebarOpen" x-cloak class="px-2.5 pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-white/30 select-none border-t border-white/[0.04] mt-1.5">

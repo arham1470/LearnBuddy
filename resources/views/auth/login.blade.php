@@ -297,11 +297,14 @@
 
                         <div>
                             <a
-                                href="mailto:support@learnbuddy.lk"
-                                class="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-lb-orange font-medium transition"
+                                href="{{ route('support.create', ['category' => 'account', 'subject' => 'Account Deactivation Appeal']) }}"
+                                data-open-support
+                                data-support-category="account"
+                                data-support-subject="Account Deactivation Appeal"
+                                class="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-lb-orange font-semibold transition cursor-pointer"
                             >
-                                <i class="fas fa-envelope text-[11px]" aria-hidden="true"></i>
-                                <span>Contact Support (support@learnbuddy.lk)</span>
+                                <i class="fas fa-headset text-xs text-lb-orange" aria-hidden="true"></i>
+                                <span>Contact Support Desk</span>
                             </a>
                         </div>
                     </div>
