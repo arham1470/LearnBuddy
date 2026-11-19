@@ -101,6 +101,7 @@ class LoginRequest extends FormRequest
             Auth::logout();
             $this->session()->invalidate();
             $this->session()->regenerateToken();
+            $this->session()->flash('account_deactivated', true);
 
             throw ValidationException::withMessages([
                 'email' => __('Your account has been deactivated. Please contact LearnBuddy support.'),

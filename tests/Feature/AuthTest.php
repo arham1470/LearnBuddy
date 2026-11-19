@@ -179,13 +179,20 @@ class AuthTest extends TestCase
             'password' => 'ValidPass123!',
         ]);
 
-        $response = $this->post('/login', [
+        $response = $this->from(route('login'))->post('/login', [
             'email' => 'inactive@learnbuddy.lk',
             'password' => 'ValidPass123!',
         ]);
 
         $this->assertGuest();
         $response->assertSessionHasErrors(['email']);
+        $response->assertSessionHas('account_deactivated', true);
+
+        $followResponse = $this->followRedirects($response);
+        $followResponse->assertSee('Account Deactivated');
+        $followResponse->assertSee('Your account has been deactivated');
+        $followResponse->assertSee('Redirecting to homepage in');
+        $followResponse->assertDontSee('Authentication failed');
     }
 
     public function test_login_attempts_are_throttled_after_consecutive_failures(): void

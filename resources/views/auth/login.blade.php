@@ -2,8 +2,11 @@
     @php
         $isPendingApproval = session('account_pending_approval') ||
             ($errors->has('email') && str_contains($errors->first('email'), 'awaiting administrator approval'));
+        $isDeactivated = session('account_deactivated') ||
+            ($errors->has('email') && str_contains($errors->first('email'), 'deactivated'));
         $displayErrors = array_filter($errors->all(), function ($error) {
-            return !str_contains($error, 'awaiting administrator approval');
+            return !str_contains($error, 'awaiting administrator approval') &&
+                !str_contains($error, 'deactivated');
         });
     @endphp
 
@@ -67,10 +70,10 @@
                                 autofocus
                                 autocomplete="username"
                                 placeholder="name@example.com"
-                                class="w-full pl-10 pr-4 py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @if(!$isPendingApproval && $errors->has('email')) border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @endif"
+                                class="w-full pl-10 pr-4 py-3 rounded-2xl border text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lb-orange focus-visible:border-transparent @if(!$isPendingApproval && !$isDeactivated && $errors->has('email')) border-rose-400 bg-rose-50/20 @else border-neutral-200 bg-neutral-50/30 @endif"
                             >
                         </div>
-                        @if (!$isPendingApproval)
+                        @if (!$isPendingApproval && !$isDeactivated)
                             @error('email')
                                 <p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>
                             @enderror
@@ -218,6 +221,89 @@
                             <span>Go to Home Now</span>
                             <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
                         </a>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Account Deactivated Background-Blurred Modal Popup -->
+        @if ($isDeactivated)
+            <div
+                x-data="{
+                    seconds: 5,
+                    timer: null,
+                    init() {
+                        this.timer = setInterval(() => {
+                            if (this.seconds > 1) {
+                                this.seconds--;
+                            } else {
+                                this.seconds = 0;
+                                clearInterval(this.timer);
+                                window.location.href = '{{ route('home') }}';
+                            }
+                        }, 1000);
+                    }
+                }"
+                class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-md transition-opacity duration-300"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="deactivated-modal-title"
+            >
+                <div class="bg-white rounded-3xl border border-neutral-200/80 shadow-2xl p-6 sm:p-8 max-w-md w-full text-center relative overflow-hidden transform transition-all duration-300 scale-100 space-y-5">
+                    <!-- Icon -->
+                    <div class="relative mx-auto w-16 h-16">
+                        <div class="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200/80 text-rose-500 flex items-center justify-center text-2xl shadow-xs">
+                            <i class="fas fa-user-slash" aria-hidden="true"></i>
+                        </div>
+                        <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] ring-2 ring-white shadow-xs">
+                            <i class="fas fa-ban" aria-hidden="true"></i>
+                        </span>
+                    </div>
+
+                    <!-- Texts -->
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100/80 text-rose-900 text-xs font-semibold uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                            Account Suspended
+                        </div>
+                        <h2 id="deactivated-modal-title" class="text-xl sm:text-2xl font-extrabold text-neutral-900 tracking-tight">
+                            Account Deactivated
+                        </h2>
+                        <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed max-w-sm mx-auto">
+                            Your account has been deactivated. Please contact LearnBuddy support for assistance.
+                        </p>
+                    </div>
+
+                    <!-- Countdown Status Box -->
+                    <div class="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between gap-3 text-xs text-neutral-600">
+                        <div class="flex items-center gap-2 font-medium">
+                            <i class="fas fa-circle-notch fa-spin text-rose-500 text-sm" aria-hidden="true"></i>
+                            <span>Redirecting to homepage in</span>
+                        </div>
+                        <span class="font-mono font-extrabold text-xs px-2.5 py-1 rounded-full bg-neutral-900 text-white shadow-xs">
+                            <span x-text="seconds">5</span>s
+                        </span>
+                    </div>
+
+                    <!-- Immediate Redirect Button & Support link -->
+                    <div class="pt-1 space-y-3">
+                        <a
+                            href="{{ route('home') }}"
+                            class="w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full font-semibold text-white bg-lb-orange hover:bg-[#E65500] active:scale-[0.99] transition shadow-sm text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-lb-orange cursor-pointer"
+                        >
+                            <span>Go to Home Now</span>
+                            <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+                        </a>
+
+                        <div>
+                            <a
+                                href="mailto:support@learnbuddy.lk"
+                                class="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-lb-orange font-medium transition"
+                            >
+                                <i class="fas fa-envelope text-[11px]" aria-hidden="true"></i>
+                                <span>Contact Support (support@learnbuddy.lk)</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
