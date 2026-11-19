@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PhysicalLocationSeeder::class,
             CategorySeeder::class,
             CourseSeeder::class,
+            SampleInstructorCoursesSeeder::class,
         ]);
     }
 }
